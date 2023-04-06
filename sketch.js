@@ -14,6 +14,8 @@ function preload() {
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 	background(0);
+	home = new HomeScreen();
+	
 	controls = new ControlsAndInput();
 
   
@@ -30,18 +32,32 @@ function setup() {
 
 function draw() {
 	background(0);
-	//draw the selected visualisation
-	vis.selectedVisual.draw();
-	//draw the controls on top.
-	controls.draw();
+	//draw home screen
+	if (home.selected == "") {
+		home.draw();
+	}
+	if (home.selected == home.options[1]) {
+		//draw the selected visualisation
+		vis.selectedVisual.draw();
+		//draw the controls on top.
+		controls.draw();
+	}
 }
 
 function mouseClicked() {
-	controls.mousePressed();
+	if (home.selected == home.options[1]) {
+		controls.mousePressed();
+	}
 }
 
 function keyPressed() {
-	controls.keyPressed(keyCode);
+	if (home.selected == "") {
+		home.keyPressed(key);
+	}
+	
+	if (home.selected == home.options[1]) {
+		controls.keyPressed(keyCode);
+	}
   }
 
 //when the window has been resized. Resize canvas to fit 
