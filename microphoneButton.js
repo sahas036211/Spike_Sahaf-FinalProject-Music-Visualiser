@@ -3,7 +3,7 @@ function MicController() {
   this.mic = new p5.AudioIn();
   this.micEnabled = false;
 
-  this.enableMic = function() {
+  this.enableMic = function() { 
     this.micEnabled = !this.micEnabled;
     if (this.micEnabled) {
       this.mic.start();
@@ -15,7 +15,6 @@ function MicController() {
     } else {
       this.mic.stop();
       fourier.setInput(null);
-  
     }
   };
 }
@@ -43,8 +42,8 @@ function MicButton() {
 
   this.hitCheck = function() {
     if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
-      this.enabled = !this.enabled;
-      controls.micController.enableMic();
+      this.enabled = !this.enabled; // Toggle the state
+      controls.micController.enableMic(); // Enable/disable the microphone
       return true;
     }
     return false;

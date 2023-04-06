@@ -19,7 +19,7 @@ function setup() {
   
 	// Instantiate the fft object without setting any input initially
 	fourier = new p5.FFT();
-  
+
 	// Create a new visualization container and add visualizations
 	vis = new Visualisations();
 	vis.add(new Spectrum());
