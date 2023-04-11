@@ -32,19 +32,31 @@ function setup() {
 
 function draw() {
 	background(0);
-	//draw home screen
+	
 	if (home.selected == "") {
+		// draw home screen
 		home.draw();
 	}
+
 	if (home.selected == home.options[1]) {
-		//draw the selected visualisation
+		// draw the selected visualisation
 		vis.selectedVisual.draw();
-		//draw the controls on top.
+		// draw the controls on top.
 		controls.draw();
 	}
 }
 
+function mouseMoved() {
+	if (home.selected == "") {
+		home.mouseMoved();
+	}
+}
+
 function mouseClicked() {
+	if (home.selected == "") {
+		home.mousePressed();
+	}
+	
 	if (home.selected == home.options[1]) {
 		controls.mousePressed();
 	}
@@ -52,7 +64,7 @@ function mouseClicked() {
 
 function keyPressed() {
 	if (home.selected == "") {
-		home.keyPressed(key);
+		home.keyPressed(keyCode);
 	}
 	
 	if (home.selected == home.options[1]) {
