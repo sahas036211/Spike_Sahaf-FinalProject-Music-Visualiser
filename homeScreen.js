@@ -37,7 +37,7 @@ function HomeScreen() {
         // draw credits at bottom of screen
         textSize(20);
         textStyle(NORMAL);
-        text("BY SPIKE ELLIOT & SYED SAHAF", width/2, height - 30);
+        text("BY SPIKE ELLIOT & SYED SAHAF", width/2, 890);
         pop();
 	};
 
