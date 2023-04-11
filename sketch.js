@@ -12,7 +12,7 @@ function preload() {
 }
 
 function setup() {
-	createCanvas(windowWidth, windowHeight);
+	createCanvas(1920, 920);
 	background(0);
 	home = new HomeScreen();
 	

@@ -13,32 +13,33 @@ function HomeScreen() {
         push();
         // draw title at top of screen
         fill("white");
-        rect(width * 0.32, height * 0.15, width * 0.45, height * 0.15);
+        rect(width/2 - 275, 100, 550, 120);
         fill("black");
-        textSize(height * 0.075);
+        textSize(48);
         textAlign(CENTER);
-        text("MUSIC VISUALISER", width / 2, height * 0.27);
-    
+        text("MUSIC VISUALISER", width/2, 180);
+		
         // loop through all options and draw them to the screen
-        textSize(height * 0.04); // Adjusted the text size based on canvas height
-        var optionSpacing = height * 0.1; // Adjusted the option spacing based on canvas height
-        for (var i = 0; i < this.options.length; i++) {
+        textSize(32);
+		for (var i = 0; i < this.options.length; i++) {
             // draw highlighted option differently
             if (this.options[i] == this.currentOption) {
-                textStyle(BOLD);
-                fill("#333333");
-                rect(0, (height * 0.35) + (i * optionSpacing), width, height * 0.1);
+                textStyle(BOLD); // draw text as bold
+                // draw grey rectangle behind text
+                fill("#333333"); 
+                rect(0, 283 + (i * 120), width, 110);
             } else textStyle(NORMAL);
+            // draw options with 120 pixels of space from each other
             fill("white");
-            text(this.options[i], width / 2, (height * 0.4) + (i * optionSpacing));
+            text(this.options[i], width/2, 350 + (i * 120)); 
         }
-    
+
         // draw credits at bottom of screen
-        textSize(height * 0.025); // Adjusted the text size based on canvas height
+        textSize(20);
         textStyle(NORMAL);
-        text("BY SPIKE ELLIOT & SYED SAHAF", width / 2, height * 0.95); // Adjusted the position based on canvas height
+        text("BY SPIKE ELLIOT & SYED SAHAF", width/2, 890);
         pop();
-    };    
+	};
 
     this.mouseMoved = function() {
         // loop through all options and check if mouse is within their boxes
