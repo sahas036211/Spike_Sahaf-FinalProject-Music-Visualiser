@@ -8,7 +8,7 @@ var sound = null;
 var fourier;
 
 function preload() {
-	sound = loadSound('assets/stomper_reggae_bit.flac');
+	sound = loadSound('assets/bakamitai.flac');
 }
 
 function setup() {
