@@ -14,15 +14,20 @@ function preload() {
 function setup() {
 	createCanvas(1920, 920);
 	background(0);
-	home = new HomeScreen();
-	
-	controls = new ControlsAndInput();
 
-  
 	// Instantiate the fft object without setting any input initially
 	fourier = new p5.FFT();
 
-	// Create a new visualization container and add visualizations
+	// Instantiate home screen object
+	home = new HomeScreen();
+
+	// Instantiate rhythm game object
+	rhythm = new RhythmGame();
+	
+	// Instantiate controls object for visualisations
+	controls = new ControlsAndInput();
+
+	// Create a new visualisation container and add visualisations
 	vis = new Visualisations();
 	vis.add(new Spectrum());
 	vis.add(new WavePattern());
@@ -43,6 +48,12 @@ function draw() {
 		vis.selectedVisual.draw();
 		// draw the controls on top.
 		controls.draw();
+	}
+
+	if (home.selected == home.options[0]) {
+		// draw the rhythm game
+		rhythm.draw();
+		rhythm.drawGame();
 	}
 }
 
