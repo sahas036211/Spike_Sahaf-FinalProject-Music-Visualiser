@@ -26,7 +26,7 @@ function RhythmGame() {
 
     // push new notes to notes array
     for (i = 0; i < 4; i++) {
-        this.notes.push(new RhythmGameNote(this.gs));
+        this.notes.push(new RhythmGameNote(this.gs, -50 + (-50*i)));
     }
 
     /**
@@ -267,18 +267,21 @@ function RhythmGame() {
             // checks hit zone index is the same as note colour index
             if (hitZoneIndex == this.notes[i].fillColourIndex) {
                 // condition for if note is hit
-                let distance = this.notes[i].hitCheck(assignedHitZone);
-                if (distance !== false) {
-                    // set value of note score to how close it was to hit zone
+                let distance = this.notes[i].distCheck(assignedHitZone);
+                if (distance <= 27) {
+                    // set value of note score by how close it was to hit zone
+                    // note is considered a hit if between 27 and 15 distance
                     let noteScore = map(distance, 27, 15, 10, 100);
                     // multiply note score by combo multiplier and add to total
                     this._score += round(noteScore * min(this._combo + 1, 16));
                     this._combo += 1; // increase combo
                     // marks the note so it can be removed from the array
                     this.notes[i].isHit = true;
-                } else {
+                } else if (distance < 54) {
                     this._combo = 0; // note in lane was missed, reset combo
+                    this.notes[i].isHit = true;
                 }
+                break; // only one note can be hit per key press
             }
         } 
         // removes any note that has been hit
@@ -293,8 +296,8 @@ function RhythmGame() {
     }
 
     this.mousePressed = function() {
-        if (!this.playing) {
-            if ((mouseY > 270 && mouseY < 390) && this.unpauseCountdown == -1) {
+        if (!this.playing && this.unpauseCountdown == -1) {
+            if (mouseY > 270 && mouseY < 390) {
                 this.unpauseCountdown = 180; // set unpause countdown to 3 secs
             } else if (mouseY > 470 && mouseY < 590) {
                 home.selected = ""; // sends you back to the home screen

@@ -1,4 +1,4 @@
-function RhythmGameNote(gs) { // gamespace to draw in
+function RhythmGameNote(gs, startDepth=-200) { // gamespace to draw in
     // list of possible colours in same order as hit zone array
     this.colours = ["#ff0000","#ffff66","#0000cc","#00cc00"];
 
@@ -10,7 +10,7 @@ function RhythmGameNote(gs) { // gamespace to draw in
 
     // CHANGE THESE VALUES LATER WHEN MAPPING NOTES, WILL NEED CONSTRUCTOR TO TAKE
     // IN MORE PROPERTY ARGUMENTS FOR VALUES LIKE LENGTH, TIME OF APPEARANCE, COLOUR, ETC.
-    this.startDepth = Math.floor(random(-200)); // random start depth for now
+    this.startDepth = startDepth;
     this._pos = createVector(-90 + this.fillColourIndex*60, -210, this.startDepth);
     this._speed = 2;
     
@@ -38,14 +38,11 @@ function RhythmGameNote(gs) { // gamespace to draw in
         this._pos = pos;
     }
 
-    // COLLISION DETECTION
+    // DISTANCE FROM HIT ZONE DETECTION
 
-    this.hitCheck = function(hitZone) {
+    this.distCheck = function(hitZone) {
         // checks distance between a note and a given hit zone
         let distance = p5.Vector.dist(this._pos, hitZone);
-        if (distance < 27) { // any distance greater than this will be a miss
-            return distance;
-        }
-        return false;
+        return distance;
     }
 }
