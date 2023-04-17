@@ -54,7 +54,6 @@ function draw() {
 	if (home.selected == home.options[0]) {
 		// draw the rhythm game
 		rhythm.draw();
-		rhythm.drawGame();
 	}
 }
 
@@ -68,10 +67,14 @@ function mouseClicked() {
 	if (home.selected == "") {
 		home.mousePressed();
 	}
+
+	if (home.selected == home.options[0]) {
+		rhythm.mousePressed();
+	}
 	
 	if (home.selected == home.options[1]) {
 		controls.mousePressed();
-	}
+	}	
 }
 
 function keyPressed() {

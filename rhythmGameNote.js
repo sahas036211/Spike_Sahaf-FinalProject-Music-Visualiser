@@ -2,8 +2,11 @@ function RhythmGameNote(gs) { // gamespace to draw in
     // list of possible colours in same order as hit zone array
     this.colours = ["#ff0000","#ffff66","#0000cc","#00cc00"];
 
-    this.fillColour = this.colours[Math.floor(random(4))]; // random colour for now
-    this.fillColourIndex = this.colours.findIndex(i => i == this.fillColour)
+    this.fillColourIndex = Math.floor(random(4));
+    this.fillColour = this.colours[this.fillColourIndex]; // random colour for now
+
+    // property for when note is hit
+    this.isHit = false;
 
     // CHANGE THESE VALUES LATER WHEN MAPPING NOTES, WILL NEED CONSTRUCTOR TO TAKE
     // IN MORE PROPERTY ARGUMENTS FOR VALUES LIKE LENGTH, TIME OF APPEARANCE, COLOUR, ETC.
@@ -15,11 +18,14 @@ function RhythmGameNote(gs) { // gamespace to draw in
         // draw note with given colour and position
         gs.push();
         gs.fill(this.fillColour);
-        // note moves forward at set distance per frame
-        this._pos.add(0,0,this._speed); 
         gs.translate(this._pos);
         gs.box(50, 25, 25);
         gs.pop();
+    }
+
+    this.move = function() {
+        // note moves forward at set distance per frame
+        this._pos.add(0,0,this._speed); 
     }
 
     // GETTERS AND SETTERS
@@ -35,12 +41,12 @@ function RhythmGameNote(gs) { // gamespace to draw in
     // COLLISION DETECTION
 
     this.hitCheck = function(hitZone) {
-        // checks distance between note and hit zone and determines points
-        // to be awarded
+        // checks distance between a note and a given hit zone
         let distance = p5.Vector.dist(this._pos, hitZone);
         console.log(distance);
-        if (distance < 100) { // CHANGE THIS VALUE LATER TO MAKE GAME MORE CHALLENGING
-            return true;
+        if (distance < 27) { // any distance greater than this will be a miss
+            console.log(distance);
+            return distance;
         }
         return false;
     }

@@ -6,6 +6,7 @@ function RhythmGame() {
     this.notes = []; // Array that will contain all notes on the song "map"
     this.playing = false; // Initialise playstate to false
     this.songCurrentTime = "0:00"; // Initialise song time to 0
+    this.unpauseCountdown = -1; // Initialise unpause countdown to -1
 
     // 3d object vectors
     this.redHitZone = createVector(-90,-195,645);
@@ -29,10 +30,10 @@ function RhythmGame() {
     }
 
     /**
-     * Converts a given number in seconds to minute:seconds format
+     * Converts a given number in seconds to minute:seconds format.
      * 
-     * @param {Float} time // time to be converted
-     * @returns {String} // time converted to string in minute:seconds format
+     * @param {Number} time number of seconds to be converted
+     * @returns {String} time converted to string in minute:seconds format
      */
     this._convertToMins = function(time) {
         // Get the seconds component of the time
@@ -41,10 +42,7 @@ function RhythmGame() {
         let timeMinutes = Math.floor(time / 60);
         // Format the time correctly
         let timeInMins = `${timeMinutes}:${timeSeconds}`;
-        if (timeSeconds == 0) {
-            // append extra zero to end if seconds count is 0 for formatting
-            timeInMins = timeInMins + "0";
-        } else if (timeSeconds < 10) {
+        if (timeSeconds < 10) {
             // insert zero before seconds count if below 10 for formatting
             timeInMins = `${timeMinutes}:0${timeSeconds}`;
         }
@@ -53,33 +51,8 @@ function RhythmGame() {
 
     // get song duration in minutes:seconds format
     this.songDuration = this._convertToMins(sound.duration());
-    
-    this.draw = function() {
-        push();
-        // Draw stats and info for current song
-        fill("white");
-        textSize(36);
-        textAlign(LEFT);
-        text(`CURRENT SONG: ${this._songName}`, 80, 100);
-        text(`SCORE: ${this._score}`, 80, 200);
-        text(`COMBO: ${this._combo}x`, 80, 300);
 
-        // if song is playing display "pause", if paused display "play"
-        if (this.playing) {
-            text('PRESS P TO PAUSE', width-440, 100);
-        } else {
-            text('PRESS P TO PLAY', width-440, 100);
-        }
-        
-        // Draw current song time & length of song in minutes:seconds format
-        if (this.playing) {
-            this.songCurrentTime = this._convertToMins(sound.currentTime());
-        }
-        text(`${this.songCurrentTime} / ${this.songDuration}`, width-360, 200);
-        pop();
-    }
-
-    this.drawGame = function() {
+    this._drawGame = function() {
         // draw 3d graphics for game
         this.gs.background(0);
         this.gs.smooth(); // applies anti-aliasing to edges of geometry
@@ -89,7 +62,15 @@ function RhythmGame() {
         
         for (i = 0; i < this.notes.length; i++) {
             this.notes[i].draw();
+            if (this.playing) {
+                this.notes[i].move();
+            }
+            // checks if note is offscreen, changes isHit property to true
+            this.noteOffScreenCheck(this.notes[i]);
         }
+        // removes any note that has gone off screen
+        this.notes = this.notes.filter(n => !n.isHit);
+        console.log(this.notes);
 
         // messing around with pan of song (remove later)
         // let panValue;
@@ -164,35 +145,103 @@ function RhythmGame() {
         image(this.gs, (width/2)-350, (height/2)-240);
     }
 
+    this.draw = function() {
+        push();
+        // Draw stats and info for current song
+        fill("white");
+        textSize(36);
+        textAlign(LEFT);
+        text(`CURRENT SONG: ${this._songName}`, 80, 100);
+        text(`SCORE: ${this._score}`, 80, 200);
+        text(`COMBO: ${this._combo}x`, 80, 300);
+
+        // if song is playing display "pause", if paused display "play"
+        if (this.playing) {
+            text('PRESS P TO PAUSE', width-440, 100);
+        } else {
+            text('PRESS P TO PLAY', width-440, 100);
+        }
+        
+        // Draw current song time & length of song in minutes:seconds format
+        if (this.playing) {
+            this.songCurrentTime = this._convertToMins(sound.currentTime());
+        }
+        text(`${this.songCurrentTime} / ${this.songDuration}`, width-360, 200);
+        pop();
+
+        this._drawGame(); // draw 3d game graphics
+
+        // PAUSE MENU
+        if (!this.playing) {
+            push();
+            fill(0,0,0,128);
+            rect(0,0,width,height);
+            textAlign(CENTER);
+            fill("white");
+            stroke(0);
+            strokeWeight(4);
+            textSize(100);
+            // checks if there is an unpause countdown currently in effect
+            if (this.unpauseCountdown != -1) {
+                if (this.unpauseCountdown != 0) {
+                    // show countdown in centre of screen
+                    let countdownDisplay = Math.ceil(this.unpauseCountdown / 60);
+                    text(countdownDisplay, width/2, height/2);
+                    this.unpauseCountdown -= 1;
+                } else { // when unpause countdown hits 0, unpause the game
+                    sound.loop(); // plays music from where it was paused
+                    this.playing = true;
+                    this.unpauseCountdown = -1;
+                }
+            } else { // if there is no countdown, display pause menu
+                textSize(48);
+                if (mouseY > 270 && mouseY < 390) { // check mouse pos
+                    textStyle(BOLD); // menu option bold when hovered over
+                }
+                text("RESUME", width/2, 350);
+                textStyle(NORMAL);
+                if (mouseY > 470 && mouseY < 590) { // check mouse pos
+                    textStyle(BOLD); // menu option bold when hovered over
+                }
+                text("BACK TO MENU", width/2, 550);
+            }
+            pop();
+        }
+    }
+
     this.keyPressed = function(key) {
-        if (key == "A" || key == "a") {
-            // sets red hitzone to pressed and checks for note collision
-            this._redPressed = true;
-            this.noteHitCheck(this.hitZones[0]);
-        } else if (key == "S" || key == "s") {
-            // sets yellow hitzone to pressed and checks for note collision
-            this._yellowPressed = true;
-            this.noteHitCheck(this.hitZones[1]);
-        } else if (key == "K" || key == "k") {
-            // sets blue hitzone to pressed and checks for note collision
-            this._bluePressed = true;
-            this.noteHitCheck(this.hitZones[2]);
-        } else if (key == "L" || key == "l") {
-            // sets green hitzone to pressed and checks for note collision
-            this._greenPressed = true;
-            this.noteHitCheck(this.hitZones[3]);
-        } else if (key == "P" || key == "p") {
-            // pauses music
-            if (sound.isPlaying()) {
+        if (this.playing) {
+            if (key == "A" || key == "a") {
+                // sets red hitzone to pressed
+                this._redPressed = true;
+                // perform note hit logic and remove any hit notes in this lane
+                this.notes = this.noteHitCheck(this.hitZones[0]);
+            } else if (key == "S" || key == "s") {
+                // sets yellow hitzone to pressed
+                this._yellowPressed = true;
+                // perform note hit logic and remove any hit notes in this lane
+                this.notes = this.noteHitCheck(this.hitZones[1]);
+            } else if (key == "K" || key == "k") {
+                // sets blue hitzone to pressed
+                this._bluePressed = true;
+                // perform note hit logic and remove any hit notes in this lane
+                this.notes = this.noteHitCheck(this.hitZones[2]);
+            } else if (key == "L" || key == "l") {
+                // sets green hitzone to pressed
+                this._greenPressed = true;
+                // perform note hit logic and remove any hit notes in this lane
+                this.notes = this.noteHitCheck(this.hitZones[3]);
+            } else if (key == "P" || key == "p") {
+                // pauses music
                 // saves time of the song when paused as time to be displayed
                 this.songCurrentTime = this._convertToMins(sound.currentTime());
     			sound.pause();
-  			} else {
-            // plays music from where it was paused
-    			sound.loop();
-  			}
-            // switches playstate from true to false and vice versa
-            this.playing = !this.playing
+                this.playing = false; // sets playstate to false
+            }
+        } else {
+            if ((key == "P" || key == "p") && this.unpauseCountdown == -1) {
+                this.unpauseCountdown = 180; // set unpause countdown to 3 secs
+            }
         }
     }
 
@@ -212,23 +261,49 @@ function RhythmGame() {
         } 
     }
 
-    // TO DO: CHANGE THIS SO THAT ONCE NOTE HAS BEEN HIT IT IS REMOVED FROM ARRAY
-    // AND ADJUST SCORE SO CLOSER NOTE IS TO HIT ZONE THE HIGHER IT IS, PLUS
-    // IMPLEMENT COMBO MULTIPLIER MECHANIC
     this.noteHitCheck = function(assignedHitZone) {
         // get index of hit zone to be checked
         hitZoneIndex = this.hitZones.findIndex(i => i == assignedHitZone);
         for (i = 0; i < this.notes.length; i++) { // iterate through all notes
             // checks hit zone index is the same as note colour index
             if (hitZoneIndex == this.notes[i].fillColourIndex) {
-                // check collision between note and hitzone
-                if (this.notes[i].hitCheck(assignedHitZone)) {
-                    this._score += 100; // add score when note is hit
+                // condition for if note is hit
+                let distance = this.notes[i].hitCheck(assignedHitZone);
+                if (distance !== false) {
+                    // set value of note score to how close it was to hit zone
+                    let noteScore = map(distance, 27, 15, 10, 100);
+                    console.log(distance);
+                    console.log(noteScore);
+                    // multiply note score by combo multiplier and add to total
+                    this._score += round(noteScore * min(this._combo + 1, 16));
+                    this._combo += 1; // increase combo
+                    // marks the note so it can be removed from the array
+                    this.notes[i].isHit = true;
+                } else {
+                    this._combo = 0; // note in lane was missed, reset combo
                 }
             }
         } 
+        // removes any note that has been hit
+        return this.notes.filter(n => !n.isHit);
     }
 
-    //TO DO: MAKE PAUSE BUTTON FUNCTIONAL, BEGIN MAPPING NOTES
-    // CURRENTLY, NOTES CONTINUE TO MOVE REGARDLESS OF "PAUSE STATE"
+    this.noteOffScreenCheck = function(note) {
+        if (note.getPos().z > 700) { // checks if note depth pos is off screen
+            note.isHit = true; // sets note to "hit" to remove it from array
+            this._combo = 0; // resets combo as note was missed
+        }
+    }
+
+    this.mousePressed = function() {
+        if (!this.playing) {
+            if (mouseY > 270 && mouseY < 390) {
+                this.unpauseCountdown = 180; // set unpause countdown to 3 secs
+            } else if (mouseY > 470 && mouseY < 590) {
+                home.selected = ""; // sends you back to the home screen
+            }
+        }
+    }
+
+    //TO DO: BEGIN MAPPING NOTES
 }
