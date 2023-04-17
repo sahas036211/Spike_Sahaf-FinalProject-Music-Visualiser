@@ -43,9 +43,7 @@ function RhythmGameNote(gs) { // gamespace to draw in
     this.hitCheck = function(hitZone) {
         // checks distance between a note and a given hit zone
         let distance = p5.Vector.dist(this._pos, hitZone);
-        console.log(distance);
         if (distance < 27) { // any distance greater than this will be a miss
-            console.log(distance);
             return distance;
         }
         return false;

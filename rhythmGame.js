@@ -70,7 +70,6 @@ function RhythmGame() {
         }
         // removes any note that has gone off screen
         this.notes = this.notes.filter(n => !n.isHit);
-        console.log(this.notes);
 
         // messing around with pan of song (remove later)
         // let panValue;
@@ -169,7 +168,7 @@ function RhythmGame() {
         text(`${this.songCurrentTime} / ${this.songDuration}`, width-360, 200);
         pop();
 
-        this._drawGame(); // draw 3d game graphics
+        this._drawGame(); // draw 3d graphics
 
         // PAUSE MENU
         if (!this.playing) {
@@ -272,8 +271,6 @@ function RhythmGame() {
                 if (distance !== false) {
                     // set value of note score to how close it was to hit zone
                     let noteScore = map(distance, 27, 15, 10, 100);
-                    console.log(distance);
-                    console.log(noteScore);
                     // multiply note score by combo multiplier and add to total
                     this._score += round(noteScore * min(this._combo + 1, 16));
                     this._combo += 1; // increase combo
@@ -297,7 +294,7 @@ function RhythmGame() {
 
     this.mousePressed = function() {
         if (!this.playing) {
-            if (mouseY > 270 && mouseY < 390) {
+            if ((mouseY > 270 && mouseY < 390) && this.unpauseCountdown == -1) {
                 this.unpauseCountdown = 180; // set unpause countdown to 3 secs
             } else if (mouseY > 470 && mouseY < 590) {
                 home.selected = ""; // sends you back to the home screen
