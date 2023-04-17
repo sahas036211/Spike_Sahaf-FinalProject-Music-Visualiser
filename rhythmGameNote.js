@@ -19,7 +19,30 @@ function RhythmGameNote(gs, startDepth=-200) { // gamespace to draw in
         gs.push();
         gs.fill(this.fillColour);
         gs.translate(this._pos);
-        gs.box(50, 25, 25);
+        gs.beginShape();
+        // FRONT FACE
+        gs.vertex(-25, 13.5, 13.5);
+        gs.vertex(25, 13.5, 13.5);
+        gs.vertex(25, -13.5, 4.5);
+        gs.vertex(-25, -13.5, 4.5);
+        gs.vertex(-25, 13.5, 13.5);
+        // LEFT SIDE FACE
+        gs.vertex(-25, 13.5, -13.5);
+        gs.vertex(-25, -13.5, -4.5);
+        gs.vertex(-25, -13.5, 4.5);
+        gs.vertex(-25, -13.5, -4.5);
+        // BACK FACE
+        gs.vertex(25, -13.5, -4.5);
+        gs.vertex(25, 13.5, -13.5);
+        gs.vertex(-25, 13.5, -13.5);
+        gs.vertex(-25, -13.5, -4.5);
+        // RIGHT SIDE FACE
+        gs.vertex(25, -13.5, -4.5);
+        gs.vertex(25, -13.5, 4.5);
+        gs.vertex(25, 13.5, 13.5);
+        gs.vertex(25, 13.5, -13.5);
+        gs.vertex(25, -13.5, -4.5);
+        gs.endShape();
         gs.pop();
     }
 

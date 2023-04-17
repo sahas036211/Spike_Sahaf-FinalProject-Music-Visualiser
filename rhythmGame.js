@@ -9,10 +9,10 @@ function RhythmGame() {
     this.unpauseCountdown = -1; // Initialise unpause countdown to -1
 
     // 3d object vectors
-    this.redHitZone = createVector(-90,-195,645);
-    this.yellowHitZone = createVector(-30,-195,645);
-    this.blueHitZone = createVector(30,-195,645);
-    this.greenHitZone = createVector(90,-195,645);
+    this.redHitZone = createVector(-90,-195,640);
+    this.yellowHitZone = createVector(-30,-195,640);
+    this.blueHitZone = createVector(30,-195,640);
+    this.greenHitZone = createVector(90,-195,640);
     this.highway = createVector(-93, -190, 650);
     // array containing all 4 hit zones
     this.hitZones = [this.redHitZone, this.yellowHitZone,
