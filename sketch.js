@@ -7,6 +7,8 @@ var sound = null;
 //variable for p5 fast fourier transform
 var fourier;
 
+console.log('ml5 version:', ml5.version);
+
 function preload() {
 	sound = loadSound('assets/bakamitai.flac');
 }
@@ -27,12 +29,18 @@ function setup() {
 	
 	// Instantiate controls object for visualisations
 	controls = new ControlsAndInput();
+	
+	//instaniate the karaoke game
+	karaoke = new KaraokeGame();
+
+	karaoke.initPitchDetection();
 
 	// Create a new visualisation container and add visualisations
 	vis = new Visualisations();
 	vis.add(new Spectrum());
 	vis.add(new WavePattern());
 	vis.add(new Needles());
+
   }
   
 
@@ -45,10 +53,9 @@ function draw() {
 	}
 
 	if (home.selected == home.options[1]) {
-		// draw the selected visualisation
-		vis.selectedVisual.draw();
-		// draw the controls on top.
-		controls.draw();
+		//draw the karaoke game
+		karaoke.draw();
+		karaoke.update();
 	}
 
 	if (home.selected == home.options[0]) {
