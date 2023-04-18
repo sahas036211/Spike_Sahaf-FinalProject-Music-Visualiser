@@ -15,7 +15,6 @@ function RhythmGame() {
     this.blueHitZone = createVector(30,-195,640);
     this.greenHitZone = createVector(90,-195,640);
     this.highway = createVector(-93, -190, 0);
-    this.noteSpawn = createVector(0, -300, -400);
     // array containing all 4 hit zones
     this.hitZones = [this.redHitZone, this.yellowHitZone,
                      this.blueHitZone, this.greenHitZone]
@@ -59,27 +58,24 @@ function RhythmGame() {
 
         // set camera to look down at notes from above for more 3d appearance
         this.gs.camera(0, -400, (height/2) / tan(PI/6), 0,0,0,0,1,0);
+
+        // convert deltaTime ms to secs
+        const dt = deltaTime * 0.001
+        let ratio = dt / (1/60);
         
         for (i = 0; i < this.notes.length; i++) {
+            // draw notes to screen
             this.notes[i].draw();
             if (this.playing) {
-                this.notes[i].move();
+                // notes move at constant speed regardless of time between frames
+                let adjustedSpeed = this.notes[i].getSpeed() * ratio;
+                this.notes[i].move(adjustedSpeed);
             }
             // checks if note is offscreen, changes isHit property to true
             this.noteOffScreenCheck(this.notes[i]);
         }
         // removes any note that has gone off screen
         this.notes = this.notes.filter(n => !n.isHit);
-
-        // messing around with pan of song (remove later)
-        // let panValue;
-        // let count = frameCount % 600;
-        // if (count <= 300) {
-        //     panValue = 1;
-        // } else {
-        //     panValue = -1;
-        // }
-        // sound.pan(panValue);
 
         // note highway
         this.gs.push();
@@ -90,13 +86,6 @@ function RhythmGame() {
             this.gs.translate(62,0,0);
             this.gs.box(62,10,2000);
         }
-        this.gs.pop();
-
-        // note "spawn" wall
-        this.gs.push();
-        this.gs.fill(0);
-        this.gs.translate(this.noteSpawn);
-        this.gs.box(248,248,10);
         this.gs.pop();
 
         // note hit zones
@@ -152,7 +141,10 @@ function RhythmGame() {
     }
 
     this.draw = function() {
-        if (this.gameFrameCount % 48 == 0 && this.playing) {
+        // TO DO: improve this so note spawn timing is time-based not frame-based
+        let bps = 60/74;
+        let beat = sound.currentTime() % (60/74);
+        if ((beat < bps*0.006 || beat > bps*0.994) && this.playing) {
             this.notes.push(new RhythmGameNote(this.gs, -400));
         } 
         push();

@@ -46,22 +46,34 @@ function RhythmGameNote(gs, startDepth) { // gamespace to draw in
         gs.pop();
     }
 
-    this.move = function() {
+    this.move = function(dist=this._speed) {
         // note moves forward at set distance per frame
-        this._pos.add(0,0,this._speed); 
+        this._pos.add(0,0,dist); 
     }
 
-    // GETTERS AND SETTERS
+    // ------------ SETTER AND GETTER FUNCTIONS ------------
 
-    this.getPos = function() {
-        return this._pos;
-    }
+    // POSITION
 
     this.setPos = function(pos) {
         this._pos = pos;
     }
 
-    // DISTANCE FROM HIT ZONE DETECTION
+    this.getPos = function() {
+        return this._pos;
+    }
+
+    // SPEED
+    
+    this.setSpeed = function(speed) {
+        this._speed = speed;
+    }
+
+    this.getSpeed = function() {
+        return this._speed;
+    }
+    
+    // ------------ DISTANCE DETECTION ------------
 
     this.distCheck = function(hitZone) {
         // checks distance between a note and a given hit zone
