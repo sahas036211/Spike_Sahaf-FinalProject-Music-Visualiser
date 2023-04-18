@@ -44,8 +44,9 @@ function draw() {
 		home.draw();
 	}
 
-	if (home.selected == home.options[1]) {
-		
+	if (home.selected == home.options[2]) {
+		vis.selectedVisual.draw();
+		controls.draw();
 	}
 
 	if (home.selected == home.options[0]) {
@@ -69,7 +70,7 @@ function mouseClicked() {
 		rhythm.mousePressed();
 	}
 	
-	if (home.selected == home.options[1]) {
+	if (home.selected == home.options[2]) {
 		controls.mousePressed();
 	}	
 }
@@ -83,7 +84,7 @@ function keyPressed() {
 		rhythm.keyPressed(key);
 	}
 	
-	if (home.selected == home.options[1]) {
+	if (home.selected == home.options[2]) {
 		controls.keyPressed(keyCode);
 	}
 }

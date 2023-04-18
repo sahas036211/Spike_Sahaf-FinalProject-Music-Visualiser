@@ -1,4 +1,4 @@
-function RhythmGameNote(gs, startDepth=-200) { // gamespace to draw in
+function RhythmGameNote(gs, startDepth) { // gamespace to draw in
     // list of possible colours in same order as hit zone array
     this.colours = ["#ff0000","#ffff66","#0000cc","#00cc00"];
 
@@ -12,7 +12,7 @@ function RhythmGameNote(gs, startDepth=-200) { // gamespace to draw in
     // IN MORE PROPERTY ARGUMENTS FOR VALUES LIKE LENGTH, TIME OF APPEARANCE, COLOUR, ETC.
     this.startDepth = startDepth;
     this._pos = createVector(-90 + this.fillColourIndex*60, -210, this.startDepth);
-    this._speed = 2;
+    this._speed = 4.5;
     
     this.draw = function() {
         // draw note with given colour and position

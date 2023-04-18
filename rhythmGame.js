@@ -7,13 +7,15 @@ function RhythmGame() {
     this.playing = false; // Initialise playstate to false
     this.songCurrentTime = "0:00"; // Initialise song time to 0
     this.unpauseCountdown = -1; // Initialise unpause countdown to -1
+    this.gameFrameCount = 0;
 
     // 3d object vectors
     this.redHitZone = createVector(-90,-195,640);
     this.yellowHitZone = createVector(-30,-195,640);
     this.blueHitZone = createVector(30,-195,640);
     this.greenHitZone = createVector(90,-195,640);
-    this.highway = createVector(-93, -190, 650);
+    this.highway = createVector(-93, -190, 0);
+    this.noteSpawn = createVector(0, -300, -400);
     // array containing all 4 hit zones
     this.hitZones = [this.redHitZone, this.yellowHitZone,
                      this.blueHitZone, this.greenHitZone]
@@ -23,11 +25,9 @@ function RhythmGame() {
     this._yellowPressed = false;
     this._bluePressed = false;
     this._greenPressed = false;
+    console.log(sound.duration());
 
     // push new notes to notes array
-    for (i = 0; i < 4; i++) {
-        this.notes.push(new RhythmGameNote(this.gs, -50 + (-50*i)));
-    }
 
     /**
      * Converts a given number in seconds to minute:seconds format.
@@ -92,6 +92,13 @@ function RhythmGame() {
         }
         this.gs.pop();
 
+        // note "spawn" wall
+        this.gs.push();
+        this.gs.fill(0);
+        this.gs.translate(this.noteSpawn);
+        this.gs.box(248,248,10);
+        this.gs.pop();
+
         // note hit zones
         this.gs.push(); // draw red hit zone
         if (this._redPressed) {
@@ -145,6 +152,9 @@ function RhythmGame() {
     }
 
     this.draw = function() {
+        if (this.gameFrameCount % 48 == 0 && this.playing) {
+            this.notes.push(new RhythmGameNote(this.gs, -400));
+        } 
         push();
         // Draw stats and info for current song
         fill("white");
@@ -205,6 +215,9 @@ function RhythmGame() {
                 text("BACK TO MENU", width/2, 550);
             }
             pop();
+        }
+        if (this.playing) {
+            this.gameFrameCount++;
         }
     }
 
