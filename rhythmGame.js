@@ -24,9 +24,6 @@ function RhythmGame() {
     this._yellowPressed = false;
     this._bluePressed = false;
     this._greenPressed = false;
-    console.log(sound.duration());
-
-    // push new notes to notes array
 
     /**
      * Converts a given number in seconds to minute:seconds format.
@@ -59,17 +56,30 @@ function RhythmGame() {
         // set camera to look down at notes from above for more 3d appearance
         this.gs.camera(0, -400, (height/2) / tan(PI/6), 0,0,0,0,1,0);
 
-        // convert deltaTime ms to secs
+        // convert deltaTime from ms to secs
         const dt = deltaTime * 0.001
         let ratio = dt / (1/60);
         
         for (i = 0; i < this.notes.length; i++) {
-            // draw notes to screen
-            this.notes[i].draw();
+            push();
+            colorMode(HSB);
+            // change saturation of note colour based on distance from hit zone
+            let hitZoneIndex = this.notes[i].fillColourIndex;
+            let distance = this.notes[i].distCheck(this.hitZones[hitZoneIndex]);
+            if (distance <= 108) {
+                // get new value by mapping distance to saturation
+                let newSat = map(distance, 108, 15, 100, 10);
+                // change saturation value of note
+                this.notes[i].fillColour = color(hue(this.notes[i].fillColour),
+                                                 newSat,
+                                                 brightness(this.notes[i].fillColour));
+            }
+            this.notes[i].draw(); // draw note to screen
+            pop();
             if (this.playing) {
                 // notes move at constant speed regardless of time between frames
-                let adjustedSpeed = this.notes[i].getSpeed() * ratio;
-                this.notes[i].move(adjustedSpeed);
+                let calibratedSpeed = this.notes[i].getSpeed() * ratio;
+                this.notes[i].move(calibratedSpeed);
             }
             // checks if note is offscreen, changes isHit property to true
             this.noteOffScreenCheck(this.notes[i]);
@@ -81,10 +91,10 @@ function RhythmGame() {
         this.gs.push();
         this.gs.fill(100);
         this.gs.translate(this.highway);
-        this.gs.box(62,10,2000);
+        this.gs.box(62,10,1500);
         for (i = 0; i < 3; i++) {
             this.gs.translate(62,0,0);
-            this.gs.box(62,10,2000);
+            this.gs.box(62,10,1500);
         }
         this.gs.pop();
 
@@ -141,36 +151,47 @@ function RhythmGame() {
     }
 
     this.draw = function() {
+        colorMode(RGB); // set colour mode to RGB
+
         // TO DO: improve this so note spawn timing is time-based not frame-based
         let bps = 60/74;
         let beat = sound.currentTime() % (60/74);
         if ((beat < bps*0.006 || beat > bps*0.994) && this.playing) {
             this.notes.push(new RhythmGameNote(this.gs, -400));
-        } 
+        }
+
+        this._drawGame(); // draw 3d graphics
+
         push();
         // Draw stats and info for current song
         fill("white");
-        textSize(36);
+        textSize(48);
         textAlign(LEFT);
-        text(`CURRENT SONG: ${this._songName}`, 80, 100);
-        text(`SCORE: ${this._score}`, 80, 200);
-        text(`COMBO: ${this._combo}x`, 80, 300);
+        text(`SONG: ${this._songName}`, 100, 150);
+        text(`SCORE: ${this._score}`, 100, 250);
+        textAlign(CENTER);
+        if (this._combo != 0) {
+            push();
+            textSize(20);
+            text("COMBO", width/2, 205);
+            textSize(76);
+            text(this._combo, width/2, 270);
+            pop();
+        }
 
         // if song is playing display "pause", if paused display "play"
         if (this.playing) {
-            text('PRESS P TO PAUSE', width-440, 100);
+            text('PRESS P TO PAUSE', width-340, 150);
         } else {
-            text('PRESS P TO PLAY', width-440, 100);
+            text('PRESS P TO PLAY', width-340, 150);
         }
         
         // Draw current song time & length of song in minutes:seconds format
         if (this.playing) {
             this.songCurrentTime = this._convertToMins(sound.currentTime());
         }
-        text(`${this.songCurrentTime} / ${this.songDuration}`, width-360, 200);
+        text(`${this.songCurrentTime} / ${this.songDuration}`, width-340, 250);
         pop();
-
-        this._drawGame(); // draw 3d graphics
 
         // PAUSE MENU
         if (!this.playing) {
@@ -267,7 +288,7 @@ function RhythmGame() {
 
     this.noteHitCheck = function(assignedHitZone) {
         // get index of hit zone to be checked
-        hitZoneIndex = this.hitZones.findIndex(i => i == assignedHitZone);
+        let hitZoneIndex = this.hitZones.findIndex(i => i == assignedHitZone);
         for (i = 0; i < this.notes.length; i++) { // iterate through all notes
             // checks hit zone index is the same as note colour index
             if (hitZoneIndex == this.notes[i].fillColourIndex) {
