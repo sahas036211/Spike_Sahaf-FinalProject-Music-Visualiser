@@ -81,12 +81,4 @@ function RhythmGameNote(gs, startDepth, bps) {
     this.getSpeed = function() {
         return this._speed;
     }
-    
-    // ------------ DISTANCE DETECTION ------------
-
-    this.distCheck = function(hitZone) {
-        // checks distance between a note and a given hit zone
-        let distance = p5.Vector.dist(this._pos, hitZone);
-        return distance;
-    }
 }

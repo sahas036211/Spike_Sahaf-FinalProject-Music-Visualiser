@@ -51,8 +51,7 @@ function RhythmGame() {
     // get song duration in minutes:seconds format
     this.songDuration = this._convertToMins(sound.duration());
 
-    this._drawGame = function() {
-        // draw 3d graphics for game
+    this._drawGame = function() { // draw 3d graphics for game
         this.gs.background(0);
         this.gs.smooth(); // applies anti-aliasing to edges of geometry
 
@@ -67,11 +66,10 @@ function RhythmGame() {
             push();
             colorMode(HSB);
             // change saturation of note colour based on distance from hit zone
-            let hitZoneIndex = this.notes[i].fillColourIndex;
-            let distance = this.notes[i].distCheck(this.hitZones[hitZoneIndex]);
-            if (distance <= 108) {
+            let distance = abs(640 - this.notes[i].getPos().z);
+            if (distance <= 100) {
                 // get new value by mapping distance to saturation
-                let newSat = map(distance, 108, 15, 100, 10);
+                let newSat = map(distance, 100, 0, 100, 10);
                 // change saturation value of note
                 this.notes[i].fillColour = color(hue(this.notes[i].fillColour),
                                                  newSat,
@@ -297,17 +295,18 @@ function RhythmGame() {
             // checks hit zone index is the same as note colour index
             if (hitZoneIndex == this.notes[i].fillColourIndex) {
                 // condition for if note is hit
-                let distance = this.notes[i].distCheck(assignedHitZone);
-                if (distance <= 27) {
+                // checks difference between hitzone depth and note depth
+                let distance = abs(640 - this.notes[i].getPos().z);
+                if (distance <= 25) {
                     // set value of note score by how close it was to hit zone
-                    // note is considered a hit if between 27 and 15 distance
-                    let noteScore = map(distance, 27, 15, 10, 100);
+                    // note is considered a hit if less than 25 pixels away
+                    let noteScore = map(distance, 25, 0, 10, 100);
                     // multiply note score by combo multiplier and add to total
                     this._score += round(noteScore * min(this._combo + 1, 16));
                     this._combo += 1; // increase combo
                     // marks the note so it can be removed from the array
                     this.notes[i].isHit = true;
-                } else if (distance < 54) {
+                } else if (distance <= 100) {
                     this._combo = 0; // note in lane was missed, reset combo
                     this.notes[i].isHit = true;
                 }
