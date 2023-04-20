@@ -110,31 +110,32 @@ function KaraokeGame() {
   
   this.lastScoreUpdateTime = 0; // Add this line in the KaraokeGame constructor
 
-this.update = function() {
-  console.log("Updating karaoke game");
-
-  // Check if 10 seconds have passed since the last score update
-  if (millis() - this.lastScoreUpdateTime >= 100) {
-    if (this.pitchDetection && this._pitchDetectionReady) {
-      console.log("Pitch detection is ready");
-      this.pitchDetection.getPitch((err, frequency) => {
-        if (err) {
-          console.error("Error getting pitch:", err);
-        }
-        if (frequency) {
-          this._userPitch = frequency;
-          let songPitch = getSongPitchAt(sound.currentTime());
-          this.calculateScore(this._userPitch, songPitch);
-        } else {
-          console.log("Frequency is not detected");
-        }
-      });
-      this.lastScoreUpdateTime = millis(); // Update the lastScoreUpdateTime
-    } else {
-      console.log("Pitch detection is not ready");
+  this.update = function() {
+    console.log("Updating karaoke game");
+  
+    // Check if 10 seconds have passed since the last score update
+    if (millis() - this.lastScoreUpdateTime >= 1000) {
+      if (this.pitchDetection && this._pitchDetectionReady) {
+        console.log("Pitch detection is ready");
+        this.pitchDetection.getPitch((err, frequency) => {
+          if (err) {
+            console.error("Error getting pitch:", err);
+          }
+          if (frequency) {
+            this._userPitch = frequency;
+            let songPitch = getSongPitchAt(sound.currentTime());
+            this.calculateScore(this._userPitch, songPitch);
+          } else {
+            console.log("Frequency is not detected");
+          }
+        });
+        this.lastScoreUpdateTime = millis(); // Update the lastScoreUpdateTime
+      } else {
+        console.log("Pitch detection is not ready");
+      }
     }
-  }
-};
+  };
+  
   
 
   if (this.mic) {
