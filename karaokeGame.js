@@ -41,12 +41,13 @@ function KaraokeGame() {
         this.mic.start(() => {
           console.log("Microphone input started.");
           // Create a media stream source from the microphone input
-          let audioContext = getAudioContext();
-          let micStream = this.mic.stream;
-          this.audioStream = audioContext.createMediaStreamSource(micStream);
-      
+          const audioContext = getAudioContext();
+
           // Initialize the pitch detection model
-          this.pitchDetection = ml5.pitchDetection('./model/', audioContext, this.audioStream, modelLoaded);
+          this.pitchDetection = ml5.pitchDetection('./model/', audioContext, this.mic.stream, modelLoaded);
+
+          //print the print detection model in the console
+          console.log(this.pitchDetection);
       
           function modelLoaded() {
             console.log("Pitch detection model loaded");
@@ -55,6 +56,7 @@ function KaraokeGame() {
           console.error("Error starting microphone input:", error);
         });
       };
+      
       
   
     this.update = function() {
