@@ -5,6 +5,8 @@ function RhythmGame() {
     this.songBps = 60/74; // Bakamitai has bpm of 74
     this.gs = createGraphics(700,700,WEBGL); // gs stands for "game space"
     this.notes = []; // Array that will contain all notes on the song "map"
+    this.hitCount = 0; // Initialise hit and miss counts for hitrate stat
+    this.noteCount = 0;
     this.playing = false; // Initialise playstate to false
     this.songCurrentTime = "0:00"; // Initialise song time to 0
     this.unpauseCountdown = -1; // Initialise unpause countdown to -1
@@ -169,7 +171,14 @@ function RhythmGame() {
         textSize(48);
         textAlign(LEFT);
         text(`SONG: ${this._songName}`, 100, 150);
-        text(`SCORE: ${this._score}`, 100, 250);
+        let accuracy;
+        if (this.hitCount == 0) {
+            accuracy = "0.00";
+        } else {
+            accuracy = nfc(this.hitCount/this.noteCount * 100, 2);
+        }
+        text(`HITRATE: ${accuracy}%`, 100, 250);
+        text(`SCORE: ${this._score}`, 100, 350);
         textAlign(CENTER);
         if (this._combo != 0) {
             push();
@@ -306,9 +315,12 @@ function RhythmGame() {
                     this._combo += 1; // increase combo
                     // marks the note so it can be removed from the array
                     this.notes[i].isHit = true;
+                    this.hitCount++; // increment hit count for hitrate stat
+                    this.noteCount++; // increment note counter for hitrate stat
                 } else if (distance <= 100) {
                     this._combo = 0; // note in lane was missed, reset combo
                     this.notes[i].isHit = true;
+                    this.noteCount++; // increment note counter for hitrate stat
                 }
                 break; // only one note can be hit per key press
             }
@@ -320,6 +332,7 @@ function RhythmGame() {
     this.noteOffScreenCheck = function(note) {
         if (note.getPos().z > 700) { // checks if note depth pos is off screen
             note.isHit = true; // sets note to "hit" to remove it from array
+            this.noteCount++; // increments note counter for hitrate stat
             this._combo = 0; // resets combo as note was missed
         }
     }
