@@ -22,7 +22,8 @@ function preload() {
 function setup() {
 	createCanvas(1920, 920);
 	background(0);
-  
+	frameRate(60); // Set framerate to constant 60 fps for consistency
+
 	// Instantiate the fft object without setting any input initially
 	fourier = new p5.FFT();
   
@@ -101,16 +102,22 @@ function mouseClicked() {
 }
 
 function keyPressed() {
-  if (home.selected == "") {
-    home.keyPressed(keyCode);
+	if (home.selected == "") {
+		home.keyPressed(keyCode);
+	}
+	
+	if (home.selected == home.options[1]) {
+		controls.keyPressed(keyCode);
+	}
   }
 
-  if (home.selected == home.options[1]) {
-    controls.keyPressed(keyCode);
-  }
+function keyReleased() {
+	if (home.selected == home.options[0]) {
+		rhythm.keyReleased(key);
+	}
 }
 
-//when the window has been resized. Resize canvas to fit
+//when the window has been resized. Resize canvas to fit 
 //if the visualisation needs to be resized call its onResize method
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
