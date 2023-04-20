@@ -65,8 +65,7 @@ function setup() {
         //draw the karaoke game
         karaoke.draw();
         karaoke.update();
-		getAudioContext().resume();
-	
+		    getAudioContext().resume();
     }
 
     if (home.selected == home.options[0]) {
