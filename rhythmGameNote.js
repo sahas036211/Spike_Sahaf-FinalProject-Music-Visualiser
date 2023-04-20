@@ -1,4 +1,5 @@
-function RhythmGameNote(gs, startDepth) { // gamespace to draw in
+function RhythmGameNote(gs, startDepth, bps) {
+    // takes gs (game space) and startDepth as parameters
     colorMode(HSB); // set colour mode to HSB
 
     // list of possible colours in same order as hit zone array
@@ -14,11 +15,13 @@ function RhythmGameNote(gs, startDepth) { // gamespace to draw in
     // property for when note is hit
     this.isHit = false;
 
-    // CHANGE THESE VALUES LATER WHEN MAPPING NOTES, WILL NEED CONSTRUCTOR TO TAKE
-    // IN MORE PROPERTY ARGUMENTS FOR VALUES LIKE LENGTH, TIME OF APPEARANCE, COLOUR, ETC.
+    // general properties
     this.startDepth = startDepth;
-    this._pos = createVector(-90 + this.fillColourIndex*60, -212, this.startDepth);
-    this._speed = 4.5;
+    this._pos = createVector(-90 + this.fillColourIndex*60,
+                             -212, 
+                             this.startDepth);
+    // speed = distance / time (in frames)
+    this._speed = 1200 / (60*bps*4);
     
     this.draw = function() {
         // draw note with given colour and position

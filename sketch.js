@@ -2,13 +2,20 @@
 var controls = null;
 //store visualisations in a container
 var vis = null;
+//global for home screen
+var home = null;
+//global for rhythm game
+var rhythm = null;
 //variable for the p5 sound object
 var sound = null;
+//variable for the p5 sound object to be analysed in rhythm game
+var rhythmGhostSound = null;
 //variable for p5 fast fourier transform
 var fourier;
 
 function preload() {
 	sound = loadSound('assets/bakamitai.flac');
+	rhythmGhostSound = loadSound('assets/bakamitai.flac');
 }
 
 function setup() {

@@ -2,6 +2,7 @@ function RhythmGame() {
     this._score = 0; // Initialise score and combo to zero
     this._combo = 0;
     this._songName = "BAKAMITAI"; // Song to be implemented
+    this.songBps = 60/74; // Bakamitai has bpm of 74
     this.gs = createGraphics(700,700,WEBGL); // gs stands for "game space"
     this.notes = []; // Array that will contain all notes on the song "map"
     this.playing = false; // Initialise playstate to false
@@ -24,6 +25,9 @@ function RhythmGame() {
     this._yellowPressed = false;
     this._bluePressed = false;
     this._greenPressed = false;
+
+    // beat detection takes bps as a property
+    this.beatDetect = new BeatDetection(this.songBps);
 
     /**
      * Converts a given number in seconds to minute:seconds format.
@@ -91,10 +95,10 @@ function RhythmGame() {
         this.gs.push();
         this.gs.fill(100);
         this.gs.translate(this.highway);
-        this.gs.box(62,10,1500);
+        this.gs.box(62,10,1400);
         for (i = 0; i < 3; i++) {
             this.gs.translate(62,0,0);
-            this.gs.box(62,10,1500);
+            this.gs.box(62,10,1400);
         }
         this.gs.pop();
 
@@ -153,11 +157,11 @@ function RhythmGame() {
     this.draw = function() {
         colorMode(RGB); // set colour mode to RGB
 
-        // TO DO: improve this so note spawn timing is time-based not frame-based
-        let bps = 60/74;
-        let beat = sound.currentTime() % (60/74);
-        if ((beat < bps*0.006 || beat > bps*0.994) && this.playing) {
-            this.notes.push(new RhythmGameNote(this.gs, -400));
+        // run beat detection every frame and spawn notes when beat is detected
+        if (this.playing) {
+            if (this.beatDetect.detectBeat()) {
+                this.notes.push(new RhythmGameNote(this.gs, -560, this.songBps));
+            }
         }
 
         this._drawGame(); // draw 3d graphics
@@ -206,12 +210,19 @@ function RhythmGame() {
             // checks if there is an unpause countdown currently in effect
             if (this.unpauseCountdown != -1) {
                 if (this.unpauseCountdown != 0) {
-                    // show countdown in centre of screen
+                    // show countdown timer in centre of the screen
                     let countdownDisplay = Math.ceil(this.unpauseCountdown / 60);
                     text(countdownDisplay, width/2, height/2);
                     this.unpauseCountdown -= 1;
                 } else { // when unpause countdown hits 0, unpause the game
-                    sound.loop(); // plays music from where it was paused
+                    sound.play(); // plays hearable music
+                    // plays muted music used for beat detection
+                    this.beatDetect.playGhostSong();
+                    // checks this is the first time the song has been played
+                    if (sound.currentTime() == 0) {
+                        this.beatDetect.initialised = true;
+                    }
+                    // sets playing condition to true
                     this.playing = true;
                     this.unpauseCountdown = -1;
                 }
@@ -261,6 +272,7 @@ function RhythmGame() {
                 // saves time of the song when paused as time to be displayed
                 this.songCurrentTime = this._convertToMins(sound.currentTime());
     			sound.pause();
+                rhythmGhostSound.pause();
                 this.playing = false; // sets playstate to false
             }
         } else {
@@ -330,6 +342,4 @@ function RhythmGame() {
             }
         }
     }
-
-    //TO DO: BEGIN MAPPING NOTES
 }
