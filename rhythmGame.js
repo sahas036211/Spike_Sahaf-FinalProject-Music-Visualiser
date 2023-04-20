@@ -208,7 +208,7 @@ function RhythmGame() {
             textSize(100);
             // checks if there is an unpause countdown currently in effect
             if (this.unpauseCountdown != -1) {
-                if (this.unpauseCountdown != 0) {
+                if (this.unpauseCountdown > 0) {
                     // show countdown timer in centre of the screen
                     let countdownDisplay = Math.ceil(this.unpauseCountdown / 60);
                     text(countdownDisplay, width/2, height/2);

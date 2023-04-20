@@ -14,7 +14,7 @@ function BeatDetection(bps) {
 
     this.peakDetect = new p5.PeakDetect(140,3500,0.5);
 
-    this.initialised = false;
+    this.initialised = false; // check to see if song has performed "jump"
 
     // amount of time in seconds between each "beat"
     this.bps = bps; 
@@ -25,6 +25,10 @@ function BeatDetection(bps) {
         if (!this.initialised) {
             // start the song one bar (4 beats) ahead if played for the first time
             rhythmGhostSound.jump(this.bps*4);
+            // p5 sound jump method was buggy and not giving expected results.
+            // code line below is a workaround found online from source:
+            // https://github.com/processing/p5.js-sound/issues/372#issuecomment-560027420
+            setTimeout(function(){ Object.assign(rhythmGhostSound, {_playing: true}); }, 100);
             this.initialised = true;
         }
     }
