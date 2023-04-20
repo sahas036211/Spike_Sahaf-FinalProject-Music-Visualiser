@@ -47,18 +47,28 @@ function HomeScreen() {
             if (mouseY > 283 + (i * 120) && mouseY < 393 + (i * 120)) {
                 // sets hovered over option to current option
                 this.currentOption = this.options[i];
+                this._hovered = this.currentOption; // Update the hovered option
                 return true;
             }
-        } return false;
+        }
+        this._hovered = null; // Reset the hovered option when not hovering over any option
+        return false;
     }
 
     this.mousePressed = function() {
-        // checks if mouse is currently hovering over an option
-        if (this.mouseMoved()) {
-            // selects option when mouse is pressed
-            this.selected = this.currentOption;
+        for (var i = 0; i < this.options.length; i++) {
+          if (this._hovered == this.options[i]) {
+            this.selected = this.options[i];
+            if (this.selected == this.options[1]) {
+              // Initialize pitch detection when Karaoke Game is selected
+              karaoke.initPitchDetection();
+            } else {
+              // Set the sound input for the visualizations when they are selected
+              fourier.setInput(sound);
+            }
+          }
         }
-    }
+      };
 
     this.keyPressed = function(keyCode) {
         switch (keyCode) {
@@ -74,18 +84,26 @@ function HomeScreen() {
 
             case DOWN_ARROW: // if down arrow is pressed
                 if (this.currentOption != this.options[this.options.length-1]) {
-                    // get index of current option
-                    let index = this.options.indexOf(this.currentOption);
-                    // change current option to next option in array
-                    this.currentOption = this.options[index + 1];
-                } else { // if on last option, set option to 0 for cycle effect
-                    this.currentOption = this.options[0];
-                } break;
+                                    // get index of current option
+                let index = this.options.indexOf(this.currentOption);
+                // change current option to next option in array
+                this.currentOption = this.options[index + 1];
+            } else { // if on last option, set option to 0 for cycle effect
+                this.currentOption = this.options[0];
+            } break;
 
-            case 32: // if spacebar is pressed
-                // select currently highlighted option
-                this.selected = this.currentOption;
-                break;
-        }
+        case 32: // if spacebar is pressed
+            // select currently highlighted option
+            this.selected = this.currentOption;
+            if (this.selected == this.options[1]) {
+              // Initialize pitch detection when Karaoke Game is selected
+              karaoke.initPitchDetection();
+            } else {
+              // Set the sound input for the visualizations when they are selected
+              fourier.setInput(sound);
+            }
+            break;
     }
 }
+}
+
