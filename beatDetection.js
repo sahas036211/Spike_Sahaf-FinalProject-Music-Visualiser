@@ -21,11 +21,11 @@ function BeatDetection(bps) {
     // when song is started for the first time, jump one bar forward
     // so notes can spawn a bar before beat is heard 
     this.playGhostSong = function() {
+        rhythmGhostSound.play();
         if (!this.initialised) {
             // start the song one bar (4 beats) ahead if played for the first time
-            rhythmGhostSound.play(cueStart=this.bps*4);
-        } else {
-            rhythmGhostSound.play();
+            rhythmGhostSound.jump(this.bps*4);
+            this.initialised = true;
         }
     }
 

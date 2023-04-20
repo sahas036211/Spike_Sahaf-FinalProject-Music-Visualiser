@@ -8,7 +8,6 @@ function RhythmGame() {
     this.playing = false; // Initialise playstate to false
     this.songCurrentTime = "0:00"; // Initialise song time to 0
     this.unpauseCountdown = -1; // Initialise unpause countdown to -1
-    this.gameFrameCount = 0;
 
     // 3d object vectors
     this.redHitZone = createVector(-90,-195,640);
@@ -218,10 +217,6 @@ function RhythmGame() {
                     sound.play(); // plays hearable music
                     // plays muted music used for beat detection
                     this.beatDetect.playGhostSong();
-                    // checks this is the first time the song has been played
-                    if (sound.currentTime() == 0) {
-                        this.beatDetect.initialised = true;
-                    }
                     // sets playing condition to true
                     this.playing = true;
                     this.unpauseCountdown = -1;
@@ -239,9 +234,6 @@ function RhythmGame() {
                 text("BACK TO MENU", width/2, 550);
             }
             pop();
-        }
-        if (this.playing) {
-            this.gameFrameCount++;
         }
     }
 
