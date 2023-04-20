@@ -66,9 +66,6 @@ function setup() {
         karaoke.draw();
         karaoke.update();
 		getAudioContext().resume();
-        if (karaoke._userPitch !== null) {
-            console.log("User's microphone pitch:", karaoke._userPitch);
-        }
 	
     }
 

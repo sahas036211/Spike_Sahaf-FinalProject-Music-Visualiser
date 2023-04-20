@@ -123,7 +123,6 @@ this.update = function() {
         }
         if (frequency) {
           this._userPitch = frequency;
-          console.log("User's microphone pitch (inside update):", this._userPitch);
           let songPitch = getSongPitchAt(sound.currentTime());
           this.calculateScore(this._userPitch, songPitch);
         } else {
@@ -142,8 +141,6 @@ this.update = function() {
     let micLevel = this.mic.getLevel();
     console.log("Microphone input level:", micLevel);
   }
-  
-
 }
 
 
@@ -189,9 +186,12 @@ function getSongPitchAt(time) {
   // Use a for loop to find the pitch at a given time
   for (let i = 0; i < songPitchData.length; i++) {
     if (songPitchData[i].time === roundedTime) {
+      console.log(`Pitch at time ${roundedTime}: ${songPitchData[i].pitch}`); // Add this line
       return songPitchData[i].pitch;
     }
   }
 
+  console.log(`No pitch found for time ${roundedTime}`); // Add this line
   return null;
 }
+
