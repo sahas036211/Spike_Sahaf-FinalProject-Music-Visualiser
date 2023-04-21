@@ -18,7 +18,7 @@ function BeatDetection(bps, difficultyValue) {
     // lower value means more notes will spawn due to more peaks.
     this.difficulty = difficultyValue;
 
-    this.peakDetect = new p5.PeakDetect(140,3500,0.5,this.difficulty);
+    this.peakDetect = new p5.PeakDetect(200,4000,0.5,this.difficulty);
 
     this.initialised = false; // check to see if song has performed "jump"
 

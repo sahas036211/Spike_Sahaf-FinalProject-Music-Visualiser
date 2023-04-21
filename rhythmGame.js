@@ -178,16 +178,16 @@ function RhythmGame() {
         text(this._songName, 250, 150);
         // display difficulty based on difficultyValue chosen
         switch (this.difficultyValue) {
-            case 40:
+            case 20:
                 text('EASY', 250, 250);
                 break;
-            case 20:
+            case 10:
                 text('NORMAL', 250, 250);
                 break;
-            case 10:
+            case 5:
                 text('HARD', 250, 250);
                 break;
-            case 5:
+            case 1:
                 text('INSANE', 250, 250);
                 break;
             default:
@@ -421,17 +421,17 @@ function RhythmGame() {
         if (!this.playing && this.unpauseCountdown == -1) {
             if (!this.gameStarted) {
                 if (mouseY > 270 && mouseY < 390) { // easy option
-                    // value of 40 (higher value, lower difficulty)
-                    this.difficultyValue = 40;
-                } else if (mouseY > 370 && mouseY < 490) { // normal option
                     // value of 20 (higher value, lower difficulty)
                     this.difficultyValue = 20;
-                } else if (mouseY > 470 && mouseY < 590) { // hard option
+                } else if (mouseY > 370 && mouseY < 490) { // normal option
                     // value of 10 (higher value, lower difficulty)
                     this.difficultyValue = 10;
-                } else if (mouseY > 570 && mouseY < 690) { // insane option
+                } else if (mouseY > 470 && mouseY < 590) { // hard option
                     // value of 5 (higher value, lower difficulty)
                     this.difficultyValue = 5;
+                } else if (mouseY > 570 && mouseY < 690) { // insane option
+                    // value of 1 (higher value, lower difficulty)
+                    this.difficultyValue = 1;
                 }
                 if (this.difficultyValue != 0) {
                     // initialise new beat detection object with difficulty
