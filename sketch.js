@@ -46,58 +46,48 @@ function setup() {
 function draw() {
 	background(0);
 	
-	if (home.selected == "") {
+	if (home.selected === "") {
 		// draw home screen
 		home.draw();
-	}
-
-	if (home.selected == home.options[2]) {
+	} else if (home.selected === home.options[2]) {
 		vis.selectedVisual.draw();
 		controls.draw();
-	}
-
-	if (home.selected == home.options[0]) {
+	} else if (home.selected === home.options[0]) {
 		// draw the rhythm game
 		rhythm.draw();
 	}
 }
 
 function mouseMoved() {
-	if (home.selected == "") {
-		home.mouseMoved();
+	if (home) {
+		if (home.selected === "") {
+			home.mouseMoved();
+		}
 	}
 }
 
 function mouseClicked() {
-	if (home.selected == "") {
+	if (home.selected === "") {
 		home.mousePressed();
-	}
-
-	if (home.selected == home.options[0]) {
+	} else if (home.selected === home.options[0]) {
 		rhythm.mousePressed();
-	}
-	
-	if (home.selected == home.options[2]) {
+	} else if (home.selected === home.options[2]) {
 		controls.mousePressed();
-	}	
+	}
 }
 
 function keyPressed() {
-	if (home.selected == "") {
+	if (home.selected === "") {
 		home.keyPressed(keyCode);
-	}
-	
-	if (home.selected == home.options[0]) {
+	} else if (home.selected === home.options[0]) {
 		rhythm.keyPressed(key);
-	}
-	
-	if (home.selected == home.options[2]) {
+	} else if (home.selected === home.options[2]) {
 		controls.keyPressed(keyCode);
 	}
 }
 
 function keyReleased() {
-	if (home.selected == home.options[0]) {
+	if (home.selected === home.options[0]) {
 		rhythm.keyReleased(key);
 	}
 }

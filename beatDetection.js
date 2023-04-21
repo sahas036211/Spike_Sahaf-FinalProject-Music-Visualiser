@@ -1,4 +1,4 @@
-function BeatDetection(bps) {
+function BeatDetection(bps, difficultyValue) {
     // Some code taken and changed from source:
     // https://stackoverflow.com/questions/68401251/analyzing-songfile-using-fft-when-i-set-the-song-volume-to-0-in-p5-js
 
@@ -12,12 +12,16 @@ function BeatDetection(bps) {
     rhythmGhostSound.connect(mute);
     mute.connect();
 
-    this.peakDetect = new p5.PeakDetect(140,3500,0.5);
+    // amount of time in seconds between each "beat"
+    this.bps = bps;
+    // determines how many frames before a peak can be detected.
+    // lower value means more notes will spawn due to more peaks.
+    this.difficulty = difficultyValue;
+
+    this.peakDetect = new p5.PeakDetect(140,3500,0.5,this.difficulty);
 
     this.initialised = false; // check to see if song has performed "jump"
 
-    // amount of time in seconds between each "beat"
-    this.bps = bps; 
     // when song is started for the first time, jump one bar forward
     // so notes can spawn a bar before beat is heard 
     this.playGhostSong = function() {

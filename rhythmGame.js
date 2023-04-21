@@ -8,6 +8,8 @@ function RhythmGame() {
     this.hitCount = 0; // Initialise hit and miss counts for hitrate stat
     this.noteCount = 0;
     this.playing = false; // Initialise playstate to false
+    this.gameStarted = false;
+    this.difficultyValue = 0;
     this.songCurrentTime = "0:00"; // Initialise song time to 0
     this.unpauseCountdown = -1; // Initialise unpause countdown to -1
 
@@ -26,9 +28,6 @@ function RhythmGame() {
     this._yellowPressed = false;
     this._bluePressed = false;
     this._greenPressed = false;
-
-    // beat detection takes bps as a property
-    this.beatDetect = new BeatDetection(this.songBps);
 
     /**
      * Converts a given number in seconds to minute:seconds format.
@@ -171,11 +170,29 @@ function RhythmGame() {
         textSize(32);
         textAlign(LEFT);
         text('SONG', 140, 148);
-        text('HITRATE', 100, 247);
-        text('SCORE', 120, 347);
+        text('DIFFICULTY', 50, 247)
+        text('HITRATE', 100, 347);
+        text('SCORE', 120, 447);
 
         textSize(60);
         text(this._songName, 250, 150);
+        // display difficulty based on difficultyValue chosen
+        switch (this.difficultyValue) {
+            case 40:
+                text('EASY', 250, 250);
+                break;
+            case 20:
+                text('NORMAL', 250, 250);
+                break;
+            case 10:
+                text('HARD', 250, 250);
+                break;
+            case 5:
+                text('INSANE', 250, 250);
+                break;
+            default:
+                text('?', 250, 250);
+        }
         let accuracy;
         if (this.hitCount == 0) {
             accuracy = '0.00';
@@ -183,8 +200,8 @@ function RhythmGame() {
             // display hitrate percent to 2 decimal places
             accuracy = nfc(this.hitCount/this.noteCount * 100, 2);
         }
-        text(`${accuracy}%`, 250, 250);
-        text(nfc(this._score), 250, 350);
+        text(`${accuracy}%`, 250, 350);
+        text(nfc(this._score), 250, 450);
 
         // combo counter at top of screen
         textAlign(CENTER);
@@ -244,7 +261,7 @@ function RhythmGame() {
             fill(0,0,0,128);
             rect(0,0,width,height);
             textAlign(CENTER);
-            fill("white");
+            fill(255);
             stroke(0);
             strokeWeight(4);
             textSize(100);
@@ -263,17 +280,45 @@ function RhythmGame() {
                     this.playing = true;
                     this.unpauseCountdown = -1;
                 }
-            } else { // if there is no countdown, display pause menu
+            } else if (!this.gameStarted) { // check if game started
+                // show difficulty select if game hasn't started yet
+                textSize(60);
+                text('SELECT DIFFICULTY', width/2, 250);
+                // difficulty options
                 textSize(48);
                 if (mouseY > 270 && mouseY < 390) { // check mouse pos
                     textStyle(BOLD); // menu option bold when hovered over
                 }
-                text("RESUME", width/2, 350);
+                text('EASY', width/2, 350);
+                textStyle(NORMAL);
+
+                if (mouseY > 370 && mouseY < 490) { // check mouse pos
+                    textStyle(BOLD); // menu option bold when hovered over
+                }
+                text('NORMAL', width/2, 450);
+                textStyle(NORMAL);
+
+                if (mouseY > 470 && mouseY < 590) { // check mouse pos
+                    textStyle(BOLD); // menu option bold when hovered over
+                }
+                text('HARD', width/2, 550);
+                textStyle(NORMAL);
+
+                if (mouseY > 570 && mouseY < 690) { // check mouse pos
+                    textStyle(BOLD); // menu option bold when hovered over
+                }
+                text('INSANE', width/2, 650);
+            } else { // if no countdown and game has started, show pause screen
+                textSize(48);
+                if (mouseY > 270 && mouseY < 390) { // check mouse pos
+                    textStyle(BOLD); // menu option bold when hovered over
+                }
+                text('RESUME', width/2, 350);
                 textStyle(NORMAL);
                 if (mouseY > 470 && mouseY < 590) { // check mouse pos
                     textStyle(BOLD); // menu option bold when hovered over
                 }
-                text("BACK TO MENU", width/2, 550);
+                text('BACK TO MENU', width/2, 550);
             }
             pop();
         }
@@ -374,10 +419,42 @@ function RhythmGame() {
 
     this.mousePressed = function() {
         if (!this.playing && this.unpauseCountdown == -1) {
-            if (mouseY > 270 && mouseY < 390) {
-                this.unpauseCountdown = 180; // set unpause countdown to 3 secs
-            } else if (mouseY > 470 && mouseY < 590) {
-                home.selected = ""; // sends you back to the home screen
+            if (!this.gameStarted) {
+                if (mouseY > 270 && mouseY < 390) { // easy option
+                    // value of 40 (higher value, lower difficulty)
+                    this.difficultyValue = 40;
+                    // set game state values to true
+                    this.gameStarted = true;
+                    this.unpauseCountdown = 180;
+                } else if (mouseY > 370 && mouseY < 490) { // normal option
+                    // value of 20 (higher value, lower difficulty)
+                    this.difficultyValue = 20;
+                    // set game state values to true
+                    this.gameStarted = true;
+                    this.unpauseCountdown = 180;
+                } else if (mouseY > 470 && mouseY < 590) { // hard option
+                    // value of 10 (higher value, lower difficulty)
+                    this.difficultyValue = 10;
+                    // set game state values to true
+                    this.gameStarted = true;
+                    this.unpauseCountdown = 180;
+                } else if (mouseY > 570 && mouseY < 690) { // insane option
+                    // value of 5 (higher value, lower difficulty)
+                    this.difficultyValue = 5;
+                    // set game state values to true
+                    this.gameStarted = true;
+                    this.unpauseCountdown = 180;
+                }
+                if (this.difficultyValue != 0) {
+                    // initialise new beat detection object with difficulty
+                    this.beatDetect = new BeatDetection(this.songBps, this.difficultyValue);
+                }
+            } else {
+                if (mouseY > 270 && mouseY < 390) {
+                    this.unpauseCountdown = 180; // set unpause countdown to 3 secs
+                } else if (mouseY > 470 && mouseY < 590) {
+                    home.selected = ""; // sends you back to the home screen
+                }
             }
         }
     }
