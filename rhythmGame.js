@@ -8,8 +8,10 @@ function RhythmGame() {
     this.hitCount = 0; // Initialise hit and miss counts for hitrate stat
     this.noteCount = 0;
     this.playing = false; // Initialise playstate to false
-    this.gameStarted = false;
-    this.difficultyValue = 0;
+    this.gameStarted = false; // Initailise gameStarted to false
+    this.gameOver = false; // Initialise gameOver to false
+    this.difficultyValue = 0; // Initialise difficultyValue to 0
+    this.difficultyText = "?"; // Initialise difficultyText to a question mark
     this.songCurrentTime = "0:00"; // Initialise song time to 0
     this.unpauseCountdown = -1; // Initialise unpause countdown to -1
 
@@ -155,172 +157,211 @@ function RhythmGame() {
     this.draw = function() {
         colorMode(RGB); // set colour mode to RGB
 
-        // run beat detection every frame and spawn notes when beat is detected
-        if (this.playing) {
-            if (this.beatDetect.detectBeat()) {
-                this.notes.push(new RhythmGameNote(this.gs, -560, this.songBps));
+        if (!this.gameOver) { // check that song hasn't ended before drawing
+            // run beat detection every frame and spawn notes when beat is detected
+            if (this.playing) {
+                if (this.beatDetect.detectBeat()) {
+                    this.notes.push(new RhythmGameNote(this.gs, -560, this.songBps));
+                }
             }
-        }
 
-        this._drawGame(); // draw 3d graphics
+            this._drawGame(); // draw 3d graphics
 
-        push();
-        // Draw stats and info for current song
-        fill(255);
-        textSize(32);
-        textAlign(LEFT);
-        text('SONG', 140, 148);
-        text('DIFFICULTY', 50, 247)
-        text('HITRATE', 100, 347);
-        text('SCORE', 120, 447);
-
-        textSize(60);
-        text(this._songName, 250, 150);
-        // display difficulty based on difficultyValue chosen
-        switch (this.difficultyValue) {
-            case 20:
-                text('EASY', 250, 250);
-                break;
-            case 10:
-                text('NORMAL', 250, 250);
-                break;
-            case 5:
-                text('HARD', 250, 250);
-                break;
-            case 1:
-                text('INSANE', 250, 250);
-                break;
-            default:
-                text('?', 250, 250);
-        }
-        let accuracy;
-        if (this.hitCount == 0) {
-            accuracy = '0.00';
-        } else {
-            // display hitrate percent to 2 decimal places
-            accuracy = nfc(this.hitCount/this.noteCount * 100, 2);
-        }
-        text(`${accuracy}%`, 250, 350);
-        text(nfc(this._score), 250, 450);
-
-        // combo counter at top of screen
-        textAlign(CENTER);
-        if (this._combo != 0) {
             push();
-            textSize(20);
-            text('COMBO', width/2, 205);
-            textSize(76);
-            text(this._combo, width/2, 270);
-            pop();
-        }
+            // Draw stats and info for current song
+            fill(255);
+            textSize(32);
+            textAlign(LEFT);
+            text('SONG', 140, 148);
+            text('DIFFICULTY', 50, 247)
+            text('HITRATE', 100, 347);
+            text('SCORE', 120, 447);
 
-        // Draw current song time & length of song in minutes:seconds format
-        if (this.playing) {
-            this.songCurrentTime = this._convertToMins(sound.currentTime());
-        }
-        text(`${this.songCurrentTime} / ${this.songDuration}`, width-340, 275);
+            textSize(60);
+            text(this._songName, 250, 150);
+            text(this.difficultyText, 250, 250);
+            let accuracy;
+            if (this.hitCount == 0) {
+                accuracy = '0.00';
+            } else {
+                // display hitrate percent to 2 decimal places
+                accuracy = nfc(this.hitCount/this.noteCount * 100, 2);
+            }
+            text(`${accuracy}%`, 250, 350);
+            text(nfc(this._score), 250, 450);
 
-        textSize(48);
-        // if song is playing display "pause", if paused display "play"
-        if (this.playing) {
-            text('PRESS P TO PAUSE', width-340, 150);
-        } else {
-            text('PRESS P TO PLAY', width-340, 150);
-        }
-        
-        // control info on right of screen
-        text('CONTROLS', width-340, 400);
-        rectMode(CENTER);
-        stroke(255);
-        strokeWeight(2);
-        // red control square
-        fill("#ff0000");
-        rect(width-430, 458, 50, 50);
-        // yellow control square
-        fill("#ffff66");
-        rect(width-370, 458, 50, 50);
-        // blue control square
-        fill("#0000cc");
-        rect(width-310, 458, 50, 50);
-        // green control square
-        fill("#00cc00");
-        rect(width-250, 458, 50, 50);
-        // control keys displayed inside squares
-        fill(255);
-        stroke(0);
-        strokeWeight(3);
-        text('A', width-430, 475);
-        text('S', width-370, 475);
-        text('K', width-310, 475);
-        text('L', width-250, 475);
-        pop();
-
-        // PAUSE MENU
-        if (!this.playing) {
-            push();
-            fill(0,0,0,128);
-            rect(0,0,width,height);
+            // combo counter at top of screen
             textAlign(CENTER);
+            if (this._combo != 0) {
+                push();
+                textSize(20);
+                text('COMBO', width/2, 205);
+                textSize(76);
+                text(this._combo, width/2, 270);
+                pop();
+            }
+
+            // Draw current song time & length of song in minutes:seconds format
+            if (this.playing) {
+                this.songCurrentTime = this._convertToMins(sound.currentTime());
+            }
+            text(`${this.songCurrentTime} / ${this.songDuration}`, width-340, 275);
+
+            textSize(48);
+            // if song is playing display "pause", if paused display "play"
+            if (this.playing) {
+                text('PRESS P TO PAUSE', width-340, 150);
+            } else {
+                text('PRESS P TO PLAY', width-340, 150);
+            }
+            
+            // control info on right of screen
+            text('CONTROLS', width-340, 400);
+            rectMode(CENTER);
+            stroke(255);
+            strokeWeight(2);
+            // red control square
+            fill("#ff0000");
+            rect(width-430, 458, 50, 50);
+            // yellow control square
+            fill("#ffff66");
+            rect(width-370, 458, 50, 50);
+            // blue control square
+            fill("#0000cc");
+            rect(width-310, 458, 50, 50);
+            // green control square
+            fill("#00cc00");
+            rect(width-250, 458, 50, 50);
+            // control keys displayed inside squares
             fill(255);
             stroke(0);
-            strokeWeight(4);
-            textSize(100);
-            // checks if there is an unpause countdown currently in effect
-            if (this.unpauseCountdown != -1) {
-                if (this.unpauseCountdown > 0) {
-                    // show countdown timer in centre of the screen
-                    let countdownDisplay = Math.ceil(this.unpauseCountdown / 60);
-                    text(countdownDisplay, width/2, height/2);
-                    this.unpauseCountdown -= 1;
-                } else { // when unpause countdown hits 0, unpause the game
-                    sound.play(); // plays hearable music
-                    // plays muted music used for beat detection
-                    this.beatDetect.playGhostSong();
-                    // sets playing condition to true
-                    this.playing = true;
-                    this.unpauseCountdown = -1;
-                }
-            } else if (!this.gameStarted) { // check if game started
-                // show difficulty select if game hasn't started yet
-                textSize(60);
-                text('SELECT DIFFICULTY', width/2, 250);
-                // difficulty options
-                textSize(48);
-                if (mouseY > 270 && mouseY < 390) { // check mouse pos
-                    textStyle(BOLD); // menu option bold when hovered over
-                }
-                text('EASY', width/2, 350);
-                textStyle(NORMAL);
-
-                if (mouseY > 370 && mouseY < 490) { // check mouse pos
-                    textStyle(BOLD); // menu option bold when hovered over
-                }
-                text('NORMAL', width/2, 450);
-                textStyle(NORMAL);
-
-                if (mouseY > 470 && mouseY < 590) { // check mouse pos
-                    textStyle(BOLD); // menu option bold when hovered over
-                }
-                text('HARD', width/2, 550);
-                textStyle(NORMAL);
-
-                if (mouseY > 570 && mouseY < 690) { // check mouse pos
-                    textStyle(BOLD); // menu option bold when hovered over
-                }
-                text('INSANE', width/2, 650);
-            } else { // if no countdown and game has started, show pause screen
-                textSize(48);
-                if (mouseY > 270 && mouseY < 390) { // check mouse pos
-                    textStyle(BOLD); // menu option bold when hovered over
-                }
-                text('RESUME', width/2, 350);
-                textStyle(NORMAL);
-                if (mouseY > 470 && mouseY < 590) { // check mouse pos
-                    textStyle(BOLD); // menu option bold when hovered over
-                }
-                text('BACK TO MENU', width/2, 550);
-            }
+            strokeWeight(3);
+            text('A', width-430, 475);
+            text('S', width-370, 475);
+            text('K', width-310, 475);
+            text('L', width-250, 475);
             pop();
+
+            // PAUSE MENU
+            if (!this.playing) {
+                push();
+                fill(0,0,0,128);
+                rect(0,0,width,height);
+                textAlign(CENTER);
+                fill(255);
+                stroke(0);
+                strokeWeight(4);
+                textSize(100);
+                // checks if there is an unpause countdown currently in effect
+                if (this.unpauseCountdown != -1) {
+                    if (this.unpauseCountdown > 0) {
+                        // show countdown timer in centre of the screen
+                        let countdownDisplay = Math.ceil(this.unpauseCountdown / 60);
+                        text(countdownDisplay, width/2, height/2);
+                        this.unpauseCountdown -= 1;
+                    } else { // when unpause countdown hits 0, unpause the game
+                        sound.play(); // plays hearable music
+                        // plays muted music used for beat detection
+                        this.beatDetect.playGhostSong();
+                        // sets playing condition to true
+                        this.playing = true;
+                        this.unpauseCountdown = -1;
+                    }
+                } else if (!this.gameStarted) { // check if game started
+                    // show difficulty select if game hasn't started yet
+                    textSize(60);
+                    text('SELECT DIFFICULTY', width/2, 250);
+                    // difficulty options
+                    textSize(48);
+                    if (mouseY > 270 && mouseY < 390) { // check mouse pos
+                        textStyle(BOLD); // menu option bold when hovered over
+                    }
+                    text('EASY', width/2, 350);
+                    textStyle(NORMAL);
+
+                    if (mouseY > 370 && mouseY < 490) { // check mouse pos
+                        textStyle(BOLD); // menu option bold when hovered over
+                    }
+                    text('NORMAL', width/2, 450);
+                    textStyle(NORMAL);
+
+                    if (mouseY > 470 && mouseY < 590) { // check mouse pos
+                        textStyle(BOLD); // menu option bold when hovered over
+                    }
+                    text('HARD', width/2, 550);
+                    textStyle(NORMAL);
+
+                    if (mouseY > 570 && mouseY < 690) { // check mouse pos
+                        textStyle(BOLD); // menu option bold when hovered over
+                    }
+                    text('INSANE', width/2, 650);
+                } else { // if no countdown and game has started, show pause screen
+                    textSize(48);
+                    if (mouseY > 270 && mouseY < 390) { // check mouse pos
+                        textStyle(BOLD); // menu option bold when hovered over
+                    }
+                    text('RESUME', width/2, 350);
+                    textStyle(NORMAL);
+                    if (mouseY > 470 && mouseY < 590) { // check mouse pos
+                        textStyle(BOLD); // menu option bold when hovered over
+                    }
+                    text('BACK TO MENU', width/2, 550);
+                }
+                pop();
+            }
+        } else { // draw game over screen when song ends
+            push();
+            fill(255);
+            textAlign(LEFT);
+            textSize(60);
+            text('RESULT', 150, 150); 
+            let accuracy = this.hitCount/this.noteCount * 100;
+            let rank;
+            if (accuracy < 50) {
+                rank = "F";
+            } else if (accuracy < 60) {
+                rank = "D";
+            } else if (accuracy < 70) {
+                rank = "C";
+            } else if (accuracy < 85) {
+                rank = "B";
+            } else if (accuracy < 95) {
+                rank = "A";
+            } else if (accuracy <= 100) {
+                rank = "S";
+            }
+            textSize(70);
+            textAlign(RIGHT);
+            text('RANK', (width/2)-25, 165);
+            text('SCORE', (width/2)-25, 315);
+            text('HITRATE', (width/2)-25, 465);
+            text('DIFFICULTY', (width/2)-25, 615);
+            
+            // draw back button at bottom of screen
+            push();
+            fill(255);
+            rectMode(CENTER);
+            rect(width/2, 775, 700, 120);
+            fill(0);
+            textAlign(CENTER);
+            if (mouseY > 715 && mouseY < 835 &&
+                mouseX < (width/2)+350 && mouseX > (width/2)-350) { // check mouse pos
+                textStyle(BOLD); // menu option bold when hovered over
+            }
+            text('BACK TO MENU', width/2, 800);
+            pop();
+
+            textAlign(LEFT);
+            textSize(130);
+            text(rank, (width/2)+25, 165);
+            text(nfc(this._score), (width/2)+25, 315);
+            text(`${nfc(accuracy, 2)}%`, (width/2)+25, 465);
+            text(this.difficultyText, (width/2)+25, 615);
+            pop();
+        }
+        if (this.songCurrentTime == "4:51") { // checks if song has reached end
+            this.playing = false;
+            this.gameOver = true; // set game over to true when song ends
         }
     }
 
@@ -439,11 +480,30 @@ function RhythmGame() {
                     // set game state values to true
                     this.gameStarted = true;
                     this.unpauseCountdown = 180;
+                    // set difficultyText based on difficultyValue
+                    switch (this.difficultyValue) {
+                        case 20:
+                            this.difficultyText = "EASY";
+                            break;
+                        case 10:
+                            this.difficultyText = "NORMAL";
+                            break;
+                        case 5:
+                            this.difficultyText = "HARD";
+                            break;
+                        case 1:
+                            this.difficultyText = "INSANE";
+                    }
                 }
-            } else {
+            } else if (!this.gameOver) {
                 if (mouseY > 270 && mouseY < 390) {
                     this.unpauseCountdown = 180; // set unpause countdown to 3 secs
                 } else if (mouseY > 470 && mouseY < 590) {
+                    home.selected = ""; // sends you back to the home screen
+                }
+            } else {
+                if (mouseY > 715 && mouseY < 835 &&
+                    mouseX < (width/2)+350 && mouseX > (width/2)-350) { // check mouse pos
                     home.selected = ""; // sends you back to the home screen
                 }
             }

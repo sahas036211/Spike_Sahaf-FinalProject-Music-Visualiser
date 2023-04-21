@@ -28,9 +28,6 @@ function setup() {
 
 	// Instantiate home screen object
 	home = new HomeScreen();
-
-	// Instantiate rhythm game object
-	rhythm = new RhythmGame();
 	
 	// Instantiate controls object for visualisations
 	controls = new ControlsAndInput();
@@ -69,6 +66,10 @@ function mouseMoved() {
 function mouseClicked() {
 	if (home.selected === "") {
 		home.mousePressed();
+		// Create new rhythm game object if rhythm game selected
+		if (home.selected === home.options[0]) {
+			rhythm = new RhythmGame();
+		}
 	} else if (home.selected === home.options[0]) {
 		rhythm.mousePressed();
 	} else if (home.selected === home.options[2]) {
@@ -79,6 +80,10 @@ function mouseClicked() {
 function keyPressed() {
 	if (home.selected === "") {
 		home.keyPressed(keyCode);
+		// Create new rhythm game object if rhythm game selected
+		if (home.selected === home.options[0]) {
+			rhythm = new RhythmGame();
+		}
 	} else if (home.selected === home.options[0]) {
 		rhythm.keyPressed(key);
 	} else if (home.selected === home.options[2]) {
