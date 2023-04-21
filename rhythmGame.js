@@ -167,28 +167,43 @@ function RhythmGame() {
 
         push();
         // Draw stats and info for current song
-        fill("white");
-        textSize(48);
+        fill(255);
+        textSize(32);
         textAlign(LEFT);
-        text(`SONG: ${this._songName}`, 100, 150);
+        text('SONG', 140, 148);
+        text('HITRATE', 100, 247);
+        text('SCORE', 120, 347);
+
+        textSize(60);
+        text(this._songName, 250, 150);
         let accuracy;
         if (this.hitCount == 0) {
-            accuracy = "0.00";
+            accuracy = '0.00';
         } else {
+            // display hitrate percent to 2 decimal places
             accuracy = nfc(this.hitCount/this.noteCount * 100, 2);
         }
-        text(`HITRATE: ${accuracy}%`, 100, 250);
-        text(`SCORE: ${this._score}`, 100, 350);
+        text(`${accuracy}%`, 250, 250);
+        text(nfc(this._score), 250, 350);
+
+        // combo counter at top of screen
         textAlign(CENTER);
         if (this._combo != 0) {
             push();
             textSize(20);
-            text("COMBO", width/2, 205);
+            text('COMBO', width/2, 205);
             textSize(76);
             text(this._combo, width/2, 270);
             pop();
         }
 
+        // Draw current song time & length of song in minutes:seconds format
+        if (this.playing) {
+            this.songCurrentTime = this._convertToMins(sound.currentTime());
+        }
+        text(`${this.songCurrentTime} / ${this.songDuration}`, width-340, 275);
+
+        textSize(48);
         // if song is playing display "pause", if paused display "play"
         if (this.playing) {
             text('PRESS P TO PAUSE', width-340, 150);
@@ -196,11 +211,31 @@ function RhythmGame() {
             text('PRESS P TO PLAY', width-340, 150);
         }
         
-        // Draw current song time & length of song in minutes:seconds format
-        if (this.playing) {
-            this.songCurrentTime = this._convertToMins(sound.currentTime());
-        }
-        text(`${this.songCurrentTime} / ${this.songDuration}`, width-340, 250);
+        // control info on right of screen
+        text('CONTROLS', width-340, 400);
+        rectMode(CENTER);
+        stroke(255);
+        strokeWeight(2);
+        // red control square
+        fill("#ff0000");
+        rect(width-430, 458, 50, 50);
+        // yellow control square
+        fill("#ffff66");
+        rect(width-370, 458, 50, 50);
+        // blue control square
+        fill("#0000cc");
+        rect(width-310, 458, 50, 50);
+        // green control square
+        fill("#00cc00");
+        rect(width-250, 458, 50, 50);
+        // control keys displayed inside squares
+        fill(255);
+        stroke(0);
+        strokeWeight(3);
+        text('A', width-430, 475);
+        text('S', width-370, 475);
+        text('K', width-310, 475);
+        text('L', width-250, 475);
         pop();
 
         // PAUSE MENU
