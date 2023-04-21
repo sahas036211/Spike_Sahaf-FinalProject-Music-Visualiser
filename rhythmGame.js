@@ -423,31 +423,22 @@ function RhythmGame() {
                 if (mouseY > 270 && mouseY < 390) { // easy option
                     // value of 40 (higher value, lower difficulty)
                     this.difficultyValue = 40;
-                    // set game state values to true
-                    this.gameStarted = true;
-                    this.unpauseCountdown = 180;
                 } else if (mouseY > 370 && mouseY < 490) { // normal option
                     // value of 20 (higher value, lower difficulty)
                     this.difficultyValue = 20;
-                    // set game state values to true
-                    this.gameStarted = true;
-                    this.unpauseCountdown = 180;
                 } else if (mouseY > 470 && mouseY < 590) { // hard option
                     // value of 10 (higher value, lower difficulty)
                     this.difficultyValue = 10;
-                    // set game state values to true
-                    this.gameStarted = true;
-                    this.unpauseCountdown = 180;
                 } else if (mouseY > 570 && mouseY < 690) { // insane option
                     // value of 5 (higher value, lower difficulty)
                     this.difficultyValue = 5;
-                    // set game state values to true
-                    this.gameStarted = true;
-                    this.unpauseCountdown = 180;
                 }
                 if (this.difficultyValue != 0) {
                     // initialise new beat detection object with difficulty
                     this.beatDetect = new BeatDetection(this.songBps, this.difficultyValue);
+                    // set game state values to true
+                    this.gameStarted = true;
+                    this.unpauseCountdown = 180;
                 }
             } else {
                 if (mouseY > 270 && mouseY < 390) {
