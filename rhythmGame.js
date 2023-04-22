@@ -261,6 +261,12 @@ function RhythmGame() {
                         this.unpauseCountdown -= 1;
                     } else { // when unpause countdown hits 0, unpause the game
                         sound.play(); // plays hearable music
+                        if (!this.beatDetect.initialised) {
+                            // set song playhead to 0 to ensure it always
+                            // starts from the beginning
+                            sound.jump();
+                            setTimeout(function(){ Object.assign(sound, {_playing: true}); }, 100);
+                        }
                         // plays muted music used for beat detection
                         this.beatDetect.playGhostSong();
                         // sets playing condition to true
