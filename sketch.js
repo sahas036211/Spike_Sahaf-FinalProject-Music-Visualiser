@@ -39,7 +39,7 @@ function setup() {
 	// Instantiate the karaoke game
 	karaoke = new KaraokeGame();
 	karaoke.initPitchDetection();
-  
+    
 	karaoke._songDuration = sound.duration();
 
 	analyzeSongPitchData();

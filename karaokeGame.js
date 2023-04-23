@@ -3,23 +3,20 @@ function PlayButton(xFunc, yFunc, w, h) {
   this.yFunc = yFunc;
   this.w = w;
   this.h = h;
-  this.active = true;
+  this.status = 'play';
 
   this.draw = function() {
-    if (this.active) {
-      // Update these lines:
-      let x = this.xFunc();
-      let y = this.yFunc();
-  
-      push();
-      fill(0, 255, 0);
-      rect(x, y, this.w, this.h);
-      fill(255);
-      textSize(24);
-      textAlign(CENTER, CENTER);
-      text('PLAY', x + this.w / 2, y + this.h / 2);
-      pop();
-    }
+    let x = this.xFunc();
+    let y = this.yFunc();
+
+    push();
+    fill(0, 255, 0);
+    rect(x, y, this.w, this.h);
+    fill(255);
+    textSize(24);
+    textAlign(CENTER, CENTER);
+    text(this.status.toUpperCase(), x + this.w / 2, y + this.h / 2);
+    pop();
   };
   
 
@@ -33,11 +30,16 @@ function PlayButton(xFunc, yFunc, w, h) {
   
 
   this.onClick = function() {
-    if (this.active && this.isMouseOver()) {
-      this.active = false;
-      sound.play();
+    if (this.isMouseOver()) {
+      if (this.status === 'play') {
+        this.status = 'pause';
+        sound.play();
+      } else {
+        this.status = 'play';
+        sound.pause();
+      }
     }
-  };
+  };  
 }
 
 var songPitchData = [];
@@ -49,7 +51,7 @@ function KaraokeGame() {
   this.pitchDetect = null;
   this._pitchDetectionReady = false;
   this._userPitch = null;
-  this.playButton = new PlayButton(() => width / 2 - 75, () => height / 2 - 25, 150, 50);
+  this.playButton = new PlayButton(() => width - 160, () => 50, 150, 50);
 
   // ... the rest of the KaraokeGame function ...
 
@@ -61,7 +63,7 @@ function KaraokeGame() {
   };
 
   this.calculateScore = function (userPitch, songPitch) {
-    let pitchTolerance = 100;
+    let pitchTolerance = 200;
     let pitchDifference = Math.abs(userPitch - songPitch);
   
     if (pitchDifference <= pitchTolerance) {
@@ -116,7 +118,6 @@ function KaraokeGame() {
     // Check if 10 seconds have passed since the last score update
     if (millis() - this.lastScoreUpdateTime >= 1000) {
       if (this.pitchDetection && this._pitchDetectionReady) {
-        console.log("Pitch detection is ready");
         this.pitchDetection.getPitch((err, frequency) => {
           if (err) {
             console.error("Error getting pitch:", err);
@@ -125,6 +126,8 @@ function KaraokeGame() {
             this._userPitch = frequency;
             let songPitch = getSongPitchAt(sound.currentTime());
             this.calculateScore(this._userPitch, songPitch);
+            console.log(songPitch);
+            console.log(this._userPitch);
           } else {
             console.log("Frequency is not detected");
           }
