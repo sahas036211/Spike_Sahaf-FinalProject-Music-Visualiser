@@ -53,8 +53,6 @@ function KaraokeGame() {
   this._userPitch = null;
   this.playButton = new PlayButton(() => width - 160, () => 50, 150, 50);
 
-  // ... the rest of the KaraokeGame function ...
-
   this._convertToMins = function(time) {
     let timeSeconds = Math.floor(time) % 60;
     let timeMinutes = Math.floor(time / 60);
@@ -62,105 +60,125 @@ function KaraokeGame() {
     return timeInMins;
   };
 
+  this.pointsAdded = 0; // Add this line in the KaraokeGame constructor
+
   this.calculateScore = function (userPitch, songPitch) {
-    let pitchTolerance = 200;
-    let pitchDifference = Math.abs(userPitch - songPitch);
-  
+    let pitchTolerance = 200; // Set the tolerance for pitch difference
+    let pitchDifference = Math.abs(userPitch - songPitch); // Calculate the difference between userPitch and songPitch
+    
+    // Check if the pitch difference is within the tolerance
     if (pitchDifference <= pitchTolerance) {
-      this._score += 10;
+      // Calculate a score based on the closeness of the user's pitch to the song pitch
+      let scoreMultiplier = 1 - (pitchDifference / pitchTolerance);
+      let scoreToAdd = Math.floor(10 * scoreMultiplier);
+      this._score += scoreToAdd;
+      this.pointsAdded = scoreToAdd; // Update pointsAdded with the score added
+    } else {
+      this.pointsAdded = 0; // No points added if the user's pitch is not within tolerance
     }
   };
   
+  
 
-  this.draw = function() {
-    console.log("Drawing karaoke game");
+  this.draw = function() {  
     push();
-    fill("white");
-    textSize(36);
-    textAlign(LEFT);
-    text(`CURRENT SONG: ${this._songName}`, 80, 100);
-    text(`SCORE: ${this._score}`, 80, 200);
+      fill("white");
+      textSize(36);
+      textAlign(LEFT);
+      text(`CURRENT SONG: ${this._songName}`, 80, 100);
+      text(`SCORE: ${this._score}`, 80, 200);
 
-    let songCurrentTime = this._convertToMins(sound.currentTime());
-    let songDuration = this._convertToMins(this._songDuration);
-    text(`${songCurrentTime} / ${songDuration}`, width - 360, 200);
+      let songCurrentTime = this._convertToMins(sound.currentTime());
+      let songDuration = this._convertToMins(this._songDuration);
+      text(`${songCurrentTime} / ${songDuration}`, width - 360, 200);
+    pop();
+
+    //This code shows the points added on the screen
+    push();
+      fill("white");
+      textSize(24);
+      textAlign(LEFT);
+      text(`POINTS ADDED: ${this.pointsAdded}`, 80, 250);
     pop();
 
     this.playButton.draw();
     this.update();
   };
 
+  //this code makes the play button clickable
   this.handleMouseClick = function() {
     this.playButton.onClick();
   };
 
   this.initPitchDetection = async function() {
-    await getAudioContext().suspend();
-    this.mic = new p5.AudioIn();
-    this.mic.start(() => {
+    await getAudioContext().suspend(); // So this suspends the audio context before we start setting up the mic input
+    this.mic = new p5.AudioIn(); // The code here creates a new p5.AudioIn object to get the mic input
+    this.mic.start(() => { // Now we're starting the microphone input
       console.log("Microphone input started.");
-      const audioContext = getAudioContext();
+      const audioContext = getAudioContext(); // The code gets the audio context from p5.js
   
+      // The following code initializes the ml5 pitch detection model with the audio context and the microphone input stream
       this.pitchDetection = ml5.pitchDetection('./model/', audioContext, this.mic.stream, () => {
         console.log("Pitch detection model loaded");
-        this._pitchDetectionReady = true;
+        this._pitchDetectionReady = true; // So this sets the pitch detection ready flag to true once the model is loaded
       });
     }, (error) => {
-      console.error("Error starting microphone input:", error);
+      console.error("Error starting microphone input:", error); // If there's any error while starting the mic input, it gets logged here
     });
-  };  
+  };   
   
   this.lastScoreUpdateTime = 0; // Add this line in the KaraokeGame constructor
 
   this.update = function() {
-    console.log("Updating karaoke game");
-  
-    // Check if 10 seconds have passed since the last score update
+    // Checks if 1 second have passed since the last score update
     if (millis() - this.lastScoreUpdateTime >= 1000) {
-      if (this.pitchDetection && this._pitchDetectionReady) {
+      // Checks if the pitch detection model is loaded and ready, and the song is playing
+      if (this.pitchDetection && this._pitchDetectionReady && this.playButton.status === 'pause') {
+        // Uses the in-built ml5 pitchDetection object to get the user's pitch from the microphone input
         this.pitchDetection.getPitch((err, frequency) => {
           if (err) {
             console.error("Error getting pitch:", err);
           }
+          //So if a frequency is actually detected, it will update the user's pitch
           if (frequency) {
             this._userPitch = frequency;
+            //Uses the getSongPitchAt function to get the song's pitch at the current time
             let songPitch = getSongPitchAt(sound.currentTime());
+            // It calls the calculateScore function to calculate the score based on the user's pitch and the song's pitch
             this.calculateScore(this._userPitch, songPitch);
-            console.log(songPitch);
-            console.log(this._userPitch);
+            console.log("Song pitch: " + songPitch);
+            console.log("User Pitch: " + this._userPitch);
           } else {
             console.log("Frequency is not detected");
           }
         });
-        this.lastScoreUpdateTime = millis(); // Update the lastScoreUpdateTime
+        // Update the lastScoreUpdateTime variable to the current time
+        this.lastScoreUpdateTime = millis();
       } else {
         console.log("Pitch detection is not ready");
       }
     }
   };
-  
-  
-
-  if (this.mic) {
-    let micLevel = this.mic.getLevel();
-    console.log("Microphone input level:", micLevel);
-  }
 }
 
 
 function analyzeSongPitchData() {
-  let duration = sound.duration();
+  let duration = sound.duration(); // Get the duration of the song
   let interval = 0.1; // Analyze pitch data every 0.1 seconds
 
+  // Function to analyze the pitch data at a given time
   let analyze = (currentTime) => {
     if (currentTime >= duration) {
+      // If the currentTime exceeds the song's duration, exit the function
       return;
     }
 
+    // Get the frequency spectrum of the song at the current time
     let spectrum = fourier.analyze();
     let maxAmplitudeIndex = -1;
     let maxAmplitude = -Infinity;
 
+    // Find the index with the maximum amplitude in the spectrum
     for (let i = 0; i < spectrum.length; i++) {
       if (spectrum[i] > maxAmplitude) {
         maxAmplitude = spectrum[i];
@@ -168,34 +186,41 @@ function analyzeSongPitchData() {
       }
     }
 
+    // Get the dominant frequency using the index with the maximum amplitude
     let dominantFrequency = fourier.getEnergy(maxAmplitudeIndex);
     let roundedTime = Math.round(currentTime * 10) / 10;
 
+    // Save the dominant frequency and the corresponding time in the songPitchData array
     songPitchData.push({
       time: roundedTime,
       pitch: dominantFrequency,
     });
 
+    // Schedule the next pitch analysis after the defined interval
     setTimeout(() => {
       analyze(currentTime + interval);
     }, interval * 1000);
   };
 
+  // Start analyzing the pitch data from the beginning of the song
   analyze(0);
 }
 
 function getSongPitchAt(time) {
   let roundedTime = Math.round(time * 10) / 10;
 
-  // Use a for loop to find the pitch at a given time
+  // Use a for loop to find the pitch at a given time in the songPitchData array
   for (let i = 0; i < songPitchData.length; i++) {
     if (songPitchData[i].time === roundedTime) {
-      console.log(`Pitch at time ${roundedTime}: ${songPitchData[i].pitch}`); // Add this line
+      // If a pitch is found for the given time, return the pitch value
+      console.log(`Pitch at time ${roundedTime}: ${songPitchData[i].pitch}`);
       return songPitchData[i].pitch;
     }
   }
 
-  console.log(`No pitch found for time ${roundedTime}`); // Add this line
+  // If no pitch is found for the given time, return null
+  console.log(`No pitch found for time ${roundedTime}`);
   return null;
 }
+
 
