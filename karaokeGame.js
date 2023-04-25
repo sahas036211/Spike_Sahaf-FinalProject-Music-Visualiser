@@ -52,6 +52,7 @@ function KaraokeGame() {
   this._pitchDetectionReady = false;
   this._userPitch = null;
   this.playButton = new PlayButton(() => width - 160, () => 50, 150, 50);
+  this.lyricsData = [];
 
   this._convertToMins = function(time) {
     let timeSeconds = Math.floor(time) % 60;
@@ -78,16 +79,53 @@ function KaraokeGame() {
     }
   };
 
+  this.loadLyrics = function(lrcFile) {
+    loadStrings(lrcFile, (lines) => {
+      lines.forEach((line) => {
+        let match = line.match(/^\[(\d{2}):(\d{2})\.(\d{2})\](.*)$/);
+        if (match) {
+          let minutes = parseInt(match[1]);
+          let seconds = parseInt(match[2]);
+          let milliseconds = parseInt(match[3]);
+          let text = match[4].trim();
+          let time = minutes * 60 + seconds + milliseconds / 100;
+          this.lyricsData.push({ time, text });
+        }
+      });
+    });
+  };
+
+  this.drawLyrics = function() {
+    let currentTime = sound.currentTime();
+    let currentLyricIndex = null;
+    
+    for (let i = 0; i < this.lyricsData.length; i++) {
+      if (currentTime >= this.lyricsData[i].time) {
+        currentLyricIndex = i;
+      } else {
+        break;
+      }
+    }
+    
+    if (currentLyricIndex !== null) {
+      push();
+      textAlign(CENTER);
+      textSize(28);
+      fill(255);
+      text(this.lyricsData[currentLyricIndex].text, width / 2, height - 100);
+      pop();
+    }
+  };
+  
+
   this.drawPitchMeter = function(userPitch, targetPitch) {
-    // Set the position and size of the pitch meter bar
     let barX = 100;
     let barY = 300;
-    let barWidth = 40;
-    let barHeight = 400;
-    let maxPitchDifference = 500;
+    let barWidth = 50;
+    let barHeight = 500;
+    let maxPitchDifference = 600;
   
-    // Calculate the height of the colored portion based on the difference
-    // between userPitch and targetPitch
+    // Calculate the height of the colored portion based on the difference between userPitch and targetPitch
     let pitchDifference = Math.abs(userPitch - targetPitch);
     let filledHeight = map(pitchDifference, 0, maxPitchDifference, barHeight, 0);
   
@@ -103,14 +141,15 @@ function KaraokeGame() {
     rect(barX, barY, barWidth, barHeight);
     pop();
   
-    // Draw the colored portion of the bar indicating the difference
-    // between userPitch and targetPitch
+    // Draw the colored portion of the bar indicating the difference between userPitch and targetPitch
     push();
     noStroke();
     fill(gaugeColor);
     rect(barX, barY + (barHeight - filledHeight), barWidth, filledHeight);
     pop();
   };
+
+  this.loadLyrics('assets/bakamitailyrics.lrc');
 
   this.draw = function() {  
     push();
@@ -137,6 +176,7 @@ function KaraokeGame() {
     let userPitch = this._userPitch || 0;
     this.drawPitchMeter(userPitch, songPitch);
 
+    this.drawLyrics();
     this.playButton.draw();
     this.update();
   };

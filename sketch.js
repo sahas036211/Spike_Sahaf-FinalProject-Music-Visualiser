@@ -41,8 +41,6 @@ function setup() {
 	karaoke.initPitchDetection();
     
 	karaoke._songDuration = sound.duration();
-
-	analyzeSongPitchData();
   
 	// Create a new visualisation container and add visualisations
 	vis = new Visualisations();
@@ -66,6 +64,7 @@ function setup() {
         karaoke.draw();
         karaoke.update();
 		    getAudioContext().resume();
+        analyzeSongPitchData();
     }else if (home.selected == home.options[0]) {
         // draw the rhythm game
         rhythm.draw();
