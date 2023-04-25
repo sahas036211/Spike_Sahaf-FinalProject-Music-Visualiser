@@ -66,14 +66,11 @@ function setup() {
         karaoke.draw();
         karaoke.update();
 		    getAudioContext().resume();
-    }
-
-    if (home.selected == home.options[0]) {
+    }else if (home.selected == home.options[0]) {
         // draw the rhythm game
         rhythm.draw();
         rhythm.drawGame();
-    }
-    if (home.selected == home.options[2]) {
+    }else if (home.selected == home.options[2]) {
         // draw the visualisations
         vis.selectedVisual.draw();
         controls.draw();
@@ -91,8 +88,7 @@ function mouseMoved() {
 function mouseClicked() {
   if (home.selected == "") {
     home.mousePressed();
-  }
-  if (home.selected == home.options[1]) {
+  }else if (home.selected == home.options[1]) {
     karaoke.handleMouseClick();
   }
 }
@@ -100,9 +96,7 @@ function mouseClicked() {
 function keyPressed() {
 	if (home.selected == "") {
 		home.keyPressed(keyCode);
-	}
-	
-	if (home.selected == home.options[1]) {
+	}else if (home.selected == home.options[1]) {
 		controls.keyPressed(keyCode);
 	}
   }

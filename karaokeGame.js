@@ -77,8 +77,40 @@ function KaraokeGame() {
       this.pointsAdded = 0; // No points added if the user's pitch is not within tolerance
     }
   };
+
+  this.drawPitchMeter = function(userPitch, targetPitch) {
+    // Set the position and size of the pitch meter bar
+    let barX = 100;
+    let barY = 300;
+    let barWidth = 40;
+    let barHeight = 400;
+    let maxPitchDifference = 500;
   
+    // Calculate the height of the colored portion based on the difference
+    // between userPitch and targetPitch
+    let pitchDifference = Math.abs(userPitch - targetPitch);
+    let filledHeight = map(pitchDifference, 0, maxPitchDifference, barHeight, 0);
   
+    // Calculate the color based on the pitch difference
+    let colorValue = map(pitchDifference, 0, maxPitchDifference, 0, 255);
+    let gaugeColor = color(255 - colorValue, colorValue, 0);
+  
+    // Draw the background bar
+    push();
+    noFill();
+    stroke(255, 255, 255, 50);
+    strokeWeight(2);
+    rect(barX, barY, barWidth, barHeight);
+    pop();
+  
+    // Draw the colored portion of the bar indicating the difference
+    // between userPitch and targetPitch
+    push();
+    noStroke();
+    fill(gaugeColor);
+    rect(barX, barY + (barHeight - filledHeight), barWidth, filledHeight);
+    pop();
+  };
 
   this.draw = function() {  
     push();
@@ -100,6 +132,10 @@ function KaraokeGame() {
       textAlign(LEFT);
       text(`POINTS ADDED: ${this.pointsAdded}`, 80, 250);
     pop();
+
+    let songPitch = getSongPitchAt(sound.currentTime()) || 0;
+    let userPitch = this._userPitch || 0;
+    this.drawPitchMeter(userPitch, songPitch);
 
     this.playButton.draw();
     this.update();
@@ -131,7 +167,7 @@ function KaraokeGame() {
 
   this.update = function() {
     // Checks if 1 second have passed since the last score update
-    if (millis() - this.lastScoreUpdateTime >= 1000) {
+    if (millis() - this.lastScoreUpdateTime >= 100) {
       // Checks if the pitch detection model is loaded and ready, and the song is playing
       if (this.pitchDetection && this._pitchDetectionReady && this.playButton.status === 'pause') {
         // Uses the in-built ml5 pitchDetection object to get the user's pitch from the microphone input
