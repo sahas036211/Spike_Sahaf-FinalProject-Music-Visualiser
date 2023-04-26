@@ -66,7 +66,7 @@ function KaraokeGame() {
     return timeInMins;
   };
 
-  this.pointsAdded = 0; // Add this line in the KaraokeGame constructor
+  this.pointsAdded = 0; // The number of points added to the score in the last frame
 
   this.calculateScore = function (userPitch, songPitch) {
     let pitchTolerance = 300; // Set the tolerance for pitch difference
