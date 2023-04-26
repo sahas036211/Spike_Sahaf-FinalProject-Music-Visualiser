@@ -49,7 +49,7 @@ var songPitchData = [];
 function KaraokeGame() {
   this._score = 0;
   this._songName = "BAKAMITAI";
-  this._songDuration = 0;
+  this._songDuration = sound.duration();
   this.pitchDetect = null;
   this._pitchDetectionReady = false;
   this._userPitch = null;
@@ -58,6 +58,24 @@ function KaraokeGame() {
   this.songPitchHistory = [];
   this.userPitchHistory = [];
 
+  this.initPitchDetection = async function() {
+    await getAudioContext().suspend(); // So this suspends the audio context before we start setting up the mic input
+    this.mic = new p5.AudioIn(); // The code here creates a new p5.AudioIn object to get the mic input
+    this.mic.start(() => { // Now we're starting the microphone input
+      console.log("Microphone input started.");
+      const audioContext = getAudioContext(); // The code gets the audio context from p5.js
+  
+      // The following code initializes the ml5 pitch detection model with the audio context and the microphone input stream
+      this.pitchDetection = ml5.pitchDetection('./model/', audioContext, this.mic.stream, () => {
+        console.log("Pitch detection model loaded");
+        this._pitchDetectionReady = true; // So this sets the pitch detection ready flag to true once the model is loaded
+      });
+    }, (error) => {
+      console.error("Error starting microphone input:", error); // If there's any error while starting the mic input, it gets logged here
+    });
+  };   
+
+  this.initPitchDetection();
 
   this._convertToMins = function(time) {
     let timeSeconds = Math.floor(time) % 60;
@@ -211,6 +229,8 @@ function KaraokeGame() {
     this.update();
     this.drawLyrics();
     this.playButton.draw();
+    getAudioContext().resume();
+    this.analyzeSongPitchData();
   };
 
   //this code makes the play button clickable
@@ -218,22 +238,54 @@ function KaraokeGame() {
     this.playButton.onClick();
   };
 
-  this.initPitchDetection = async function() {
-    await getAudioContext().suspend(); // So this suspends the audio context before we start setting up the mic input
-    this.mic = new p5.AudioIn(); // The code here creates a new p5.AudioIn object to get the mic input
-    this.mic.start(() => { // Now we're starting the microphone input
-      console.log("Microphone input started.");
-      const audioContext = getAudioContext(); // The code gets the audio context from p5.js
+  this.analyzeSongPitchData = function() {
+    let duration = sound.duration(); // Get the duration of the song
+    let interval = 0.1; // Analyze pitch data every 0.1 seconds
   
-      // The following code initializes the ml5 pitch detection model with the audio context and the microphone input stream
-      this.pitchDetection = ml5.pitchDetection('./model/', audioContext, this.mic.stream, () => {
-        console.log("Pitch detection model loaded");
-        this._pitchDetectionReady = true; // So this sets the pitch detection ready flag to true once the model is loaded
+    fourier.setInput(sound); // Set the sound as the input for the FFT
+  
+    // Function to analyze the pitch data at a given time
+    let analyze = (currentTime) => {
+      if (currentTime >= duration) {
+        // If the currentTime exceeds the song's duration, exit the function
+        return;
+      }
+  
+      // Get the frequency spectrum of the song at the current time
+      let spectrum = fourier.analyze();
+      let maxAmplitudeIndex = -1;
+      let maxAmplitude = -Infinity;
+  
+      // Find the index with the maximum amplitude in the spectrum
+      for (let i = 0; i < spectrum.length; i++) {
+        if (spectrum[i] > maxAmplitude) {
+          maxAmplitude = spectrum[i];
+          maxAmplitudeIndex = i;
+        }
+      }
+  
+      // Get the dominant frequency using the index with the maximum amplitude
+      let sampleRate = sound.sampleRate(); // Get the sample rate from the sound
+      let fftSize = fourier.bins * 2; // Calculate the FFT size (twice the number of bins)
+      let dominantFrequency = maxAmplitudeIndex * sampleRate / (2 * fftSize); // Calculate the frequency using the formula
+  
+      let roundedTime = Math.round(currentTime * 10) / 10;
+  
+      // Save the dominant frequency and the corresponding time in the songPitchData array
+      songPitchData.push({
+        time: roundedTime,
+        pitch: dominantFrequency,
       });
-    }, (error) => {
-      console.error("Error starting microphone input:", error); // If there's any error while starting the mic input, it gets logged here
-    });
-  };   
+  
+      // Schedule the next pitch analysis after the defined interval
+      setTimeout(() => {
+        analyze(currentTime + interval);
+      }, interval * 1000);
+    };
+  
+    // Start analyzing the pitch data from the beginning of the song
+    analyze(0);
+  }
   
   this.lastScoreUpdateTime = 0; // Add this line in the KaraokeGame constructor
 
@@ -276,59 +328,6 @@ function KaraokeGame() {
     }
   };
 }
-
-
-function analyzeSongPitchData() {
-  let duration = sound.duration(); // Get the duration of the song
-  let interval = 0.1; // Analyze pitch data every 0.1 seconds
-
-  fourier.setInput(sound); // Set the sound as the input for the FFT
-
-  // Function to analyze the pitch data at a given time
-  let analyze = (currentTime) => {
-    if (currentTime >= duration) {
-      // If the currentTime exceeds the song's duration, exit the function
-      return;
-    }
-
-    // Get the frequency spectrum of the song at the current time
-    let spectrum = fourier.analyze();
-    let maxAmplitudeIndex = -1;
-    let maxAmplitude = -Infinity;
-
-    // Find the index with the maximum amplitude in the spectrum
-    for (let i = 0; i < spectrum.length; i++) {
-      if (spectrum[i] > maxAmplitude) {
-        maxAmplitude = spectrum[i];
-        maxAmplitudeIndex = i;
-      }
-    }
-
-    // Get the dominant frequency using the index with the maximum amplitude
-    let sampleRate = sound.sampleRate(); // Get the sample rate from the sound
-    let fftSize = fourier.bins * 2; // Calculate the FFT size (twice the number of bins)
-    let dominantFrequency = maxAmplitudeIndex * sampleRate / (2 * fftSize); // Calculate the frequency using the formula
-
-    let roundedTime = Math.round(currentTime * 10) / 10;
-
-    // Save the dominant frequency and the corresponding time in the songPitchData array
-    songPitchData.push({
-      time: roundedTime,
-      pitch: dominantFrequency,
-    });
-
-    // Schedule the next pitch analysis after the defined interval
-    setTimeout(() => {
-      analyze(currentTime + interval);
-    }, interval * 1000);
-  };
-
-  // Start analyzing the pitch data from the beginning of the song
-  analyze(0);
-}
-
-
-
 
 function getSongPitchAt(time) {
   let closestTimeIndex = -1;

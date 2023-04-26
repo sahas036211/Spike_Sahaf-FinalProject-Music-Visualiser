@@ -45,28 +45,26 @@ function setup() {
   }
   
 function draw() {
-  background(0);
-
-  if (home.selected === "") {
-    // draw home screen
-    home.draw();
-  } else if (home.selected === home.options[0]) {
-    // draw the rhythm game
-    rhythm.draw();
-  }  else if (home.selected === home.options[1]) {
-    //draw the karaoke game
-    karaoke.draw();
-    getAudioContext().resume();
-    analyzeSongPitchData();
-  } else if (home.selected === home.options[2]) {
-    // draw visualisers
-    vis.selectedVisual.draw();
-    controls.draw();
-  }
+  	background(0);
+	// draw depending on which screen has been selected from menu
+  	if (home.selected === "") {
+		// draw home screen
+		home.draw();
+  	} else if (home.selected === home.options[0]) {
+    	// draw the rhythm game
+    	rhythm.draw();
+  	}  else if (home.selected === home.options[1]) {
+    	//draw the karaoke game
+    	karaoke.draw();
+  	} else if (home.selected === home.options[2]) {
+    	// draw visualisers
+    	vis.selectedVisual.draw();
+    	controls.draw();
+  	}
 }
 
 function mouseMoved() {
-	if (home) {
+	if (home) { // checks home != null to prevent errors while loading setup
 		if (home.selected === "") {
 			home.mouseMoved();
 		}
@@ -74,60 +72,60 @@ function mouseMoved() {
 }
 
 function mouseClicked() {
-  if (home.selected === "") {
-		home.mousePressed();
-    // Check if menu item has been selected after mouse clicked in home screen
-		if (home.selected === home.options[0]) {
-      // Create new rhythm game object if rhythm game selected
-			rhythm = new RhythmGame();
-		} else if (home.selected === home.options[1]) {
-      // Create new karaoke game object if karaoke game selected
-	    karaoke = new KaraokeGame();
-	    karaoke.initPitchDetection();
-	    karaoke._songDuration = sound.duration();
-      fourier.setInput(sound);
-    }
-	} else if (home.selected === home.options[0]) {
-		rhythm.mousePressed();
-	} else if (home.selected == home.options[1]) {
-    karaoke.handleMouseClick();
-  } else if (home.selected === home.options[2]) {
-		controls.mousePressed();
+	if (home) { // checks home != null to prevent errors while loading setup
+		if (home.selected === "") {
+			home.mousePressed();
+			// Check if menu item has been selected after mouse press
+			if (home.selected === home.options[0]) {
+				// Create new rhythm game object if rhythm game selected
+				rhythm = new RhythmGame();
+			} else if (home.selected === home.options[1]) {
+				// Create new karaoke game object if karaoke game selected
+				karaoke = new KaraokeGame();
+			}
+		} else if (home.selected === home.options[0]) {
+			rhythm.mousePressed();
+		} else if (home.selected == home.options[1]) {
+			karaoke.handleMouseClick();
+		} else if (home.selected === home.options[2]) {
+			controls.mousePressed();
+		}
 	}
 }
 
 function keyPressed() {
-	if (home.selected === "") {
-		home.keyPressed(keyCode);
-    // Check if menu item has been selected after key pressed in home screen
-		if (home.selected === home.options[0]) {
-      // Create new rhythm game object if rhythm game selected
-			rhythm = new RhythmGame();
-		} else if (home.selected === home.options[1]) {
-      // Create new karaoke game object if karaoke game selected
-	    karaoke = new KaraokeGame();
-	    karaoke.initPitchDetection();
-	    karaoke._songDuration = sound.duration();
-      fourier.setInput(sound);
-    }
-	} else if (home.selected === home.options[0]) {
-		rhythm.keyPressed(key);
-	} else if (home.selected === home.options[2]) {
-		controls.keyPressed(keyCode);
+	if (home) { // checks home != null to prevent errors while loading
+		if (home.selected === "") {
+			home.keyPressed(keyCode);
+			// Check if menu item has been selected after key press
+			if (home.selected === home.options[0]) {
+				// Create new rhythm game object if rhythm game selected
+				rhythm = new RhythmGame();
+			} else if (home.selected === home.options[1]) {
+				// Create new karaoke game object if karaoke game selected
+				karaoke = new KaraokeGame();
+			}
+		} else if (home.selected === home.options[0]) {
+			rhythm.keyPressed(key);
+		} else if (home.selected === home.options[2]) {
+			controls.keyPressed(keyCode);
+		}
 	}
 }
 
 function keyReleased() {
-	if (home.selected == home.options[0]) {
-		rhythm.keyReleased(key);
+	if (home) { // checks home != null to prevent errors while loading
+		if (home.selected == home.options[0]) {
+			rhythm.keyReleased(key);
+		}
 	}
 }
 
 //when the window has been resized. Resize canvas to fit 
 //if the visualisation needs to be resized call its onResize method
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-  if (vis.selectedVisual.hasOwnProperty('onResize')) {
-    vis.selectedVisual.onResize();
-  }
+  	resizeCanvas(windowWidth, windowHeight);
+  	if (vis.selectedVisual.hasOwnProperty('onResize')) {
+  		vis.selectedVisual.onResize();
+  	}
 }
