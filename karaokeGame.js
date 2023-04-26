@@ -4,6 +4,8 @@ function PlayButton(xFunc, yFunc, w, h) {
   this.w = w;
   this.h = h;
   this.status = 'play';
+  this.pauseTime = 0;
+
 
   this.draw = function() {
     let x = this.xFunc();
@@ -53,6 +55,9 @@ function KaraokeGame() {
   this._userPitch = null;
   this.playButton = new PlayButton(() => width - 160, () => 50, 150, 50);
   this.lyricsData = [];
+  this.songPitchHistory = [];
+  this.userPitchHistory = [];
+
 
   this._convertToMins = function(time) {
     let timeSeconds = Math.floor(time) % 60;
@@ -64,7 +69,7 @@ function KaraokeGame() {
   this.pointsAdded = 0; // Add this line in the KaraokeGame constructor
 
   this.calculateScore = function (userPitch, songPitch) {
-    let pitchTolerance = 200; // Set the tolerance for pitch difference
+    let pitchTolerance = 300; // Set the tolerance for pitch difference
     let pitchDifference = Math.abs(userPitch - songPitch); // Calculate the difference between userPitch and songPitch
     
     // Check if the pitch difference is within the tolerance
@@ -79,6 +84,7 @@ function KaraokeGame() {
     }
   };
 
+  //source based on guide from https://dev.to/mcanam/javascript-lyric-synchronizer-4i15
   this.loadLyrics = function(lrcFile) {
     loadStrings(lrcFile, (lines) => {
       lines.forEach((line) => {
@@ -95,6 +101,37 @@ function KaraokeGame() {
     });
   };
 
+  this.drawPitchWaveform = function() {
+    let waveformHeight = 200; // Adjust the height of the waveform as desired
+    let waveformY = height - waveformHeight - 50; // Position the waveform above the lyrics display
+  
+    push();
+    strokeWeight(2);
+  
+    // Draw the song's pitch waveform
+    stroke(255, 0, 0);
+    for (let i = 1; i < this.songPitchHistory.length; i++) {
+      let x1 = map(i - 1, 0, this.songPitchHistory.length, 0, width);
+      let x2 = map(i, 0, this.songPitchHistory.length, 0, width);
+      let y1 = map(this.songPitchHistory[i - 1], 0, 2000, waveformY + waveformHeight, waveformY);
+      let y2 = map(this.songPitchHistory[i], 0, 2000, waveformY + waveformHeight, waveformY);
+      line(x1, y1, x2, y2);
+    }
+  
+    // Draw the user's pitch waveform
+    stroke(0, 255, 0);
+    for (let i = 1; i < this.userPitchHistory.length; i++) {
+      let x1 = map(i - 1, 0, this.userPitchHistory.length, 0, width);
+      let x2 = map(i, 0, this.userPitchHistory.length, 0, width);
+      let y1 = map(this.userPitchHistory[i - 1], 0, 2000, waveformY + waveformHeight, waveformY);
+      let y2 = map(this.userPitchHistory[i], 0, 2000, waveformY + waveformHeight, waveformY);
+      line(x1, y1, x2, y2);
+    }
+  
+    pop();
+  };
+  
+
   this.drawLyrics = function() {
     let currentTime = sound.currentTime();
     let currentLyricIndex = null;
@@ -110,7 +147,7 @@ function KaraokeGame() {
     if (currentLyricIndex !== null) {
       push();
       textAlign(CENTER);
-      textSize(28);
+      textSize(70);
       fill(255);
       text(this.lyricsData[currentLyricIndex].text, width / 2, height - 100);
       pop();
@@ -118,34 +155,28 @@ function KaraokeGame() {
   };
   
 
-  this.drawPitchMeter = function(userPitch, targetPitch) {
-    let barX = 100;
-    let barY = 300;
+  this.drawDualPitchBars = function(userPitch, songPitch) {
     let barWidth = 50;
-    let barHeight = 500;
-    let maxPitchDifference = 600;
-  
-    // Calculate the height of the colored portion based on the difference between userPitch and targetPitch
-    let pitchDifference = Math.abs(userPitch - targetPitch);
-    let filledHeight = map(pitchDifference, 0, maxPitchDifference, barHeight, 0);
-  
-    // Calculate the color based on the pitch difference
-    let colorValue = map(pitchDifference, 0, maxPitchDifference, 0, 255);
-    let gaugeColor = color(255 - colorValue, colorValue, 0);
-  
-    // Draw the background bar
-    push();
-    noFill();
-    stroke(255, 255, 255, 50);
-    strokeWeight(2);
-    rect(barX, barY, barWidth, barHeight);
-    pop();
-  
-    // Draw the colored portion of the bar indicating the difference between userPitch and targetPitch
+    let barHeight = 1000;
+    let maxPitch = 2000;
+
+    let userBarX = 50;
+    let songBarX = 150;
+
+    let userFilledHeight = map(userPitch, 0, maxPitch, 0, barHeight);
+    let songFilledHeight = map(songPitch, 0, maxPitch, 0, barHeight);
+
     push();
     noStroke();
-    fill(gaugeColor);
-    rect(barX, barY + (barHeight - filledHeight), barWidth, filledHeight);
+
+    // Draw the user pitch bar
+    fill(0, 255, 0, 150);
+    rect(userBarX, height - userFilledHeight - 200, barWidth, userFilledHeight);
+
+    // Draw the song pitch bar
+    fill(255, 0, 0, 150);
+    rect(songBarX, height - songFilledHeight - 200, barWidth, songFilledHeight);
+
     pop();
   };
 
@@ -174,11 +205,12 @@ function KaraokeGame() {
 
     let songPitch = getSongPitchAt(sound.currentTime()) || 0;
     let userPitch = this._userPitch || 0;
-    this.drawPitchMeter(userPitch, songPitch);
+    this.drawDualPitchBars(userPitch, songPitch);
 
+    this.drawPitchWaveform();
+    this.update();
     this.drawLyrics();
     this.playButton.draw();
-    this.update();
   };
 
   //this code makes the play button clickable
@@ -234,6 +266,14 @@ function KaraokeGame() {
         console.log("Pitch detection is not ready");
       }
     }
+
+    if (this.playButton.status === 'pause') {
+      let songPitch = getSongPitchAt(sound.currentTime());
+      let userPitch = this._userPitch;
+  
+      this.songPitchHistory.push(songPitch || 0);
+      this.userPitchHistory.push(userPitch || 0);
+    }
   };
 }
 
@@ -241,6 +281,8 @@ function KaraokeGame() {
 function analyzeSongPitchData() {
   let duration = sound.duration(); // Get the duration of the song
   let interval = 0.1; // Analyze pitch data every 0.1 seconds
+
+  fourier.setInput(sound); // Set the sound as the input for the FFT
 
   // Function to analyze the pitch data at a given time
   let analyze = (currentTime) => {
@@ -263,7 +305,10 @@ function analyzeSongPitchData() {
     }
 
     // Get the dominant frequency using the index with the maximum amplitude
-    let dominantFrequency = fourier.getEnergy(maxAmplitudeIndex);
+    let sampleRate = sound.sampleRate(); // Get the sample rate from the sound
+    let fftSize = fourier.bins * 2; // Calculate the FFT size (twice the number of bins)
+    let dominantFrequency = maxAmplitudeIndex * sampleRate / (2 * fftSize); // Calculate the frequency using the formula
+
     let roundedTime = Math.round(currentTime * 10) / 10;
 
     // Save the dominant frequency and the corresponding time in the songPitchData array
@@ -282,21 +327,27 @@ function analyzeSongPitchData() {
   analyze(0);
 }
 
-function getSongPitchAt(time) {
-  let roundedTime = Math.round(time * 10) / 10;
 
-  // Use a for loop to find the pitch at a given time in the songPitchData array
+
+
+function getSongPitchAt(time) {
+  let closestTimeIndex = -1;
+  let minTimeDifference = Infinity;
+
+  // Iterate through the songPitchData array to find the closest time
   for (let i = 0; i < songPitchData.length; i++) {
-    if (songPitchData[i].time === roundedTime) {
-      // If a pitch is found for the given time, return the pitch value
-      console.log(`Pitch at time ${roundedTime}: ${songPitchData[i].pitch}`);
-      return songPitchData[i].pitch;
+    let timeDifference = Math.abs(time - songPitchData[i].time);
+    if (timeDifference < minTimeDifference) {
+      minTimeDifference = timeDifference;
+      closestTimeIndex = i;
     }
   }
 
-  // If no pitch is found for the given time, return null
-  console.log(`No pitch found for time ${roundedTime}`);
-  return null;
+  // If there's no data available, return -1
+  if (closestTimeIndex === -1) {
+    return -1;
+  }
+
+  // Return the pitch at the closest time
+  return songPitchData[closestTimeIndex].pitch;
 }
-
-
