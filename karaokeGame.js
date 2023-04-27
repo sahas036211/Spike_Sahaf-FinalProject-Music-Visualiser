@@ -3,7 +3,6 @@ var songPitchData = [];
 function KaraokeGame() {
     this._score = 0;
     this._songName = "BAKAMITAI";
-    this._songDuration = sound.duration();
     this.pitchDetect = null;
     this._pitchDetectionReady = false;
     this._userPitch = null;
@@ -14,6 +13,27 @@ function KaraokeGame() {
     this.gameStarted = false; // Initailise gameStarted to false
     this.gameOver = false; // Initialise gameOver to false
     this.unpauseCountdown = -1; // Initialise unpause countdown to -1
+    this.songCurrentTime = "0:00"; // Initialise song time to 0
+
+    /**
+     * Converts a given number in seconds to minute:seconds format.
+     * 
+     * @param {Number} time number of seconds to be converted
+     * @returns {String} time converted to string in minute:seconds format
+     */
+    this._convertToMins = function(time) {
+        // Get the seconds component of the time
+        let timeSeconds = Math.floor(time) % 60;
+        // Get the minutes component of the time
+        let timeMinutes = Math.floor(time / 60);
+        // Format the time correctly
+        // Insert zero before seconds count if less than 10 for formatting
+        let timeInMins = `${timeMinutes}:${timeSeconds < 10 ? '0' : ''}${timeSeconds}`;
+        return timeInMins;
+    };
+
+    // get song duration in minutes:seconds format
+    this.songDuration = this._convertToMins(sound.duration());
 
     this.initPitchDetection = async function() {
         await getAudioContext().suspend(); // So this suspends the audio context before we start setting up the mic input
@@ -33,24 +53,7 @@ function KaraokeGame() {
     };   
 
     this.initPitchDetection();
-
-    /**
-     * Converts a given number in seconds to minute:seconds format.
-     * 
-     * @param {Number} time number of seconds to be converted
-     * @returns {String} time converted to string in minute:seconds format
-     */
-    this._convertToMins = function(time) {
-        // Get the seconds component of the time
-        let timeSeconds = Math.floor(time) % 60;
-        // Get the minutes component of the time
-        let timeMinutes = Math.floor(time / 60);
-        // Format the time correctly
-        // Insert zero before seconds count if less than 10 for formatting
-        let timeInMins = `${timeMinutes}:${timeSeconds < 10 ? '0' : ''}${timeSeconds}`;
-        return timeInMins;
-    };
-
+    
     this.pointsAdded = 0; // The number of points added to the score in the last frame
 
     this.calculateScore = function (userPitch, songPitch) {
@@ -234,9 +237,11 @@ function KaraokeGame() {
         text(this.pointsAdded, 250, 350)
         textAlign(CENTER);
 
-        let songCurrentTime = this._convertToMins(sound.currentTime());
-        let songDuration = this._convertToMins(this._songDuration);
-        text(`${songCurrentTime} / ${songDuration}`, width - 340, 250);
+        // Draw current song time & length of song in minutes:seconds format
+        if (this.playing) {
+          this.songCurrentTime = this._convertToMins(sound.currentTime());
+        }
+        text(`${this.songCurrentTime} / ${this.songDuration}`, width - 340, 250);
 
         // if song is playing display "pause", if paused display "play"
         textSize(48);
@@ -315,7 +320,7 @@ function KaraokeGame() {
         // Checks if 1 second have passed since the last score update
         if (millis() - this.lastScoreUpdateTime >= 100) {
             // Checks if the pitch detection model is loaded and ready, and the song is playing
-            if (this.pitchDetection && this._pitchDetectionReady && !this.playing) {
+            if (this.pitchDetection && this._pitchDetectionReady && this.playing) {
                 // Uses the in-built ml5 pitchDetection object to get the user's pitch from the microphone input
                 this.pitchDetection.getPitch((err, frequency) => {
                     if (err) {
@@ -341,7 +346,7 @@ function KaraokeGame() {
             }
         }
 
-        if (!this.playing) {
+        if (this.playing) {
             let songPitch = getSongPitchAt(sound.currentTime());
             let userPitch = this._userPitch;
         
