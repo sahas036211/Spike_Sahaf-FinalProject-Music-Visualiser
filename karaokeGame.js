@@ -1,5 +1,3 @@
-var songPitchData = [];
-
 function KaraokeGame() {
     this._score = 0;
     this._songName = "BAKAMITAI";
@@ -7,6 +5,7 @@ function KaraokeGame() {
     this._pitchDetectionReady = false;
     this._userPitch = null;
     this.lyricsData = [];
+    this.songPitchData = [];
     this.songPitchHistory = [];
     this.userPitchHistory = [];
     this.playing = false; // Initialise playstate to false
@@ -88,6 +87,28 @@ function KaraokeGame() {
             });
         });
     };
+
+    this.getSongPitchAt = function(time) {
+        let closestTimeIndex = -1;
+        let minTimeDifference = Infinity;
+  
+        // Iterate through the songPitchData array to find the closest time
+        for (let i = 0; i < this.songPitchData.length; i++) {
+            let timeDifference = Math.abs(time - this.songPitchData[i].time);
+            if (timeDifference < minTimeDifference) {
+                minTimeDifference = timeDifference;
+                closestTimeIndex = i;
+            }
+        }
+  
+        // If there's no data available, return -1
+        if (closestTimeIndex === -1) {
+            return -1;
+        }
+  
+        // Return the pitch at the closest time
+        return this.songPitchData[closestTimeIndex].pitch;
+    }
 
     this.drawPitchWaveform = function() {
         let waveformHeight = 200; // Adjust the height of the waveform as desired
@@ -252,7 +273,7 @@ function KaraokeGame() {
         }
         pop();
 
-        let songPitch = getSongPitchAt(sound.currentTime()) || 0;
+        let songPitch = this.getSongPitchAt(sound.currentTime()) || 0;
         let userPitch = this._userPitch || 0;
         this.drawDualPitchBars(userPitch, songPitch);
 
@@ -301,7 +322,7 @@ function KaraokeGame() {
             let roundedTime = Math.round(currentTime * 10) / 10;
       
             // Save the dominant frequency and the corresponding time in the songPitchData array
-            songPitchData.push({
+            this.songPitchData.push({
                 time: roundedTime,
                 pitch: dominantFrequency,
             });
@@ -330,7 +351,7 @@ function KaraokeGame() {
                     if (frequency) {
                         this._userPitch = frequency;
                         //Uses the getSongPitchAt function to get the song's pitch at the current time
-                        let songPitch = getSongPitchAt(sound.currentTime());
+                        let songPitch = this.getSongPitchAt(sound.currentTime());
                         // It calls the calculateScore function to calculate the score based on the user's pitch and the song's pitch
                         this.calculateScore(this._userPitch, songPitch);
                         console.log("Song pitch: " + songPitch);
@@ -347,13 +368,13 @@ function KaraokeGame() {
         }
 
         if (this.playing) {
-            let songPitch = getSongPitchAt(sound.currentTime());
+            let songPitch = this.getSongPitchAt(sound.currentTime());
             let userPitch = this._userPitch;
         
             this.songPitchHistory.push(songPitch || 0);
             this.userPitchHistory.push(userPitch || 0);
         }
-    };
+    }
 
     //
     // ------------ INPUT HANDLER FUNCTIONS ------------
@@ -387,27 +408,5 @@ function KaraokeGame() {
                 // TO DO: GAME OVER SCREEN "BACK TO MENU" BUTTON
             }
         }
-    };
-}
-
-function getSongPitchAt(time) {
-    let closestTimeIndex = -1;
-    let minTimeDifference = Infinity;
-
-    // Iterate through the songPitchData array to find the closest time
-    for (let i = 0; i < songPitchData.length; i++) {
-        let timeDifference = Math.abs(time - songPitchData[i].time);
-        if (timeDifference < minTimeDifference) {
-            minTimeDifference = timeDifference;
-            closestTimeIndex = i;
-        }
     }
-
-    // If there's no data available, return -1
-    if (closestTimeIndex === -1) {
-        return -1;
-    }
-
-    // Return the pitch at the closest time
-    return songPitchData[closestTimeIndex].pitch;
 }
