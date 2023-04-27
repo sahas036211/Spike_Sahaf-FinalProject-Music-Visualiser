@@ -24,7 +24,7 @@ function preload() {
 
 
 function setup() {
-	createCanvas(1920, 920);
+	createCanvas(1920, 920); // Lock canvas size
 	background(0);
 	frameRate(60); // Set framerate to constant 60 fps for consistency
 
@@ -42,7 +42,7 @@ function setup() {
 	vis.add(new Spectrum());
 	vis.add(new WavePattern());
 	vis.add(new Needles());
-  }
+}
   
 function draw() {
   	background(0);
@@ -94,7 +94,7 @@ function mouseClicked() {
 }
 
 function keyPressed() {
-	if (home) { // checks home != null to prevent errors while loading
+	if (home) { // checks home != null to prevent errors while loading setup
 		if (home.selected === "") {
 			home.keyPressed(keyCode);
 			// Check if menu item has been selected after key press
@@ -114,7 +114,7 @@ function keyPressed() {
 }
 
 function keyReleased() {
-	if (home) { // checks home != null to prevent errors while loading
+	if (home) { // checks home != null to prevent errors while loading setup
 		if (home.selected == home.options[0]) {
 			rhythm.keyReleased(key);
 		}

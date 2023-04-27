@@ -1,5 +1,5 @@
-function RhythmGameNote(gs, startDepth, bps) {
-    // takes gs (game space) and startDepth as parameters
+function RhythmGameNote(gs, bps) {
+    // takes gs (game space) and bps as parameters
     colorMode(HSB); // set colour mode to HSB
 
     // list of possible colours in same order as hit zone array
@@ -9,24 +9,23 @@ function RhythmGameNote(gs, startDepth, bps) {
                     color(120,100,80)]; // green
 
     // random colour for every new note
-    this.fillColourIndex = Math.floor(random(4));
-    this.fillColour = this.colours[this.fillColourIndex]; 
+    this._fillColourIndex = Math.floor(random(4));
+    this._fillColour = this.colours[this._fillColourIndex]; 
 
     // property for when note is hit
     this.isHit = false;
 
     // general properties
-    this.startDepth = startDepth;
-    this._pos = createVector(-90 + this.fillColourIndex*60,
+    this._startDepth = -560; // 1200 units away from centre of hit zones
+    this._pos = createVector(-90 + this._fillColourIndex*60,
                              -212, 
-                             this.startDepth);
-    // speed = distance / time (in frames)
-    this._speed = 1200 / (60*bps*4);
+                             this._startDepth);
+    this._speed = 1200 / (60*bps*4); // speed = distance / time (in frames)
     
     this.draw = function() {
         // draw note with given colour and position
         gs.push();
-        gs.fill(this.fillColour);
+        gs.fill(this._fillColour);
         gs.translate(this._pos);
         gs.beginShape();
         // FRONT FACE
@@ -55,30 +54,37 @@ function RhythmGameNote(gs, startDepth, bps) {
         gs.pop();
     }
 
-    this.move = function(dist=this._speed) {
+    this.move = function(speed=this._speed) {
         // note moves forward at set distance per frame
-        this._pos.add(0,0,dist); 
+        this._pos.add(0,0,speed);
     }
 
-    // ------------ SETTER AND GETTER FUNCTIONS ------------
+    // ------------ GETTER & SETTER FUNCTIONS ------------
+
+    // FILL COLOUR
+    this.getFillColour = function() {
+        return this._fillColour;
+    }
+
+    this.setFillColour = function(colour) {
+        this._fillColour = colour;
+    }
+
+    // these properties are either never changed or only changed internally
+    // so there is no need for setter functions.
+
+    // FILL COLOUR INDEX
+    this.getFillColourIndex = function() {
+        return this._fillColourIndex;
+    }
 
     // POSITION
-
-    this.setPos = function(pos) {
-        this._pos = pos;
-    }
-
     this.getPos = function() {
         return this._pos;
     }
 
     // SPEED
-    
-    this.setSpeed = function(speed) {
-        this._speed = speed;
-    }
-
     this.getSpeed = function() {
-        return this._speed;
+        return this._speed; 
     }
 }

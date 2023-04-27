@@ -12,12 +12,13 @@ function BeatDetection(bps, difficultyValue) {
     rhythmGhostSound.connect(mute);
     mute.connect();
 
-    // amount of time in seconds between each "beat"
-    this.bps = bps;
+    this.bps = bps;  // amount of time in seconds between each pulse "beat"
+
     // determines how many frames before a peak can be detected.
     // lower value means more notes will spawn due to more peaks.
     this.difficulty = difficultyValue;
 
+    // p5 function to check for peaks in a frequency spectrum
     this.peakDetect = new p5.PeakDetect(200,4000,0.5,this.difficulty);
 
     this.initialised = false; // check to see if song has performed "jump"
@@ -27,7 +28,7 @@ function BeatDetection(bps, difficultyValue) {
     this.playGhostSong = function() {
         rhythmGhostSound.play();
         if (!this.initialised) {
-            // start the song one bar (4 beats) ahead if played for the first time
+            // start the song one bar (4 pulses) ahead if played for the first time
             rhythmGhostSound.jump(this.bps*4);
             // p5 sound jump method was buggy and not giving expected results.
             // code line below is a workaround found online from source:
@@ -37,9 +38,11 @@ function BeatDetection(bps, difficultyValue) {
         }
     }
 
+    // analyse FFT and update peak detection
     this.detectBeat = function() {
         this.fft.analyze();
         this.peakDetect.update(this.fft);
+        // return true if peak or "beat" is detected
         if (this.peakDetect.isDetected) {
             return true;
         }
