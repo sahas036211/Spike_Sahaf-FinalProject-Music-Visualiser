@@ -162,7 +162,7 @@ function RhythmGame() {
         textSize(32);
         textAlign(LEFT);
         text('SONG', 140, 148);
-        text('DIFFICULTY', 50, 247)
+        text('DIFFICULTY', 50, 247);
         text('HITRATE', 100, 347);
         text('SCORE', 120, 447);
 

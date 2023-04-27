@@ -86,7 +86,7 @@ function mouseClicked() {
 		} else if (home.selected === home.options[0]) {
 			rhythm.mousePressed();
 		} else if (home.selected == home.options[1]) {
-			karaoke.handleMouseClick();
+			karaoke.mousePressed();
 		} else if (home.selected === home.options[2]) {
 			controls.mousePressed();
 		}
@@ -107,6 +107,8 @@ function keyPressed() {
 			}
 		} else if (home.selected === home.options[0]) {
 			rhythm.keyPressed(key);
+		} else if (home.selected === home.options[1]) {
+			karaoke.keyPressed(key);
 		} else if (home.selected === home.options[2]) {
 			controls.keyPressed(keyCode);
 		}
