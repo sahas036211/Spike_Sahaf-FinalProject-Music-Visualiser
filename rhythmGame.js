@@ -1,14 +1,14 @@
 function RhythmGame() {
     this.score = 0; // Initialise score and combo to zero
     this.combo = 0;
-    this.songName = currentSong.songName.toUpperCase(); // Name of song
+    this.songName = currentSong.songName; // Name of song
     this.songBps = 60/currentSong.bpm; // Song beats per second
     this.gs = createGraphics(700,700,WEBGL); // gs stands for "game space"
     this.notes = []; // Array that will contain all notes on the song "map"
     this.hitCount = 0; // Initialise hit and miss counts for hitrate stat
     this.noteCount = 0;
     this.playing = false; // Initialise playstate to false
-    this.gameStarted = false; // Initailise gameStarted to false
+    this.gameStarted = false; // Initialise gameStarted to false
     this.gameOver = false; // Initialise gameOver to false
     this.difficultyValue = 0; // Initialise difficultyValue to 0
     this.difficultyText = "?"; // Initialise difficultyText to a question mark
@@ -49,7 +49,7 @@ function RhythmGame() {
     };
 
     // get song duration in minutes:seconds format
-    this.songDuration = this._convertToMins(sound.duration());
+    this.songDuration = this._convertToMins(currentSong.sound.duration());
 
     //
     // ------------ DRAWING FUNCTIONS ------------
@@ -192,7 +192,7 @@ function RhythmGame() {
 
         // Draw current song time & length of song in minutes:seconds format
         if (this.playing) {
-            this.songCurrentTime = this._convertToMins(sound.currentTime());
+            this.songCurrentTime = this._convertToMins(currentSong.sound.currentTime());
         }
         text(`${this.songCurrentTime} / ${this.songDuration}`, width-340, 275);
 
@@ -249,12 +249,12 @@ function RhythmGame() {
                 text(countdownDisplay, width/2, height/2);
                 this.unpauseCountdown -= 1;
             } else { // when unpause countdown hits 0, unpause the game
-                sound.play(); // plays hearable music
+                currentSong.sound.play(); // plays hearable music
                 if (!this.beatDetect.initialised) {
                     // set song playhead to 0 to ensure it always
                     // starts from the beginning
-                    sound.jump();
-                    setTimeout(function(){ Object.assign(sound, {_playing: true}); }, 100);
+                    currentSong.sound.jump();
+                    setTimeout(function(){ Object.assign(currentSong.sound, {_playing: true}); }, 100);
                 }
                 // plays muted music used for beat detection
                 this.beatDetect.playGhostSong();
@@ -452,10 +452,10 @@ function RhythmGame() {
                 this.notes = this._noteHitCheck(this.hitZones[3]);
             } else if (key == "P" || key == "p") {
                 // saves time of the song when paused as time to be displayed
-                this.songCurrentTime = this._convertToMins(sound.currentTime());
+                this.songCurrentTime = this._convertToMins(currentSong.sound.currentTime());
                 // pauses music
-    			sound.pause();
-                rhythmGhostSound.pause();
+    			currentSong.sound.pause();
+                currentSong.ghostSound.pause();
                 this.playing = false; // sets playstate to false
             }
         } else {

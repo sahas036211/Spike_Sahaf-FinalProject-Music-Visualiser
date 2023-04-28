@@ -39,7 +39,7 @@ function SettingsScreen() {
         pop();
 
         textAlign(LEFT);
-        text(currentSong.songName.toUpperCase(), (width/2)+25, 470);
+        text(currentSong.songName, (width/2)+25, 470);
 
         // draw back button at bottom of screen
         push();
@@ -102,9 +102,6 @@ function SettingsScreen() {
             } else { // if on last song, set song to 0 for cycle effect
                 currentSong = songs[0];
             }
-            // load new song to play
-            sound = loadSound(`assets/${currentSong.fileName}.${currentSong.ext}`);
-	        rhythmGhostSound = loadSound(`assets/${currentSong.fileName}.${currentSong.ext}`);
         }
         if (mouseY > 715 && mouseY < 835 &&
             mouseX < (width/2)+250 && mouseX > (width/2)-250) { // check mouse pos

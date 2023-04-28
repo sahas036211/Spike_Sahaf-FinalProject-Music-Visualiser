@@ -6,10 +6,16 @@ var vis = null;
 var home = null;
 //global for rhythm game
 var rhythm = null;
-//variable for the p5 sound object
-var sound = null;
-//variable for the p5 sound object to be analysed in rhythm game
-var rhythmGhostSound = null;
+//variables for p5 sound objects
+var bakamitai = null;
+var demiurge = null;
+//variables for the p5 sound objects to be analysed in rhythm game
+var bakamitaiGS = null;
+var demiurgeGS = null;
+//variable for array that will contain song information
+var songs = [];
+//variable for currently selected sound object to be played
+var currentSong = null;
 //variable for p5 fast fourier transform
 var fourier;
 
@@ -17,19 +23,29 @@ var fourier;
 var fft;
 var songPitchData = {};
 
-let songs = [{fileName: 'bakamitai', ext: 'flac', freq1: 200,
- 			  freq2: 4000, bpm: 74, threshold: 0.5, songName: 'Baka Mitai'},
-			  
-			 {fileName: 'demiurge', ext: 'mp3', freq1: 20, 
-			  freq2: 20000, bpm: 84, threshold: 0.1, songName: 'Demiurge'}];
-
-let currentSong = songs[0];
-
+// preload the songs to be played
 function preload() {
-	sound = loadSound(`assets/${currentSong.fileName}.${currentSong.ext}`);
-	rhythmGhostSound = loadSound(`assets/${currentSong.fileName}.${currentSong.ext}`);
-}
+	// baka mitai
+	bakamitai = loadSound(`assets/bakamitai.flac`);
+	bakamitaiGS = loadSound(`assets/bakamitai.flac`); // ghost song
+	// demiurge
+	demiurge = loadSound(`assets/demiurge.mp3`);
+	demiurgeGS = loadSound(`assets/demiurge.mp3`); // ghost song
 
+	songs = [
+	   {
+		songName: 'BAKA MITAI', sound: bakamitai, ghostSound: bakamitaiGS,
+		freq1: 200, freq2: 4000, bpm: 74, threshold: 0.5,  
+	   },
+		
+	   {
+		songName: 'DEMIURGE', sound: demiurge, ghostSound: demiurgeGS,
+		freq1: 20, freq2: 20000, bpm: 84, threshold: 0.1,  
+	   }
+	];
+	// default song set to baka mitai
+	currentSong = songs[0];
+}
 
 function setup() {
 	createCanvas(1920, 920); // Lock canvas size

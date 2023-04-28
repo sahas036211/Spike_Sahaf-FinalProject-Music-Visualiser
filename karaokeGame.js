@@ -9,7 +9,7 @@ function KaraokeGame() {
     this.songPitchHistory = [];
     this.userPitchHistory = [];
     this.playing = false; // Initialise playstate to false
-    this.gameStarted = false; // Initailise gameStarted to false
+    this.gameStarted = false; // Initialise gameStarted to false
     this.gameOver = false; // Initialise gameOver to false
     this.unpauseCountdown = -1; // Initialise unpause countdown to -1
     this.songCurrentTime = "0:00"; // Initialise song time to 0
@@ -36,7 +36,7 @@ function KaraokeGame() {
     };
 
     // get song duration in minutes:seconds format
-    this.songDuration = this._convertToMins(sound.duration());
+    this.songDuration = this._convertToMins(currentSong.sound.duration());
 
     this.initPitchDetection = async function() {
         await getAudioContext().suspend(); // So this suspends the audio context before we start setting up the mic input
@@ -155,7 +155,7 @@ function KaraokeGame() {
   
 
     this.drawLyrics = function() {
-        let currentTime = sound.currentTime();
+        let currentTime = currentSong.sound.currentTime();
         let currentLyricIndex = null;
         
         for (let i = 0; i < this.lyricsData.length; i++) {
@@ -219,12 +219,12 @@ function KaraokeGame() {
                   text(countdownDisplay, width/2, height/2);
                   this.unpauseCountdown -= 1;
             } else { // when unpause countdown hits 0, unpause the game
-                  sound.play(); // plays hearable music
+                  currentSong.sound.play(); // plays hearable music
                   if (!this.gameStarted) {
                       // set song playhead to 0 to ensure it always
                       // starts from the beginning
-                      sound.jump();
-                      setTimeout(function(){ Object.assign(sound, {_playing: true}); }, 100);
+                      currentSong.sound.jump();
+                      setTimeout(function(){ Object.assign(currentSong.sound, {_playing: true}); }, 100);
                   }
                   // sets playing condition to true
                   this.playing = true;
@@ -286,7 +286,7 @@ function KaraokeGame() {
 
             // Draw current song time & length of song in minutes:seconds format
             if (this.playing) {
-            this.songCurrentTime = this._convertToMins(sound.currentTime());
+            this.songCurrentTime = this._convertToMins(currentSong.sound.currentTime());
             }
             text(`${this.songCurrentTime} / ${this.songDuration}`, width - 340, 250);
 
@@ -299,7 +299,7 @@ function KaraokeGame() {
             }
         pop();
         
-        let songPitch = this.getSongPitchAt(sound.currentTime()) || 0;
+        let songPitch = this.getSongPitchAt(currentSong.sound.currentTime()) || 0;
         let userPitch = this._userPitch || 0;
         
         if (this.showVisuals) {
@@ -319,10 +319,10 @@ function KaraokeGame() {
     };
 
     this.analyzeSongPitchData = function() {
-        let duration = sound.duration(); // Get the duration of the song
+        let duration = currentSong.sound.duration(); // Get the duration of the song
         let interval = 0.1; // Analyze pitch data every 0.1 seconds
       
-        fourier.setInput(sound); // Set the sound as the input for the FFT
+        fourier.setInput(currentSong.sound); // Set the sound as the input for the FFT
       
         // Function to analyze the pitch data at a given time
         let analyze = (currentTime) => {
@@ -345,7 +345,7 @@ function KaraokeGame() {
             }
       
             // Get the dominant frequency using the index with the maximum amplitude
-            let sampleRate = sound.sampleRate(); // Get the sample rate from the sound
+            let sampleRate = currentSong.sound.sampleRate(); // Get the sample rate from the sound
             let fftSize = fourier.bins * 2; // Calculate the FFT size (twice the number of bins)
             let dominantFrequency = maxAmplitudeIndex * sampleRate / (2 * fftSize); // Calculate the frequency using the formula
         
@@ -381,7 +381,7 @@ function KaraokeGame() {
                     if (frequency) {
                         this._userPitch = frequency;
                         //Uses the getSongPitchAt function to get the song's pitch at the current time
-                        let songPitch = this.getSongPitchAt(sound.currentTime());
+                        let songPitch = this.getSongPitchAt(currentSong.sound.currentTime());
                         // It calls the calculateScore function to calculate the score based on the user's pitch and the song's pitch
                         this.calculateScore(this._userPitch, songPitch);
                         console.log("Song pitch: " + songPitch);
@@ -398,7 +398,7 @@ function KaraokeGame() {
         }
 
         if (this.playing) {
-            let songPitch = this.getSongPitchAt(sound.currentTime());
+            let songPitch = this.getSongPitchAt(currentSong.sound.currentTime());
             let userPitch = this._userPitch;
         
             this.songPitchHistory.push(songPitch || 0);
@@ -414,9 +414,9 @@ function KaraokeGame() {
         if (this.playing) {
             if (key == "P" || key == "p") {
                 // saves time of the song when paused as time to be displayed
-                this.songCurrentTime = this._convertToMins(sound.currentTime());
+                this.songCurrentTime = this._convertToMins(currentSong.sound.currentTime());
                 // pauses music
-                sound.pause();
+                currentSong.sound.pause();
                 this.playing = false; // sets playstate to false
             }
         } else {
