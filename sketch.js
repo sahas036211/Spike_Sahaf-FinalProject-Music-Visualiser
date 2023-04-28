@@ -10,10 +10,14 @@ var rhythm = null;
 var bakamitai = null;
 var demiurge = null;
 var chestnuts = null;
+var newtank = null;
+var peptobismol = null;
 //variables for the p5 sound objects to be analysed in rhythm game
 var bakamitaiGS = null;
 var demiurgeGS = null;
 var chestnutsGS = null;
+var newtankGS = null;
+var peptobismolGS = null;
 //variable for array that will contain song information
 var songs = [];
 //variable for currently selected sound object to be played
@@ -44,6 +48,12 @@ function preload() {
 	// chestnuts
 	chestnuts = loadSound('assets/chestnuts.mp3');
 	chestnutsGS = loadSound('assets/chestnuts.mp3'); // ghost song
+	// new tank
+	newtank = loadSound('assets/newtank.mp3');
+	newtankGS = loadSound('assets/newtank.mp3'); // ghost song
+	// pepto bismol
+	peptobismol = loadSound('assets/peptobismol.mp3');
+	peptobismolGS = loadSound('assets/peptobismol.mp3');
 
 	songs = [
 	   {
@@ -59,6 +69,16 @@ function preload() {
 	   {
 		songName: 'CHESTNUTS', sound: chestnuts, ghostSound: chestnutsGS,
 		freq1: 200, freq2: 4000, bpm: 68, threshold: 0.5
+	   },
+
+	   {
+		songName: 'NEW TANK', sound: newtank, ghostSound: newtankGS,
+		freq1: 20, freq2: 20000, bpm: 151, threshold: 0.1
+	   },
+
+	   {
+		songName: 'PEPTO BISMOL', sound: peptobismol, ghostSound: peptobismolGS,
+		freq1: 20, freq2: 20000, bpm: 140, threshold: 0.1
 	   }
 	];
 

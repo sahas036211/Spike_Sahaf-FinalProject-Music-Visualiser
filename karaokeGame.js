@@ -266,6 +266,10 @@ function KaraokeGame() {
         this.loadLyrics('assets/demiurgelyrics.lrc');
     } else if (currentSong.songName == 'CHESTNUTS') {
         this.loadLyrics('assets/chestnutslyrics.lrc');
+    } else if (currentSong.songName == 'NEW TANK') {
+        this.loadLyrics('assets/newtanklyrics.lrc');
+    } else if (currentSong.songName === 'PEPTO BISMOL') {
+        this.loadLyrics('assets/peptobismollyrics.lrc');
     }
 
 

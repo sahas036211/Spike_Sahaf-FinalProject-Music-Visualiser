@@ -17,10 +17,12 @@ function RhythmGameNote(gs, bps) {
 
     // general properties
     this._startDepth = -560; // 1200 units away from centre of hit zones
+
     this._pos = createVector(-90 + this._fillColourIndex*60,
                              -212, 
                              this._startDepth);
-    this._speed = 1200 / (60*bps*4); // speed = distance / time (in frames)
+
+    this._speed = 1200*bps / (60*4); // speed = distance / time (in frames)
     
     this.draw = function() {
         // draw note with given colour and position
