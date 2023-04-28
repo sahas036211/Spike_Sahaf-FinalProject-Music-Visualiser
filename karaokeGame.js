@@ -1,6 +1,6 @@
 function KaraokeGame() {
     this._score = 0;
-    this._songName = "BAKAMITAI";
+    this._songName = currentSong.songName;
     this.pitchDetect = null;
     this._pitchDetectionReady = false;
     this._userPitch = null;
@@ -240,7 +240,12 @@ function KaraokeGame() {
         pop();
     }
 
-    this.loadLyrics('assets/bakamitailyrics.lrc');
+    if (currentSong.fileName == 'bakamitai'){
+        this.loadLyrics('assets/bakamitailyrics.lrc');
+    }else if (currentSong.fileName == 'demiurge'){
+        this.loadLyrics('assets/demiurgelyrics.lrc');
+    }
+
 
     this.draw = function() {  
         push();

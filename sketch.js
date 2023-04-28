@@ -18,10 +18,10 @@ var fft;
 var songPitchData = {};
 
 let songs = [{fileName: 'bakamitai', ext: 'flac', freq1: 200,
- 			  freq2: 4000, bpm: 74, threshold: 0.5},
+ 			  freq2: 4000, bpm: 74, threshold: 0.5, songName: 'Baka Mitai'},
 			  
 			 {fileName: 'demiurge', ext: 'mp3', freq1: 20, 
-			  freq2: 20000, bpm: 84, threshold: 0.1}];
+			  freq2: 20000, bpm: 84, threshold: 0.1, songName: 'Demiurge'}];
 
 let currentSong = songs[0];
 
