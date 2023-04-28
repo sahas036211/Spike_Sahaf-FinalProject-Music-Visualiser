@@ -13,6 +13,10 @@ function KaraokeGame() {
     this.gameOver = false; // Initialise gameOver to false
     this.unpauseCountdown = -1; // Initialise unpause countdown to -1
     this.songCurrentTime = "0:00"; // Initialise song time to 0
+    this.useCameraBackground = false; // Initialise useCameraBackground to false
+    this.video = null; // Initialise video to null
+    this.showVisuals = true; // Initialise showVisuals to true
+
 
     /**
      * Converts a given number in seconds to minute:seconds format.
@@ -109,6 +113,15 @@ function KaraokeGame() {
         // Return the pitch at the closest time
         return this.songPitchData[closestTimeIndex].pitch;
     }
+
+    this.initWebcam = function () {
+        this.video = createCapture(VIDEO); // Create a video capture element
+        this.video.size(width, height); // Set the video size to match the canvas size
+        this.video.hide(); // Hide the default video element
+    };
+
+    this.initWebcam(); // This calls the initWebcam function to initialise the webcam
+
 
     this.drawPitchWaveform = function() {
         let waveformHeight = 200; // Adjust the height of the waveform as desired
@@ -248,41 +261,53 @@ function KaraokeGame() {
 
 
     this.draw = function() {  
-        push();
-        // Draw stats and info for current song
-        fill(255);
-        textSize(32);
-        textAlign(LEFT);
-        text('SONG', 140, 148);
-        text('SCORE', 120, 247);
-        text('POINTS +', 90, 347);
 
-        textSize(60);
-        text(this._songName, 250, 150);
-        text(nfc(this._score), 250, 250);
-        text(this.pointsAdded, 250, 350)
-        textAlign(CENTER);
-
-        // Draw current song time & length of song in minutes:seconds format
-        if (this.playing) {
-          this.songCurrentTime = this._convertToMins(sound.currentTime());
-        }
-        text(`${this.songCurrentTime} / ${this.songDuration}`, width - 340, 250);
-
-        // if song is playing display "pause", if paused display "play"
-        textSize(48);
-        if (this.playing) {
-            text('PRESS P TO PAUSE', width-340, 150);
+        // If useCameraBackground is true, draw the webcam feed as the background
+        if (this.useCameraBackground && this.video) {
+            image(this.video, 0, 0, width, height);
         } else {
-            text('PRESS P TO PLAY', width-340, 150);
+            background(0);
         }
-        pop();
 
+        push();
+            // Draw stats and info for current song
+            fill(255);
+            textSize(32);
+            textAlign(LEFT);
+            text('SONG', 140, 148);
+            text('SCORE', 120, 247);
+            text('POINTS +', 90, 347);
+
+            textSize(60);
+            text(this._songName, 250, 150);
+            text(nfc(this._score), 250, 250);
+            text(this.pointsAdded, 250, 350)
+            textAlign(CENTER);
+
+            // Draw current song time & length of song in minutes:seconds format
+            if (this.playing) {
+            this.songCurrentTime = this._convertToMins(sound.currentTime());
+            }
+            text(`${this.songCurrentTime} / ${this.songDuration}`, width - 340, 250);
+
+            // if song is playing display "pause", if paused display "play"
+            textSize(48);
+            if (this.playing) {
+                text('PRESS P TO PAUSE', width-340, 150);
+            } else {
+                text('PRESS P TO PLAY', width-340, 150);
+            }
+        pop();
+        
         let songPitch = this.getSongPitchAt(sound.currentTime()) || 0;
         let userPitch = this._userPitch || 0;
-        this.drawDualPitchBars(userPitch, songPitch);
+        
+        if (this.showVisuals) {
+             this.drawDualPitchBars(userPitch, songPitch);
 
-        this.drawPitchWaveform();
+            this.drawPitchWaveform();
+        }
+
         this.update();
         this.drawLyrics();
         getAudioContext().resume();
@@ -399,6 +424,15 @@ function KaraokeGame() {
                 this.unpauseCountdown = 180; // set unpause countdown to 3 secs
             }
         }
+        if (key == "C" || key == "c") {
+            // Toggle the useCameraBackground boolean when the "C" key is pressed
+            this.useCameraBackground = !this.useCameraBackground;
+        }
+        // Toggle the showVisuals property when the "H" key is pressed
+        if (key == "H" || key == "h") {
+            this.showVisuals = !this.showVisuals;
+        }
+
     }
 
     this.mousePressed = function() {
