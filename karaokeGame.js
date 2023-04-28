@@ -269,34 +269,37 @@ function KaraokeGame() {
             background(0);
         }
 
+        // draw glitter overlay gif
+        image(glitter, 0, 0, width, height);
+
         push();
-            // Draw stats and info for current song
-            fill(255);
-            textSize(32);
-            textAlign(LEFT);
-            text('SONG', 140, 148);
-            text('SCORE', 120, 247);
-            text('POINTS +', 90, 347);
+        // Draw stats and info for current song
+        fill(255);
+        textSize(32);
+        textAlign(LEFT);
+        text('SONG', 140, 148);
+        text('SCORE', 120, 247);
+        text('POINTS +', 90, 347);
 
-            textSize(60);
-            text(this._songName, 250, 150);
-            text(nfc(this._score), 250, 250);
-            text(this.pointsAdded, 250, 350)
-            textAlign(CENTER);
+        textSize(60);
+        text(this._songName, 250, 150);
+        text(nfc(this._score), 250, 250);
+        text(this.pointsAdded, 250, 350)
+        textAlign(CENTER);
 
-            // Draw current song time & length of song in minutes:seconds format
-            if (this.playing) {
+        // Draw current song time & length of song in minutes:seconds format
+        if (this.playing) {
             this.songCurrentTime = this._convertToMins(currentSong.sound.currentTime());
-            }
-            text(`${this.songCurrentTime} / ${this.songDuration}`, width - 340, 250);
+        }
+        text(`${this.songCurrentTime} / ${this.songDuration}`, width - 340, 250);
 
-            // if song is playing display "pause", if paused display "play"
-            textSize(48);
-            if (this.playing) {
-                text('PRESS P TO PAUSE', width-340, 150);
-            } else {
-                text('PRESS P TO PLAY', width-340, 150);
-            }
+        // if song is playing display "pause", if paused display "play"
+        textSize(48);
+        if (this.playing) {
+            text('PRESS P TO PAUSE', width-340, 150);
+        } else {
+            text('PRESS P TO PLAY', width-340, 150);
+        }
         pop();
         
         let songPitch = this.getSongPitchAt(currentSong.sound.currentTime()) || 0;
@@ -316,6 +319,7 @@ function KaraokeGame() {
         if (!this.playing) {
             this._drawPauseMenu();
         }
+        
     };
 
     this.analyzeSongPitchData = function() {
