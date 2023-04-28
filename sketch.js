@@ -9,9 +9,11 @@ var rhythm = null;
 //variables for p5 sound objects
 var bakamitai = null;
 var demiurge = null;
+var chestnuts = null;
 //variables for the p5 sound objects to be analysed in rhythm game
 var bakamitaiGS = null;
 var demiurgeGS = null;
+var chestnutsGS = null;
 //variable for array that will contain song information
 var songs = [];
 //variable for currently selected sound object to be played
@@ -19,6 +21,7 @@ var currentSong = null;
 //variables for image overlay effects
 var glitter = null;
 var hearts = null;
+var butterflies = null;
 //variable for p5 fast fourier transform
 var fourier;
 
@@ -30,6 +33,7 @@ var songPitchData = {};
 function preload() {
 	glitter = loadImage('assets/glitter.gif');
 	hearts = loadImage('assets/hearts.gif');
+	butterflies = loadImage('assets/butterflies.gif');
 
 	// baka mitai
 	bakamitai = loadSound('assets/bakamitai.flac');
@@ -37,16 +41,24 @@ function preload() {
 	// demiurge
 	demiurge = loadSound('assets/demiurge.mp3');
 	demiurgeGS = loadSound('assets/demiurge.mp3'); // ghost song
+	// chestnuts
+	chestnuts = loadSound('assets/chestnutsong.mp3');
+	chestnutsGS = loadSound('assets/chestnutsong.mp3'); // ghost song
 
 	songs = [
 	   {
 		songName: 'BAKA MITAI', sound: bakamitai, ghostSound: bakamitaiGS,
-		freq1: 200, freq2: 4000, bpm: 74, threshold: 0.5,  
+		freq1: 200, freq2: 4000, bpm: 74, threshold: 0.5
 	   },
 		
 	   {
 		songName: 'DEMIURGE', sound: demiurge, ghostSound: demiurgeGS,
-		freq1: 20, freq2: 20000, bpm: 84, threshold: 0.1,  
+		freq1: 20, freq2: 20000, bpm: 84, threshold: 0.1
+	   },
+
+	   {
+		songName: 'CHESTNUTS', sound: chestnuts, ghostSound: chestnutsGS,
+		freq1: 20, freq2: 20000, bpm: 68, threshold: 0.1
 	   }
 	];
 

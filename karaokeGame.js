@@ -272,6 +272,7 @@ function KaraokeGame() {
         // draw glitter and hearts overlay gifs
         image(glitter, 0, 0, width, height);
         image(hearts, 0, 0, width, height);
+        image(butterflies, 0, 0, width, height);
 
         push();
         // Draw stats and info for current song
