@@ -2,13 +2,19 @@ function SettingsScreen() {
     this.options = ["VOLUME",
                     "SONG SELECT"];
 
-    this.volumeSlider = createSlider(0,100,100);
+    // create a volume slider with range 0 to 1 that starts at 0.5
+    this.volumeSlider = createSlider(0,100,50);
     this.volumeSlider.position((width/2)+25, 325);
     
     // sets default starting option to rhythm game
     this.currentOption = this.options[0];
 
     this.draw = function() {
+        let vol = this.volumeSlider.value();
+        for (var i = 0; i < songs.length; i++) {
+            // set volume of all songs relative to slider value
+            songs[i].sound.setVolume(vol/100);
+        }
         
         // draw title at top of screen
         fill("white");

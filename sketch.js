@@ -43,6 +43,12 @@ function preload() {
 		freq1: 20, freq2: 20000, bpm: 84, threshold: 0.1,  
 	   }
 	];
+
+	// default all songs to half volume
+	for (var i = 0; i < songs.length; i++) {
+		songs[i].sound.setVolume(0.5);
+	}
+
 	// default song set to baka mitai
 	currentSong = songs[0];
 }

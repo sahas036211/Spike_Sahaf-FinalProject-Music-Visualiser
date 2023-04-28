@@ -66,7 +66,7 @@ function RhythmGame() {
         const dt = deltaTime * 0.001
         let ratio = dt / (1/60);
         
-        for (i = 0; i < this.notes.length; i++) {
+        for (var i = 0; i < this.notes.length; i++) {
             push();
             colorMode(HSB);
             // change saturation of note colour based on distance from hit zone
@@ -97,7 +97,7 @@ function RhythmGame() {
         this.gs.fill(100);
         this.gs.translate(this.highway);
         this.gs.box(62,10,1400);
-        for (i = 0; i < 3; i++) {
+        for (var i = 0; i < 3; i++) {
             this.gs.translate(62,0,0);
             this.gs.box(62,10,1400);
         }
@@ -391,7 +391,7 @@ function RhythmGame() {
     this._noteHitCheck = function(assignedHitZone) {
         // get index of hit zone to be checked
         let hitZoneIndex = this.hitZones.findIndex(i => i == assignedHitZone);
-        for (i = 0; i < this.notes.length; i++) { // iterate through all notes
+        for (var i = 0; i < this.notes.length; i++) { // iterate through all notes
             // checks hit zone index is the same as note colour index
             if (hitZoneIndex == this.notes[i].getFillColourIndex()) {
                 // condition for if note is hit
