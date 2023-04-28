@@ -17,9 +17,17 @@ var fourier;
 var fft;
 var songPitchData = {};
 
+let songs = [{fileName: 'bakamitai', ext: 'flac', freq1: 200,
+ 			  freq2: 4000, bpm: 74, threshold: 0.5},
+			  
+			 {fileName: 'demiurge', ext: 'mp3', freq1: 20, 
+			  freq2: 20000, bpm: 84, threshold: 0.1}];
+
+let currentSong = songs[0];
+
 function preload() {
-	sound = loadSound('assets/bakamitai.flac');
-	rhythmGhostSound = loadSound('assets/bakamitai.flac');
+	sound = loadSound(`assets/${currentSong.fileName}.${currentSong.ext}`);
+	rhythmGhostSound = loadSound(`assets/${currentSong.fileName}.${currentSong.ext}`);
 }
 
 
@@ -33,6 +41,9 @@ function setup() {
   
 	// Instantiate home screen object
 	home = new HomeScreen();
+
+	// Instantiate settings screen object
+	settings = new SettingsScreen();
   
 	// Instantiate controls object for visualisations
 	controls = new ControlsAndInput();
@@ -46,6 +57,7 @@ function setup() {
   
 function draw() {
   	background(0);
+	settings.volumeSlider.hide();
 	// draw depending on which screen has been selected from menu
   	if (home.selected === "") {
 		// draw home screen
@@ -60,13 +72,19 @@ function draw() {
     	// draw visualisers
     	vis.selectedVisual.draw();
     	controls.draw();
-  	}
+  	} else if (home.selected === home.options[3]) {
+		// draw options and settings menu
+		settings.draw();
+        settings.volumeSlider.show();
+    }    
 }
 
 function mouseMoved() {
 	if (home) { // checks home != null to prevent errors while loading setup
 		if (home.selected === "") {
 			home.mouseMoved();
+		} else if (home.selected === home.options[3]) {
+			settings.mouseMoved();
 		}
 	}
 }
@@ -89,6 +107,8 @@ function mouseClicked() {
 			karaoke.mousePressed();
 		} else if (home.selected === home.options[2]) {
 			controls.mousePressed();
+		} else if (home.selected === home.options[3]) {
+			settings.mousePressed();
 		}
 	}
 }
@@ -111,6 +131,8 @@ function keyPressed() {
 			karaoke.keyPressed(key);
 		} else if (home.selected === home.options[2]) {
 			controls.keyPressed(keyCode);
+		} else if (home.selected === home.options[3]) {
+			settings.keyPressed(key);
 		}
 	}
 }

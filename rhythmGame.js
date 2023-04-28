@@ -1,8 +1,8 @@
 function RhythmGame() {
     this.score = 0; // Initialise score and combo to zero
     this.combo = 0;
-    this.songName = "BAKAMITAI"; // Song to be implemented
-    this.songBps = 60/74; // Bakamitai has bpm of 74
+    this.songName = currentSong.fileName.toUpperCase(); // Name of song
+    this.songBps = 60/currentSong.bpm; // Song beats per second
     this.gs = createGraphics(700,700,WEBGL); // gs stands for "game space"
     this.notes = []; // Array that will contain all notes on the song "map"
     this.hitCount = 0; // Initialise hit and miss counts for hitrate stat
@@ -495,7 +495,8 @@ function RhythmGame() {
                 }
                 if (this.difficultyValue != 0) {
                     // initialise new beat detection object with difficulty
-                    this.beatDetect = new BeatDetection(this.songBps, this.difficultyValue);
+                    this.beatDetect = new BeatDetection(this.songBps,
+                                                        this.difficultyValue);
                     // set game state values to true
                     this.gameStarted = true;
                     this.unpauseCountdown = 180;

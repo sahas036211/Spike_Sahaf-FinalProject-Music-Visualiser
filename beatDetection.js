@@ -19,7 +19,10 @@ function BeatDetection(bps, difficultyValue) {
     this.difficulty = difficultyValue;
 
     // p5 function to check for peaks in a frequency spectrum
-    this.peakDetect = new p5.PeakDetect(200,4000,0.5,this.difficulty);
+    this.peakDetect = new p5.PeakDetect(currentSong.freq1,
+                                        currentSong.freq2,
+                                        currentSong.threshold,
+                                        this.difficulty);
 
     this.initialised = false; // check to see if song has performed "jump"
 

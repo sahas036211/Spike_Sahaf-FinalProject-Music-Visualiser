@@ -4,7 +4,7 @@ function HomeScreen() {
     this.options = ["RHYTHM GAME",
                     "KARAOKE GAME", 
                     "GALLERY & MUSIC", 
-                    "OPTIONS & CONTROLS"];
+                    "OPTIONS & SETTINGS"];
 
     // sets default starting option to rhythm game
     this.currentOption = this.options[0]; 
