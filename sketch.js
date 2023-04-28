@@ -56,16 +56,12 @@ function setup() {
 }
   
 function draw() {
-<<<<<<< Updated upstream
-  	background(0);
 	settings.volumeSlider.hide();
-=======
 	if (controls.webcam) {
         image(controls.webcam, 0, 0, width, height);
     } else {
         background(0);
     }
->>>>>>> Stashed changes
 	// draw depending on which screen has been selected from menu
   	if (home.selected === "") {
 		// draw home screen
