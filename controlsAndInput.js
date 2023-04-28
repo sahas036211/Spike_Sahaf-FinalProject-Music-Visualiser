@@ -16,14 +16,32 @@ function ControlsAndInput() {
 	  if (!this.playbackButton.hitCheck()) {
 		// Check if the mic button has been clicked
 		if (!this.micButton.hitCheck()) {
-		  if (fullscreen()) {
-			fullscreen(false);
-		  } else {
-			fullscreen(true);
-		  }
+			if (!this.webcamButton.hitCheck()) {
+				if (fullscreen()) {
+					fullscreen(false);
+				} else {
+					fullscreen(true);
+				}
+			}
 		}
 	  }
 	};
+
+	this.webcamButton = new WebcamButton();
+
+    // Webcam input
+    this.webcam = null;
+
+    // Enable or disable webcam input
+    this.enableWebcam = function () {
+        if (this.webcam) {
+            this.webcam.remove();
+            this.webcam = null;
+        } else {
+            this.webcam = createCapture(VIDEO);
+            this.webcam.hide();
+        }
+    };
   
 
 	//responds to keyboard presses
@@ -59,6 +77,7 @@ function ControlsAndInput() {
 
 		//mic button
 		this.micButton.draw();
+		this.webcamButton.draw();
 
 	};
 
