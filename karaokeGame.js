@@ -269,8 +269,9 @@ function KaraokeGame() {
             background(0);
         }
 
-        // draw glitter overlay gif
+        // draw glitter and hearts overlay gifs
         image(glitter, 0, 0, width, height);
+        image(hearts, 0, 0, width, height);
 
         push();
         // Draw stats and info for current song

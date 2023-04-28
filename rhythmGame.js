@@ -361,6 +361,10 @@ function RhythmGame() {
 
         if (!this.gameOver) { // check that song hasn't ended before drawing
 
+            // draw glitter overlay gif
+            image(glitter, 0, 0, width/2, height);
+            image(glitter, width/2, 0, width/2, height);
+            
             this._drawGame(); // draw 3d graphics
 
             this._drawGameInfo(); // draw stats and info on sides of screen

@@ -16,8 +16,9 @@ var demiurgeGS = null;
 var songs = [];
 //variable for currently selected sound object to be played
 var currentSong = null;
-//variable for glitter overlay effect
+//variables for image overlay effects
 var glitter = null;
+var hearts = null;
 //variable for p5 fast fourier transform
 var fourier;
 
@@ -28,6 +29,8 @@ var songPitchData = {};
 // preload the songs and images to be used
 function preload() {
 	glitter = loadImage('assets/glitter.gif');
+	hearts = loadImage('assets/hearts.gif');
+
 	// baka mitai
 	bakamitai = loadSound('assets/bakamitai.flac');
 	bakamitaiGS = loadSound('assets/bakamitai.flac'); // ghost song
