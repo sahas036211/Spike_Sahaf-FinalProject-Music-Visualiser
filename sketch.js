@@ -42,8 +42,8 @@ function preload() {
 	demiurge = loadSound('assets/demiurge.mp3');
 	demiurgeGS = loadSound('assets/demiurge.mp3'); // ghost song
 	// chestnuts
-	chestnuts = loadSound('assets/chestnutsong.mp3');
-	chestnutsGS = loadSound('assets/chestnutsong.mp3'); // ghost song
+	chestnuts = loadSound('assets/chestnuts.mp3');
+	chestnutsGS = loadSound('assets/chestnuts.mp3'); // ghost song
 
 	songs = [
 	   {
@@ -58,7 +58,7 @@ function preload() {
 
 	   {
 		songName: 'CHESTNUTS', sound: chestnuts, ghostSound: chestnutsGS,
-		freq1: 20, freq2: 20000, bpm: 68, threshold: 0.1
+		freq1: 200, freq2: 4000, bpm: 68, threshold: 0.5
 	   }
 	];
 

@@ -171,7 +171,14 @@ function KaraokeGame() {
             textAlign(CENTER);
             textSize(70);
             fill(255);
-            text(this.lyricsData[currentLyricIndex].text, width / 2, height - 100);
+            stroke(0);
+            strokeWeight(3);
+            text(this.lyricsData[currentLyricIndex].text, width / 2, height - 200);
+            if (currentLyricIndex != this.lyricsData.length-1) {
+                fill(140);
+                textSize(55);
+                text(this.lyricsData[currentLyricIndex+1].text, width/2, height - 100);
+            }
             pop();
         }
     };
@@ -253,10 +260,12 @@ function KaraokeGame() {
         pop();
     }
 
-    if (currentSong.songName == 'BAKA MITAI'){
+    if (currentSong.songName == 'BAKA MITAI') {
         this.loadLyrics('assets/bakamitailyrics.lrc');
-    }else if (currentSong.songName == 'DEMIURGE'){
+    } else if (currentSong.songName == 'DEMIURGE') {
         this.loadLyrics('assets/demiurgelyrics.lrc');
+    } else if (currentSong.songName == 'CHESTNUTS') {
+        this.loadLyrics('assets/chestnutslyrics.lrc');
     }
 
 
