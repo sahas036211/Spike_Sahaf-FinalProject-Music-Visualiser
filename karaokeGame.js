@@ -253,9 +253,9 @@ function KaraokeGame() {
         pop();
     }
 
-    if (currentSong.fileName == 'bakamitai'){
+    if (currentSong.songName == 'BAKA MITAI'){
         this.loadLyrics('assets/bakamitailyrics.lrc');
-    }else if (currentSong.fileName == 'demiurge'){
+    }else if (currentSong.songName == 'DEMIURGE'){
         this.loadLyrics('assets/demiurgelyrics.lrc');
     }
 
