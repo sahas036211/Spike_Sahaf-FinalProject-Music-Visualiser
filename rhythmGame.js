@@ -378,7 +378,7 @@ function RhythmGame() {
         }
 
         // check if song has reached end
-        if (this.songCurrentTime == "4:51") {
+        if (this.songCurrentTime == this.songDuration) {
             this.playing = false;
             this.gameOver = true; // set game over to true when song ends
         }
