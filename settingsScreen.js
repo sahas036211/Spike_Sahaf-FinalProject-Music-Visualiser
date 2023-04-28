@@ -39,7 +39,7 @@ function SettingsScreen() {
         pop();
 
         textAlign(LEFT);
-        text(currentSong.fileName.toUpperCase(), (width/2)+25, 470);
+        text(currentSong.songName.toUpperCase(), (width/2)+25, 470);
 
         // draw back button at bottom of screen
         push();
