@@ -21,9 +21,9 @@ function SettingsScreen() {
         push();
         rect(width/2 - 275, 100, 550, 120);
         fill("black");
-        textSize(48);
+        textSize(56);
         textAlign(CENTER);
-        text("OPTIONS & SETTINGS", width/2, 180);
+        text("SETTINGS", width/2, 180);
         pop();
         
         textSize(32);
@@ -50,16 +50,13 @@ function SettingsScreen() {
         // draw back button at bottom of screen
         push();
         fill(255);
-        rectMode(CENTER);
-        rect(width/2, 775, 500, 100);
-        fill(0);
         textAlign(CENTER);
         textSize(48);
         if (mouseY > 725 && mouseY < 825 &&
             mouseX < (width/2)+250 && mouseX > (width/2)-250) { // check mouse pos
             textStyle(BOLD); // menu option bold when hovered over
         }
-        text('BACK TO MENU', width/2, 795);
+        text('BACK TO MAIN MENU', width/2, 795);
         pop();
 	};
 
