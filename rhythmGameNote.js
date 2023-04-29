@@ -1,5 +1,5 @@
-function RhythmGameNote(gs, bps) {
-    // takes gs (game space) and bps as parameters
+function RhythmGameNote(gs, beatInterval) {
+    // takes gs (game space) and beatInterval as parameters
     colorMode(HSB); // set colour mode to HSB
 
     // list of possible colours in same order as hit zone array
@@ -16,13 +16,23 @@ function RhythmGameNote(gs, bps) {
     this.isHit = false;
 
     // general properties
-    this._startDepth = -560; // 1200 units away from centre of hit zones
+    this._startDepth = -700; // 1340 units away from centre of hit zones
+    let distance = 1340;
+
+    // scale spawn distance and speed of notes to bpm of the song.
+    // song with BPM of 60 spawns notes at end of highway,
+    // song with BPM of 180 spawns notes at halfway point of highway.
+    let distanceToReduce = map(beatInterval,
+                               1, 60/180,
+                               0, distance/2);
+    distance -= (distanceToReduce);
+    this._startDepth += (distanceToReduce);
 
     this._pos = createVector(-90 + this._fillColourIndex*60,
                              -212, 
                              this._startDepth);
 
-    this._speed = 1200 / (60*4*bps); // speed = distance / time (in frames)
+    this._speed = distance / (60*4*beatInterval); // speed = distance / time (in frames)
     
     this.draw = function() {
         // draw note with given colour and position

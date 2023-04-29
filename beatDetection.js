@@ -1,4 +1,4 @@
-function BeatDetection(bps, difficultyValue) {
+function BeatDetection(beatInterval, difficultyValue) {
     // Some code taken and changed from source:
     // https://stackoverflow.com/questions/68401251/analyzing-songfile-using-fft-when-i-set-the-song-volume-to-0-in-p5-js
 
@@ -12,7 +12,7 @@ function BeatDetection(bps, difficultyValue) {
     currentSong.ghostSound.connect(mute);
     mute.connect();
 
-    this.bps = bps;  // amount of time in seconds between each pulse "beat"
+    this.beatInterval = beatInterval;  // amount of time in seconds between each pulse "beat"
 
     // determines how many frames before a peak can be detected.
     // lower value means more notes will spawn due to more peaks.
@@ -32,7 +32,7 @@ function BeatDetection(bps, difficultyValue) {
         currentSong.ghostSound.play();
         if (!this.initialised) {
             // start the song one bar (4 pulses) ahead if played for the first time
-            currentSong.ghostSound.jump(this.bps*4);
+            currentSong.ghostSound.jump(this.beatInterval*4);
             // p5 sound jump method was buggy and not giving expected results.
             // code line below is a workaround found online from source:
             // https://github.com/processing/p5.js-sound/issues/372#issuecomment-560027420

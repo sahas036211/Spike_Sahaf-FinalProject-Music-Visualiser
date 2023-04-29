@@ -2,7 +2,7 @@ function RhythmGame() {
     this.score = 0; // Initialise score and combo to zero
     this.combo = 0;
     this.songName = currentSong.songName; // Name of song
-    this.songBps = 60/currentSong.bpm; // Song beats per second
+    this.songBeatInterval = 60/currentSong.bpm; // time in seconds between beat
     this.gs = createGraphics(700,700,WEBGL); // gs stands for "game space"
     this.notes = []; // Array that will contain all notes on the song "map"
     this.hitCount = 0; // Initialise hit and miss counts for hitrate stat
@@ -20,7 +20,11 @@ function RhythmGame() {
     this.yellowHitZone = createVector(-30,-195,640);
     this.blueHitZone = createVector(30,-195,640);
     this.greenHitZone = createVector(90,-195,640);
-    this.highway = createVector(-93, -190, 0);
+    // amount to reduce the highway depth by depending on where notes will spawn
+    let highwayShortenAmt = map(this.songBeatInterval,
+                                1, 60/180,
+                                0, 600);
+    this.highway = createVector(-93, -190, highwayShortenAmt/2);
     // array containing all 4 hit zones
     this.hitZones = [this.redHitZone, this.yellowHitZone,
                      this.blueHitZone, this.greenHitZone]
@@ -96,10 +100,10 @@ function RhythmGame() {
         this.gs.push();
         this.gs.fill(100);
         this.gs.translate(this.highway);
-        this.gs.box(62,10,1400);
+        this.gs.box(62,10,1400-highwayShortenAmt);
         for (var i = 0; i < 3; i++) {
             this.gs.translate(62,0,0);
-            this.gs.box(62,10,1400);
+            this.gs.box(62,10,1400-highwayShortenAmt);
         }
         this.gs.pop();
 
@@ -184,9 +188,9 @@ function RhythmGame() {
         if (this.combo != 0) {
             push();
             textSize(20);
-            text('COMBO', width/2, 135);
+            text('COMBO', width/2, 270);
             textSize(76);
-            text(this.combo, width/2, 200);
+            text(this.combo, width/2, 335);
             pop();
         }
 
@@ -372,7 +376,7 @@ function RhythmGame() {
             if (this.playing) { // check game playing state is true
                 if (this.beatDetect.detectBeat()) { // run beat detection
                     // spawn new note when a beat is detected
-                    this.notes.push(new RhythmGameNote(this.gs, this.songBps));
+                    this.notes.push(new RhythmGameNote(this.gs, this.songBeatInterval));
                 }
             } else { // draw menu if game play state is false
                 this._drawPauseMenu();
@@ -499,7 +503,7 @@ function RhythmGame() {
                 }
                 if (this.difficultyValue != 0) {
                     // initialise new beat detection object with difficulty
-                    this.beatDetect = new BeatDetection(this.songBps,
+                    this.beatDetect = new BeatDetection(this.songBeatInterval,
                                                         this.difficultyValue);
                     // set game state values to true
                     this.gameStarted = true;
