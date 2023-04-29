@@ -142,6 +142,10 @@ function setup() {
   
 	// Instantiate controls object for visualisations
 	controls = new ControlsAndInput();
+
+	karaoke = new KaraokeGame();
+	karaoke.initPitchDetection();
+	karaoke.analyzeSongPitchData();
   
 	// Create a new visualisation container and add visualisations
 	vis = new Visualisations();
@@ -167,7 +171,6 @@ function draw() {
   	}  else if (home.selected === home.options[1]) {
     	//draw the karaoke game
     	karaoke.draw();
-		karaoke.analyzeSongPitchData();
 		getAudioContext().resume();
   	} else if (home.selected === home.options[2]) {
     	// draw visualisers
@@ -198,10 +201,6 @@ function mouseClicked() {
 			if (home.selected === home.options[0]) {
 				// Create new rhythm game object if rhythm game selected
 				rhythm = new RhythmGame();
-			} else if (home.selected === home.options[1]) {
-				// Create new karaoke game object if karaoke game selected
-				karaoke = new KaraokeGame();
-				karaoke.initPitchDetection();
 			}
 		} else if (home.selected === home.options[0]) {
 			rhythm.mousePressed();
@@ -223,11 +222,7 @@ function keyPressed() {
 			if (home.selected === home.options[0]) {
 				// Create new rhythm game object if rhythm game selected
 				rhythm = new RhythmGame();
-			} else if (home.selected === home.options[1]) {
-				// Create new karaoke game object if karaoke game selected
-				karaoke = new KaraokeGame();
-				karaoke.initPitchDetection();
-			}
+			} 
 		} else if (home.selected === home.options[0]) {
 			rhythm.keyPressed(key);
 		} else if (home.selected === home.options[1]) {
