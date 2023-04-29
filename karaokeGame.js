@@ -63,8 +63,6 @@ function KaraokeGame() {
             console.error("Error starting microphone input:", error); // If there's any error while starting the mic input, it gets logged here
         });
     };   
-
-    this.initPitchDetection();
     
     this.pointsAdded = 0; // The number of points added to the score in the last frame
 

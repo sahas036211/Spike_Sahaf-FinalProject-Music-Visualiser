@@ -201,6 +201,7 @@ function mouseClicked() {
 			} else if (home.selected === home.options[1]) {
 				// Create new karaoke game object if karaoke game selected
 				karaoke = new KaraokeGame();
+				karaoke.initPitchDetection();
 			}
 		} else if (home.selected === home.options[0]) {
 			rhythm.mousePressed();
@@ -225,6 +226,7 @@ function keyPressed() {
 			} else if (home.selected === home.options[1]) {
 				// Create new karaoke game object if karaoke game selected
 				karaoke = new KaraokeGame();
+				karaoke.initPitchDetection();
 			}
 		} else if (home.selected === home.options[0]) {
 			rhythm.keyPressed(key);
