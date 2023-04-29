@@ -344,15 +344,12 @@ function RhythmGame() {
         // draw back button at bottom of screen
         push();
         fill(255);
-        rectMode(CENTER);
-        rect(width/2, 775, 700, 120);
-        fill(0);
         textAlign(CENTER);
         if (mouseY > 715 && mouseY < 835 &&
             mouseX < (width/2)+350 && mouseX > (width/2)-350) { // check mouse pos
             textStyle(BOLD); // menu option bold when hovered over
         }
-        text('BACK TO MENU', width/2, 800);
+        text('BACK TO MAIN MENU', width/2, 800);
         pop();
 
         textAlign(LEFT);
