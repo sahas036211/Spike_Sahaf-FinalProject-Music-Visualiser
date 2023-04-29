@@ -2,7 +2,7 @@ function RhythmGame() {
     this.score = 0; // Initialise score and combo to zero
     this.combo = 0;
     this.songName = currentSong.songName; // Name of song
-    this.songBps = currentSong.bpm/60; // Song beats per second
+    this.songBps = 60/currentSong.bpm; // Song beats per second
     this.gs = createGraphics(700,700,WEBGL); // gs stands for "game space"
     this.notes = []; // Array that will contain all notes on the song "map"
     this.hitCount = 0; // Initialise hit and miss counts for hitrate stat

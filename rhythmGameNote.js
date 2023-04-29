@@ -22,7 +22,7 @@ function RhythmGameNote(gs, bps) {
                              -212, 
                              this._startDepth);
 
-    this._speed = 1200*bps / (60*4); // speed = distance / time (in frames)
+    this._speed = 1200 / (60*4*bps); // speed = distance / time (in frames)
     
     this.draw = function() {
         // draw note with given colour and position
