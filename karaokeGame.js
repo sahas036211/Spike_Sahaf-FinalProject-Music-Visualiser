@@ -4,7 +4,6 @@ function KaraokeGame() {
     this.pitchDetect = null;
     this._pitchDetectionReady = false;
     this._userPitch = null;
-    this.lyricsData = [];
     this.songPitchData = [];
     this.songPitchHistory = [];
     this.userPitchHistory = [];
@@ -20,8 +19,6 @@ function KaraokeGame() {
     this.updateRate = 5; // The update rate (every N frames)
     this.maxDataPoints = 200; // Number of data points stored in the arrays
     this.updateCounter = 0; // Counter used to track frame updates
-
-
 
     // set gif overlay effects to paused at start
     glitter.pause();
@@ -82,23 +79,6 @@ function KaraokeGame() {
         } else {
             this.pointsAdded = 0; // No points added if the user's pitch is not within tolerance
         }
-    };
-
-    //source based on guide from https://dev.to/mcanam/javascript-lyric-synchronizer-4i15
-    this.loadLyrics = function(lrcFile) {
-        loadStrings(lrcFile, (lines) => {
-            lines.forEach((line) => {
-                let match = line.match(/^\[(\d{2}):(\d{2})\.(\d{2})\](.*)$/);
-                if (match) {
-                    let minutes = parseInt(match[1]);
-                    let seconds = parseInt(match[2]);
-                    let milliseconds = parseInt(match[3]);
-                    let text = match[4].trim();
-                    let time = minutes * 60 + seconds + milliseconds / 100;
-                    this.lyricsData.push({ time, text });
-                }
-            });
-        });
     };
 
     this.getSongPitchAt = function(time) {
@@ -169,8 +149,8 @@ function KaraokeGame() {
         let currentTime = currentSong.sound.currentTime();
         let currentLyricIndex = null;
         
-        for (let i = 0; i < this.lyricsData.length; i++) {
-            if (currentTime >= this.lyricsData[i].time) {
+        for (let i = 0; i < currentSong.lyricsData.length; i++) {
+            if (currentTime >= currentSong.lyricsData[i].time) {
                 currentLyricIndex = i;
             } else {
                 break;
@@ -184,11 +164,11 @@ function KaraokeGame() {
             fill(255);
             stroke(0);
             strokeWeight(3);
-            text(this.lyricsData[currentLyricIndex].text, width / 2, height - 200);
-            if (currentLyricIndex != this.lyricsData.length-1) {
+            text(currentSong.lyricsData[currentLyricIndex].text, width / 2, height - 200);
+            if (currentLyricIndex != currentSong.lyricsData.length-1) {
                 fill(140);
                 textSize(55);
-                text(this.lyricsData[currentLyricIndex+1].text, width/2, height - 100);
+                text(currentSong.lyricsData[currentLyricIndex+1].text, width/2, height - 100);
             }
             pop();
         }
@@ -276,19 +256,6 @@ function KaraokeGame() {
         }
         pop();
     }
-
-    if (currentSong.songName == 'BAKA MITAI') {
-        this.loadLyrics('assets/bakamitailyrics.lrc');
-    } else if (currentSong.songName == 'DEMIURGE') {
-        this.loadLyrics('assets/demiurgelyrics.lrc');
-    } else if (currentSong.songName == 'CHESTNUTS') {
-        this.loadLyrics('assets/chestnutslyrics.lrc');
-    } else if (currentSong.songName == 'NEW TANK') {
-        this.loadLyrics('assets/newtanklyrics.lrc');
-    } else if (currentSong.songName === 'PEPTO BISMOL') {
-        this.loadLyrics('assets/peptobismollyrics.lrc');
-    }
-
 
     this.draw = function() {  
 

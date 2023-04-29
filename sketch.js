@@ -18,6 +18,13 @@ var demiurgeGS = null;
 var chestnutsGS = null;
 var newtankGS = null;
 var peptobismolGS = null;
+//variables for lyric files of songs
+var bakamitaiLyrics = null;
+var demiurgeLyrics = null;
+var chestnutsLyrics = null;
+var newtankLyrics = null;
+var peptobismolLyrics = null;
+
 //variable for array that will contain song information
 var songs = [];
 //variable for currently selected sound object to be played
@@ -42,56 +49,84 @@ function preload() {
 	// baka mitai
 	bakamitai = loadSound('assets/bakamitai.flac');
 	bakamitaiGS = loadSound('assets/bakamitai.flac'); // ghost song
+	bakamitaiLyrics = loadStrings('assets/bakamitailyrics.lrc'); // lyrics
+
 	// demiurge
 	demiurge = loadSound('assets/demiurge.mp3');
 	demiurgeGS = loadSound('assets/demiurge.mp3'); // ghost song
+	demiurgeLyrics = loadStrings('assets/demiurgelyrics.lrc'); // lyrics
+
 	// chestnuts
 	chestnuts = loadSound('assets/chestnuts.mp3');
 	chestnutsGS = loadSound('assets/chestnuts.mp3'); // ghost song
+	chestnutsLyrics = loadStrings('assets/chestnutslyrics.lrc'); // lyrics
+
 	// new tank
 	newtank = loadSound('assets/newtank.mp3');
 	newtankGS = loadSound('assets/newtank.mp3'); // ghost song
+	newtankLyrics = loadStrings('assets/newtanklyrics.lrc'); // lyrics
+	
 	// pepto bismol
 	peptobismol = loadSound('assets/peptobismol.mp3');
-	peptobismolGS = loadSound('assets/peptobismol.mp3');
-
-	songs = [
-	   {
-		songName: 'BAKA MITAI', sound: bakamitai, ghostSound: bakamitaiGS,
-		freq1: 200, freq2: 4000, bpm: 74, threshold: 0.5
-	   },
-		
-	   {
-		songName: 'DEMIURGE', sound: demiurge, ghostSound: demiurgeGS,
-		freq1: 20, freq2: 20000, bpm: 84, threshold: 0.1
-	   },
-
-	   {
-		songName: 'CHESTNUTS', sound: chestnuts, ghostSound: chestnutsGS,
-		freq1: 200, freq2: 4000, bpm: 68, threshold: 0.5
-	   },
-
-	   {
-		songName: 'NEW TANK', sound: newtank, ghostSound: newtankGS,
-		freq1: 20, freq2: 20000, bpm: 151, threshold: 0.1
-	   },
-
-	   {
-		songName: 'PEPTO BISMOL', sound: peptobismol, ghostSound: peptobismolGS,
-		freq1: 20, freq2: 20000, bpm: 140, threshold: 0.1
-	   }
-	];
-
-	// default all songs to half volume
-	for (var i = 0; i < songs.length; i++) {
-		songs[i].sound.setVolume(0.5);
-	}
-
-	// default song set to baka mitai
-	currentSong = songs[0];
+	peptobismolGS = loadSound('assets/peptobismol.mp3'); // ghost song
+	peptobismolLyrics = loadStrings('assets/peptobismollyrics.lrc'); // lyrics
 }
 
 function setup() {
+	songs = [
+		{
+		 songName: 'BAKA MITAI', sound: bakamitai, ghostSound: bakamitaiGS,
+		 freq1: 200, freq2: 4000, bpm: 74, threshold: 0.5,
+		 lyrics: bakamitaiLyrics, lyricsData: []
+		},
+		 
+		{
+		 songName: 'DEMIURGE', sound: demiurge, ghostSound: demiurgeGS,
+		 freq1: 20, freq2: 20000, bpm: 84, threshold: 0.1,
+		 lyrics: demiurgeLyrics, lyricsData: []
+		},
+ 
+		{
+		 songName: 'CHESTNUTS', sound: chestnuts, ghostSound: chestnutsGS,
+		 freq1: 200, freq2: 4000, bpm: 68, threshold: 0.5,
+		 lyrics: chestnutsLyrics, lyricsData: []
+		},
+ 
+		{
+		 songName: 'NEW TANK', sound: newtank, ghostSound: newtankGS,
+		 freq1: 20, freq2: 20000, bpm: 151, threshold: 0.1,
+		 lyrics: newtankLyrics, lyricsData: []
+		},
+ 
+		{
+		 songName: 'PEPTO BISMOL', sound: peptobismol, ghostSound: peptobismolGS,
+		 freq1: 20, freq2: 20000, bpm: 140, threshold: 0.1,
+		 lyrics: peptobismolLyrics, lyricsData: []
+		}
+	];
+ 
+	for (var i = 0; i < songs.length; i++) {
+		// default all songs to half volume
+		songs[i].sound.setVolume(0.5);
+ 
+		// code based on source: https://dev.to/mcanam/javascript-lyric-synchronizer-4i15
+		lines = songs[i].lyrics;
+		lines.forEach(line => {
+			let match = line.match(/^\[(\d{2}):(\d{2})\.(\d{2})\](.*)$/);
+			if (match) {
+				let minutes = parseInt(match[1]);
+				let seconds = parseInt(match[2]);
+				let milliseconds = parseInt(match[3]);
+				let text = match[4].trim();
+				let time = minutes * 60 + seconds + milliseconds / 100;
+				songs[i].lyricsData.push({ time, text });
+			}
+		})
+	}
+ 
+	// default song set to baka mitai
+	currentSong = songs[0];
+
 	createCanvas(1920, 920); // Lock canvas size
 	background(0);
 	frameRate(60); // Set framerate to constant 60 fps for consistency
