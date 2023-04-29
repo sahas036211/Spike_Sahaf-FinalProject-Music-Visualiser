@@ -132,6 +132,8 @@ function draw() {
   	}  else if (home.selected === home.options[1]) {
     	//draw the karaoke game
     	karaoke.draw();
+		karaoke.analyzeSongPitchData();
+		getAudioContext().resume();
   	} else if (home.selected === home.options[2]) {
     	// draw visualisers
     	vis.selectedVisual.draw();

@@ -16,6 +16,12 @@ function KaraokeGame() {
     this.useCameraBackground = false; // Initialise useCameraBackground to false
     this.video = null; // Initialise video to null
     this.showVisuals = true; // Initialise showVisuals to true
+    this.analyzeSongPitchDataCalled = false //
+    this.updateRate = 5; // The update rate (every N frames)
+    this.maxDataPoints = 200; // Number of data points stored in the arrays
+    this.updateCounter = 0; // Counter used to track frame updates
+
+
 
     // set gif overlay effects to paused at start
     glitter.pause();
@@ -129,32 +135,34 @@ function KaraokeGame() {
     this.drawPitchWaveform = function() {
         let waveformHeight = 200; // Adjust the height of the waveform as desired
         let waveformY = height - waveformHeight - 50; // Position the waveform above the lyrics display
-  
+    
         push();
-        strokeWeight(2);
-  
-        // Draw the song's pitch waveform
-        stroke(255, 0, 0);
-        for (let i = 1; i < this.songPitchHistory.length; i++) {
-            let x1 = map(i - 1, 0, this.songPitchHistory.length, 0, width);
-            let x2 = map(i, 0, this.songPitchHistory.length, 0, width);
-            let y1 = map(this.songPitchHistory[i - 1], 0, 2000, waveformY + waveformHeight, waveformY);
-            let y2 = map(this.songPitchHistory[i], 0, 2000, waveformY + waveformHeight, waveformY);
-            line(x1, y1, x2, y2);
-        }
-      
-        // Draw the user's pitch waveform
-        stroke(0, 255, 0);
-        for (let i = 1; i < this.userPitchHistory.length; i++) {
-            let x1 = map(i - 1, 0, this.userPitchHistory.length, 0, width);
-            let x2 = map(i, 0, this.userPitchHistory.length, 0, width);
-            let y1 = map(this.userPitchHistory[i - 1], 0, 2000, waveformY + waveformHeight, waveformY);
-            let y2 = map(this.userPitchHistory[i], 0, 2000, waveformY + waveformHeight, waveformY);
-            line(x1, y1, x2, y2);
-        }
-      
+            noFill();
+            strokeWeight(2);
+        
+            // Draw the song's pitch waveform
+            stroke(255, 0, 0);
+            beginShape();
+            for (let i = 1; i < this.songPitchHistory.length; i++) {
+                let x = map(i, 0, this.songPitchHistory.length, 0, width);
+                let y = map(this.songPitchHistory[i], 0, 2000, waveformY + waveformHeight, waveformY);
+                vertex(x, y);
+            }
+            endShape();
+        
+            // Draw the user's pitch waveform
+            stroke(0, 255, 0);
+            beginShape();
+            for (let i = 1; i < this.userPitchHistory.length; i++) {
+                let x = map(i, 0, this.userPitchHistory.length, 0, width);
+                let y = map(this.userPitchHistory[i], 0, 2000, waveformY + waveformHeight, waveformY);
+                vertex(x, y);
+            }
+            endShape();
+    
         pop();
     };
+    
   
 
     this.drawLyrics = function() {
@@ -188,29 +196,31 @@ function KaraokeGame() {
   
 
     this.drawDualPitchBars = function(userPitch, songPitch) {
-        let barWidth = 50;
-        let barHeight = 1000;
-        let maxPitch = 2000;
-
-        let userBarX = 50;
-        let songBarX = 150;
-
-        let userFilledHeight = map(userPitch, 0, maxPitch, 0, barHeight);
-        let songFilledHeight = map(songPitch, 0, maxPitch, 0, barHeight);
-
+        // Constants for bar dimensions and maximum pitch
+        const barWidth = 50;
+        const barHeight = 300;
+        const maxPitch = 1000;
+    
+        // X-coordinates for user and song pitch bars
+        const userBarX = 50;
+        const songBarX = 150;
+    
+        // Calculate the filled heights of the user and song pitch bars, ensuring they are within the range of 0 to barHeight
+        const userFilledHeight = Math.min(barHeight, Math.max(0, (userPitch / maxPitch) * barHeight));
+        const songFilledHeight = Math.min(barHeight, Math.max(0, (songPitch / maxPitch) * barHeight));
+    
         push();
-        noStroke();
-
-        // Draw the user pitch bar
-        fill(0, 255, 0, 150);
-        rect(userBarX, height - userFilledHeight - 200, barWidth, userFilledHeight);
-
-        // Draw the song pitch bar
-        fill(255, 0, 0, 150);
-        rect(songBarX, height - songFilledHeight - 200, barWidth, songFilledHeight);
-
+            noStroke();
+        
+            // Draw the user pitch bar based on the user's pitch value
+            fill(0, 255, 0, 150);
+            rect(userBarX, height - userFilledHeight - 200, barWidth, userFilledHeight);
+        
+            // Draw the song pitch bar based on the song's pitch value
+            fill(255, 0, 0, 150);
+            rect(songBarX, height - songFilledHeight - 200, barWidth, songFilledHeight);
         pop();
-    };
+    };    
 
     this._drawPauseMenu = function() {
         push();
@@ -313,6 +323,8 @@ function KaraokeGame() {
         // Draw current song time & length of song in minutes:seconds format
         if (this.playing) {
             this.songCurrentTime = this._convertToMins(currentSong.sound.currentTime());
+            this.update();
+            this.drawLyrics();
         }
         text(`${this.songCurrentTime} / ${this.songDuration}`, width - 340, 250);
 
@@ -327,17 +339,13 @@ function KaraokeGame() {
         
         let songPitch = this.getSongPitchAt(currentSong.sound.currentTime()) || 0;
         let userPitch = this._userPitch || 0;
+
+
         
         if (this.showVisuals) {
              this.drawDualPitchBars(userPitch, songPitch);
-
             this.drawPitchWaveform();
         }
-
-        this.update();
-        this.drawLyrics();
-        getAudioContext().resume();
-        this.analyzeSongPitchData();
 
         if (!this.playing) {
             this._drawPauseMenu();
@@ -346,8 +354,16 @@ function KaraokeGame() {
     };
 
     this.analyzeSongPitchData = function () {
+        // Check if the function has already been executed
+        if (this.analyzeSongPitchDataCalled) {
+          return; // Exit the function if it has been executed before
+        }
+      
+        // Set the flag to indicate the function has been executed
+        this.analyzeSongPitchDataCalled = true;
+      
         let duration = currentSong.sound.duration(); // Get the duration of the song
-        let interval = 1; // Analyze pitch data every 1 second
+        let interval = 0.5; // Analyze pitch data every 5 miliseconds
       
         fourier.setInput(currentSong.sound); // Set the sound as the input for the FFT
       
@@ -394,8 +410,8 @@ function KaraokeGame() {
       
         // Start analyzing the pitch data from the beginning of the song
         analyze(0);
-      };      
-  
+      };
+      
     this.lastScoreUpdateTime = 0; // Add this line in the KaraokeGame constructor
 
     this.update = function() {
@@ -423,7 +439,63 @@ function KaraokeGame() {
                 });
                 // Update the lastScoreUpdateTime variable to the current time
                 this.lastScoreUpdateTime = millis();
-              } else {
+              } else {this.update = function() {
+                // Checks if 1 second have passed since the last score update
+                if (millis() - this.lastScoreUpdateTime >= 100) {
+                    // Checks if the pitch detection model is loaded and ready, and the song is playing
+                    if (this.pitchDetection && this._pitchDetectionReady && this.playing) {
+                        // Uses the in-built ml5 pitchDetection object to get the user's pitch from the microphone input
+                        this.pitchDetection.getPitch((err, frequency) => {
+                            if (err) {
+                                console.error("Error getting pitch:", err);
+                            }
+                            //So if a frequency is actually detected, it will update the user's pitch
+                            if (frequency) {
+                                this._userPitch = frequency;
+                                //Uses the getSongPitchAt function to get the song's pitch at the current time
+                                let songPitch = this.getSongPitchAt(currentSong.sound.currentTime());
+                                // It calls the calculateScore function to calculate the score based on the user's pitch and the song's pitch
+                                this.calculateScore(this._userPitch, songPitch);
+                                console.log("Song pitch: " + songPitch);
+                                console.log("User Pitch: " + this._userPitch);
+                            } else {
+                                console.log("Frequency is not detected");
+                            }
+                        });
+                        // Update the lastScoreUpdateTime variable to the current time
+                        this.lastScoreUpdateTime = millis();
+                    } else {
+                        console.log("Pitch detection is not ready");
+                    }
+                }
+            
+                // Increment the update counter
+                this.updateCounter++;
+            
+                // If the song is playing and the update counter reaches the specified update rate
+                if (this.playing && this.updateCounter >= this.updateRate) {
+                    let songPitch = this.getSongPitchAt(currentSong.sound.currentTime());
+                    let userPitch = this._userPitch;
+            
+                    // Adds the song's pitch to the songPitchHistory array
+                    this.songPitchHistory.push(songPitch || 0);
+                    // If the songPitchHistory array exceeds the maxDataPoints limit, remove the oldest data point
+                    if (this.songPitchHistory.length > this.maxDataPoints) {
+                        this.songPitchHistory.shift();
+                    }
+            
+                    // Adds the user's pitch to the userPitchHistory array
+                    this.userPitchHistory.push(userPitch || 0);
+                    // If the userPitchHistory array exceeds the maxDataPoints limit, remove the oldest data point
+                    if (this.userPitchHistory.length > this.maxDataPoints) {
+                        this.userPitchHistory.shift();
+                    }
+            
+                    // Resets the update counter
+                    this.updateCounter = 0;
+                }
+            }
+            
                 console.log("Pitch detection is not ready");
             }
         }
