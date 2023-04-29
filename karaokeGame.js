@@ -19,6 +19,9 @@ function KaraokeGame() {
     this.updateRate = 5; // The update rate (every N frames)
     this.maxDataPoints = 200; // Number of data points stored in the arrays
     this.updateCounter = 0; // Counter used to track frame updates
+    this.pitchDetectionThrottle = 500; // Throttle pitch detection calls to every 500 ms
+    this.lastPitchDetectionTime = 0; // Initialize the last pitch detection time
+
 
     // set gif overlay effects to paused at start
     glitter.pause();
@@ -383,98 +386,50 @@ function KaraokeGame() {
 
     this.update = function() {
         // Checks if 1 second have passed since the last score update
-        if (millis() - this.lastScoreUpdateTime >= 100) {
+        if (millis() - this.lastScoreUpdateTime >= 1000) {
             // Checks if the pitch detection model is loaded and ready, and the song is playing
             if (this.pitchDetection && this._pitchDetectionReady && this.playing) {
-                // Uses the in-built ml5 pitchDetection object to get the user's pitch from the microphone input
-                this.pitchDetection.getPitch((err, frequency) => {
-                    if (err) {
-                        console.error("Error getting pitch:", err);
-                    }
-                    //So if a frequency is actually detected, it will update the user's pitch
-                    if (frequency) {
-                        this._userPitch = frequency;
-                        //Uses the getSongPitchAt function to get the song's pitch at the current time
-                        let songPitch = this.getSongPitchAt(currentSong.sound.currentTime());
-                        // It calls the calculateScore function to calculate the score based on the user's pitch and the song's pitch
-                        this.calculateScore(this._userPitch, songPitch);
-                        console.log("Song pitch: " + songPitch);
-                        console.log("User Pitch: " + this._userPitch);
-                    } else {
-                        console.log("Frequency is not detected");
-                    }
-                });
-                // Update the lastScoreUpdateTime variable to the current time
-                this.lastScoreUpdateTime = millis();
-              } else {this.update = function() {
-                // Checks if 1 second have passed since the last score update
-                if (millis() - this.lastScoreUpdateTime >= 100) {
-                    // Checks if the pitch detection model is loaded and ready, and the song is playing
-                    if (this.pitchDetection && this._pitchDetectionReady && this.playing) {
-                        // Uses the in-built ml5 pitchDetection object to get the user's pitch from the microphone input
-                        this.pitchDetection.getPitch((err, frequency) => {
-                            if (err) {
-                                console.error("Error getting pitch:", err);
-                            }
-                            //So if a frequency is actually detected, it will update the user's pitch
-                            if (frequency) {
-                                this._userPitch = frequency;
-                                //Uses the getSongPitchAt function to get the song's pitch at the current time
-                                let songPitch = this.getSongPitchAt(currentSong.sound.currentTime());
-                                // It calls the calculateScore function to calculate the score based on the user's pitch and the song's pitch
-                                this.calculateScore(this._userPitch, songPitch);
-                                console.log("Song pitch: " + songPitch);
-                                console.log("User Pitch: " + this._userPitch);
-                            } else {
-                                console.log("Frequency is not detected");
-                            }
-                        });
-                        // Update the lastScoreUpdateTime variable to the current time
-                        this.lastScoreUpdateTime = millis();
-                    } else {
-                        console.log("Pitch detection is not ready");
-                    }
+                // Throttle pitch detection calls
+                if (millis() - this.lastPitchDetectionTime >= this.pitchDetectionThrottle) {
+                    // Update the last pitch detection time
+                    this.lastPitchDetectionTime = millis();
+                    
+                    // Uses the in-built ml5 pitchDetection object to get the user's pitch from the microphone input
+                    this.pitchDetection.getPitch((err, frequency) => {
+                        if (err) {
+                            console.error("Error getting pitch:", err);
+                        }
+                        // So if a frequency is actually detected, it will update the user's pitch
+                        if (frequency) {
+                            this._userPitch = frequency;
+                            // Uses the getSongPitchAt function to get the song's pitch at the current time
+                            let songPitch = this.getSongPitchAt(currentSong.sound.currentTime());
+                            // It calls the calculateScore function to calculate the score based on the user's pitch and the song's pitch
+                            this.calculateScore(this._userPitch, songPitch);
+                            console.log("Song pitch: " + songPitch);
+                            console.log("User Pitch: " + this._userPitch);
+                        } else {
+                            console.log("Frequency is not detected");
+                        }
+                    });
                 }
-            
-                // Increment the update counter
-                this.updateCounter++;
-            
-                // If the song is playing and the update counter reaches the specified update rate
-                if (this.playing && this.updateCounter >= this.updateRate) {
-                    let songPitch = this.getSongPitchAt(currentSong.sound.currentTime());
-                    let userPitch = this._userPitch;
-            
-                    // Adds the song's pitch to the songPitchHistory array
-                    this.songPitchHistory.push(songPitch || 0);
-                    // If the songPitchHistory array exceeds the maxDataPoints limit, remove the oldest data point
-                    if (this.songPitchHistory.length > this.maxDataPoints) {
-                        this.songPitchHistory.shift();
-                    }
-            
-                    // Adds the user's pitch to the userPitchHistory array
-                    this.userPitchHistory.push(userPitch || 0);
-                    // If the userPitchHistory array exceeds the maxDataPoints limit, remove the oldest data point
-                    if (this.userPitchHistory.length > this.maxDataPoints) {
-                        this.userPitchHistory.shift();
-                    }
-            
-                    // Resets the update counter
-                    this.updateCounter = 0;
-                }
-            }
-            
+            } else {
                 console.log("Pitch detection is not ready");
             }
+    
+            // Update the lastScoreUpdateTime variable to the current time
+            this.lastScoreUpdateTime = millis();
         }
-
+    
         if (this.playing) {
             let songPitch = this.getSongPitchAt(currentSong.sound.currentTime());
             let userPitch = this._userPitch;
-        
+    
             this.songPitchHistory.push(songPitch || 0);
             this.userPitchHistory.push(userPitch || 0);
         }
     }
+    
 
     //
     // ------------ INPUT HANDLER FUNCTIONS ------------
