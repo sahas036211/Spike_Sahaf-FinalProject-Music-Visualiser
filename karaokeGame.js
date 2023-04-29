@@ -17,6 +17,10 @@ function KaraokeGame() {
     this.video = null; // Initialise video to null
     this.showVisuals = true; // Initialise showVisuals to true
 
+    // set gif overlay effects to paused at start
+    glitter.pause();
+    hearts.pause();
+    butterflies.pause();
 
     /**
      * Converts a given number in seconds to minute:seconds format.
@@ -232,6 +236,10 @@ function KaraokeGame() {
                       currentSong.sound.jump();
                       setTimeout(function(){ Object.assign(currentSong.sound, {_playing: true}); }, 100);
                   }
+                  // play overlay effect gifs
+                  glitter.play();
+                  hearts.play();
+                  butterflies.play();
                   // sets playing condition to true
                   this.playing = true;
                   this.unpauseCountdown = -1;
@@ -282,7 +290,8 @@ function KaraokeGame() {
         }
 
         // draw glitter and hearts overlay gifs
-        image(glitter, 0, 0, width, height);
+        image(glitter, 0, 0, width/2, height);
+        image(glitter, width/2, 0, width/2, height);
         image(hearts, 0, 0, width, height);
         image(butterflies, 0, 0, width, height);
 
@@ -439,6 +448,10 @@ function KaraokeGame() {
                 this.songCurrentTime = this._convertToMins(currentSong.sound.currentTime());
                 // pauses music
                 currentSong.sound.pause();
+                // pauses gif overlay effects
+                glitter.pause();
+                hearts.pause();
+                butterflies.pause();
                 this.playing = false; // sets playstate to false
             }
         } else {

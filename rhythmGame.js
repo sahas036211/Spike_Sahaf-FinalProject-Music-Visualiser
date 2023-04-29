@@ -15,6 +15,8 @@ function RhythmGame() {
     this.songCurrentTime = "0:00"; // Initialise song time to 0
     this.unpauseCountdown = -1; // Initialise unpause countdown to -1
 
+    glitter.pause(); // set glitter overlay gif to paused at start
+
     // 3d object vectors
     this.redHitZone = createVector(-90,-195,640);
     this.yellowHitZone = createVector(-30,-195,640);
@@ -262,6 +264,8 @@ function RhythmGame() {
                 }
                 // plays muted music used for beat detection
                 this.beatDetect.playGhostSong();
+                // play glitter overlay gif
+                glitter.play();
                 // sets playing condition to true
                 this.playing = true;
                 this.unpauseCountdown = -1;
@@ -464,6 +468,8 @@ function RhythmGame() {
                 // pauses music
     			currentSong.sound.pause();
                 currentSong.ghostSound.pause();
+                // pauses glitter overlay gif
+                glitter.pause();
                 this.playing = false; // sets playstate to false
             }
         } else {
