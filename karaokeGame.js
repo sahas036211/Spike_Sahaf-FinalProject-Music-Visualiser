@@ -47,7 +47,6 @@ function KaraokeGame() {
         
             // The following code initializes the ml5 pitch detection model with the audio context and the microphone input stream
             this.pitchDetection = ml5.pitchDetection('./model/', audioContext, this.mic.stream, () => {
-                console.log("Pitch detection model loaded");
                 this._pitchDetectionReady = true; // So this sets the pitch detection ready flag to true once the model is loaded
             });
         }, (error) => {
@@ -337,52 +336,56 @@ function KaraokeGame() {
         
     };
 
-    this.analyzeSongPitchData = function() {
+    this.analyzeSongPitchData = function () {
         let duration = currentSong.sound.duration(); // Get the duration of the song
-        let interval = 0.1; // Analyze pitch data every 0.1 seconds
+        let interval = 1; // Analyze pitch data every 1 second
       
         fourier.setInput(currentSong.sound); // Set the sound as the input for the FFT
       
         // Function to analyze the pitch data at a given time
         let analyze = (currentTime) => {
-            if (currentTime >= duration) {
-                // If the currentTime exceeds the song's duration, exit the function
-                return;
-            }
+          if (currentTime >= duration) {
+            // If the currentTime exceeds the song's duration, exit the function
+            return;
+          }
       
+          if (currentSong.sound.isPlaying()) {
             // Get the frequency spectrum of the song at the current time
             let spectrum = fourier.analyze();
             let maxAmplitudeIndex = -1;
             let maxAmplitude = -Infinity;
-        
+      
             // Find the index with the maximum amplitude in the spectrum
             for (let i = 0; i < spectrum.length; i++) {
-                if (spectrum[i] > maxAmplitude) {
-                    maxAmplitude = spectrum[i];
-                    maxAmplitudeIndex = i;
-                }
+              if (spectrum[i] > maxAmplitude) {
+                maxAmplitude = spectrum[i];
+                maxAmplitudeIndex = i;
+              }
             }
       
             // Get the dominant frequency using the index with the maximum amplitude
             let sampleRate = currentSong.sound.sampleRate(); // Get the sample rate from the sound
             let fftSize = fourier.bins * 2; // Calculate the FFT size (twice the number of bins)
             let dominantFrequency = maxAmplitudeIndex * sampleRate / (2 * fftSize); // Calculate the frequency using the formula
-        
+      
             let roundedTime = Math.round(currentTime * 10) / 10;
       
             // Save the dominant frequency and the corresponding time in the songPitchData array
             this.songPitchData.push({
-                time: roundedTime,
-                pitch: dominantFrequency,
+              time: roundedTime,
+              pitch: dominantFrequency,
             });
+          }
       
-            // Schedule the next pitch analysis after the defined interval
-            setTimeout(() => {analyze(currentTime + interval)}, interval * 1000);
+          // Schedule the next pitch analysis after the defined interval
+          setTimeout(() => {
+            analyze(currentTime + interval);
+          }, interval * 1000);
         };
       
         // Start analyzing the pitch data from the beginning of the song
         analyze(0);
-    }
+      };      
   
     this.lastScoreUpdateTime = 0; // Add this line in the KaraokeGame constructor
 
