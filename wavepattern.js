@@ -1,7 +1,7 @@
 //draw the waveform to the screen
 function WavePattern() {
 	//vis name
-	this.name = "wavepattern";
+	this.name = "WAVEPATTERN";
 
 	//draw the wave form to the screen
 	this.draw = function() {

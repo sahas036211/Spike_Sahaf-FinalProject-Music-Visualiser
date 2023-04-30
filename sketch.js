@@ -1,7 +1,5 @@
-//global for the controls and input 
-var controls = null;
 //store visualisations in a container
-var vis = null;
+var visScreen = null;
 //global for home screen
 var home = null;
 //global for rhythm game
@@ -145,20 +143,14 @@ function setup() {
 	// Instantiate settings screen object
 	settings = new SettingsScreen();
   
-	// Instantiate controls object for visualisations
-	controls = new ControlsAndInput();
-  
-	// Create a new visualisation container and add visualisations
-	vis = new Visualisations();
-	vis.add(new Spectrum());
-	vis.add(new WavePattern());
-	vis.add(new Needles());
+	// Instantiate visualisations screen object
+	visScreen = new VisualisationScreen();
 }
   
 function draw() {
 	settings.volumeSlider.hide();
-	if (controls.webcam) {
-        image(controls.webcam, 0, 0, width, height);
+	if (visScreen.controls.webcam) {
+        image(visScreen.controls.webcam, 0, 0, width, height);
     } else {
         background(0);
     }
@@ -175,8 +167,7 @@ function draw() {
 		getAudioContext().resume();
   	} else if (home.selected === home.options[2]) {
     	// draw visualisers
-    	vis.selectedVisual.draw();
-    	controls.draw();
+    	visScreen.draw();
   	} else if (home.selected === home.options[3]) {
 		// draw options and settings menu
 		settings.draw();
@@ -215,7 +206,7 @@ function mouseClicked() {
 		} else if (home.selected == home.options[1]) {
 			karaoke.mousePressed();
 		} else if (home.selected === home.options[2]) {
-			controls.mousePressed();
+			visScreen.controls.mousePressed();
 		} else if (home.selected === home.options[3]) {
 			settings.mousePressed();
 		}
@@ -243,7 +234,7 @@ function keyPressed() {
 		} else if (home.selected === home.options[1]) {
 			karaoke.keyPressed(key);
 		} else if (home.selected === home.options[2]) {
-			controls.keyPressed(keyCode);
+			visScreen.controls.keyPressed(keyCode);
 		} else if (home.selected === home.options[3]) {
 			settings.keyPressed(key);
 		}
@@ -256,13 +247,4 @@ function keyReleased() {
 			rhythm.keyReleased(key);
 		}
 	}
-}
-
-//when the window has been resized. Resize canvas to fit 
-//if the visualisation needs to be resized call its onResize method
-function windowResized() {
-  	resizeCanvas(windowWidth, windowHeight);
-  	if (vis.selectedVisual.hasOwnProperty('onResize')) {
-  		vis.selectedVisual.onResize();
-  	}
 }

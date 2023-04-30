@@ -1,9 +1,9 @@
 function PlaybackButton() {
 	
-	this.x = 20;
-	this.y = 20;
-	this.width = 20;
-	this.height = 20;
+	this.width = 30;
+	this.height = 30;
+	this.x = (width/2)-this.width;
+	this.y = height-160;
 
 	//flag to determine whether to play or pause after button click and
 	//to determine which icon to draw
@@ -12,7 +12,7 @@ function PlaybackButton() {
 	this.draw = function() {
 		if (this.playing) {
 			rect(this.x, this.y, this.width/2 - 2, this.height);
-			rect(this.x + (this.width/2 + 2), this.y, this.width/2 - 2, this.height);
+			rect(this.x + (this.width/2 + 3), this.y, this.width/2 - 2, this.height);
 		} else {
 			triangle(this.x, this.y,
                      this.x + this.width, this.y + this.height/2,

@@ -1,4 +1,4 @@
-function ControlsAndInput() {
+function VisControls() {
 	this.menuDisplayed = false;
   
 	// Playback button displayed in the top left of the screen
@@ -12,19 +12,10 @@ function ControlsAndInput() {
   
 	// Make the window fullscreen or revert to windowed
 	this.mousePressed = function() {
-	  // Check if the playback button has been clicked
-	  if (!this.playbackButton.hitCheck()) {
-		// Check if the mic button has been clicked
-		if (!this.micButton.hitCheck()) {
-			if (!this.webcamButton.hitCheck()) {
-				if (fullscreen()) {
-					fullscreen(false);
-				} else {
-					fullscreen(true);
-				}
-			}
-		}
-	  }
+	  // Check if buttons have been clicked
+	  this.playbackButton.hitCheck();
+	  this.micButton.hitCheck();
+	  this.webcamButton.hitcheck();
 	};
 
 	this.webcamButton = new WebcamButton();
@@ -54,7 +45,7 @@ function ControlsAndInput() {
 
 		if (keycode > 48 && keycode < 58) {
 			var visNumber = keycode - 49;
-			vis.selectVisual(vis.visuals[visNumber].name);
+			visScreen.vis.selectVisual(visScreen.visuals[visNumber].name);
 		}
 	};
 
@@ -64,14 +55,22 @@ function ControlsAndInput() {
 		fill("white");
 		stroke("black");
 		strokeWeight(2);
+		textAlign(CENTER);
 		textSize(34);
 
+		text('PRESS P TO RETURN \nTO MAIN MENU', width-340, 100);
 		//playback button
 		this.playbackButton.draw();
 		//only draw the menu if menu displayed is set to true.
 		if (this.menuDisplayed) {
-			text("Select a visualisation:", 100, 30);
+			textSize(40);
+			rectMode(CENTER);
+			rect(300, 105, 450, 80, 90);
+			fill("black");
+			text("VISUALISATIONS", 300, 120);
 			this.menu();
+		} else {
+			text("PRESS SPACE \nFOR VISUALISATIONS", 300, 100);
 		}
 		pop();
 
@@ -81,12 +80,19 @@ function ControlsAndInput() {
 
 	};
 
+	//draw out menu items for each visualisation
 	this.menu = function() {
-		//draw out menu items for each visualisation
-		//???
+		fill("white");
+		textSize(34);
+
+		text("PRESS SPACE TO HIDE", 300, 220);
+
 		//loop through the visualisations and draw out the name
-		for (var i = 0; i < vis.visuals.length; i++) {
-			text(i+1 + " - " + vis.visuals[i].name, 100, 60 + (i * 30)); 
+		for (var i = 0; i < visScreen.vis.visuals.length; i++) {
+			textAlign(RIGHT);
+			text(`${i+1}`, 160, 300 + (i * 50));
+			textAlign(LEFT);
+			text(`${visScreen.vis.visuals[i].name}`, 220, 300 + (i * 50)); 
 		}
 	};
 }

@@ -1,5 +1,5 @@
 function Spectrum() {
-	this.name = "spectrum";
+	this.name = "SPECTRUM";
 
 	this.draw = function() {
 		push();
