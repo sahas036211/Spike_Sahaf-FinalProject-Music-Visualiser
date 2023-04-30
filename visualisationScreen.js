@@ -20,14 +20,16 @@ function VisualisationScreen() {
         fill(255);
         rect(width/4, height-100, progressWidth, 25, 90, 0, 0, 90);
 
+        
+
         push();
         textAlign(RIGHT);
         textSize(24);
         text(convertToMins(currentSong.sound.currentTime()), 
-            (width/4)-40, height-80)
+            (width/4)-40, height-86)
         textAlign(LEFT);
         text(convertToMins(currentSong.sound.duration()), 
-            (width*0.75)+40, height-80)
+            (width*0.75)+40, height-86)
         pop();
 
         this.controls.draw();

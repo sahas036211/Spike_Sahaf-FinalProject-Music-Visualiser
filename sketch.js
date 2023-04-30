@@ -33,6 +33,8 @@ var currentSong = null;
 var glitter = null;
 var hearts = null;
 var butterflies = null;
+//variable for images for visualisation buttons
+var loopButtonImg = null;
 //variable for p5 fast fourier transform
 var fourier;
 
@@ -44,9 +46,13 @@ var preloadedPitchDetectionModel;
 
 // preload the songs and images to be used
 function preload() {
+	// gif overlay images
 	glitter = loadImage('assets/glitter.gif');
 	hearts = loadImage('assets/hearts.gif');
 	butterflies = loadImage('assets/butterflies.gif');
+
+	// visualisation button images
+	loopButtonImg = loadImage('assets/loopbutton.png');
 
 	// baka mitai
 	bakamitai = loadSound('assets/bakamitai.flac');

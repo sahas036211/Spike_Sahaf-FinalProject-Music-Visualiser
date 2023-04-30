@@ -12,6 +12,9 @@ function VisControls() {
 
 	// Web cam button to be displayed
 	this.webcamButton = new WebcamButton();
+
+	// Loop song button
+	this.loopButton = new LoopButton();
   
 	// Make the window fullscreen or revert to windowed
 	this.mousePressed = function() {
@@ -19,9 +22,8 @@ function VisControls() {
 	  	this.playbackButton.hitCheck();
 	  	this.micButton.hitCheck();
 	  	this.webcamButton.hitCheck();
+		this.loopButton.hitCheck();
 	};
-
-	
 
     // Webcam input
     this.webcam = null;
@@ -37,7 +39,6 @@ function VisControls() {
         }
     };
   
-
 	//responds to keyboard presses
 	//@param keycode the ascii code of the keypressed
 	this.keyPressed = function(keycode) {
@@ -52,7 +53,7 @@ function VisControls() {
 		}
 	};
 
-	//draws the playback button and potentially the menu
+	// draws the playback button and potentially the menu
 	this.draw = function() {
 		push();
 		fill("white");
@@ -62,9 +63,8 @@ function VisControls() {
 		textSize(34);
 
 		text('PRESS P TO RETURN \nTO MAIN MENU', width-340, 100);
-		//playback button
-		this.playbackButton.draw();
-		//only draw the menu if menu displayed is set to true.
+
+		// only draw the menu if menu displayed is set to true.
 		if (this.menuDisplayed) {
 			textSize(40);
 			rectMode(CENTER);
@@ -77,9 +77,41 @@ function VisControls() {
 		}
 		pop();
 
-		//mic button
+		// playback button
+		this.playbackButton.draw();
+
+		// loop button
+		this.loopButton.draw();
+		
+		// mic button
 		this.micButton.draw();
+		
+		// webcam button
 		this.webcamButton.draw();
+
+		// song progress bar
+		fill('#333333');
+        rectMode(LEFT);
+        
+        rect(width/4, height-100, width/2, 25, 90);
+        // white completion bar
+        let progressWidth = map(currentSong.sound.currentTime(),
+                                0, currentSong.sound.duration(),
+                                0, width/2);
+        fill(255);
+        rect(width/4, height-100, progressWidth, 25, 90, 0, 0, 90);
+
+        
+
+        push();
+        textAlign(RIGHT);
+        textSize(24);
+        text(convertToMins(currentSong.sound.currentTime()), 
+            (width/4)-40, height-86)
+        textAlign(LEFT);
+        text(convertToMins(currentSong.sound.duration()), 
+            (width*0.75)+40, height-86)
+        pop();
 
 	};
 

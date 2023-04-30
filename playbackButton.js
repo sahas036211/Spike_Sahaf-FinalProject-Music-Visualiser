@@ -30,7 +30,11 @@ function PlaybackButton() {
 			if (currentSong.sound.isPlaying()) {
     			currentSong.sound.pause();
   			} else {
-    			currentSong.sound.loop();
+				if (visScreen.controls.loopButton.loopEnabled) {
+					currentSong.sound.loop();
+				} else {
+					currentSong.sound.play();
+				}
   			}
   			this.playing = !this.playing;
   			return true;
