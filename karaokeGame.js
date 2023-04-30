@@ -63,8 +63,6 @@ function KaraokeGame() {
             console.error("Error starting microphone input:", error); // If there's any error while starting the mic input, it gets logged here
         });
     };   
-
-    this.initPitchDetection();
     
     this.pointsAdded = 0; // The number of points added to the score in the last frame
 
@@ -248,8 +246,10 @@ function KaraokeGame() {
             }
             if (this.gameStarted) { // if game started show resume option
                 text('RESUME', width/2, 350);
+                getAudioContext().resume();
             } else { // if game not started show start option
                 text('START', width/2, 350);
+                getAudioContext().resume();
             }
             textStyle(NORMAL);
             if (mouseY > 470 && mouseY < 590) { // check mouse pos
