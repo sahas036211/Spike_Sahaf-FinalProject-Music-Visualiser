@@ -37,25 +37,8 @@ function RhythmGame() {
     this.bluePressed = false;
     this.greenPressed = false;
 
-    /**
-     * Converts a given number in seconds to minute:seconds format.
-     * 
-     * @param {Number} time number of seconds to be converted
-     * @returns {String} time converted to string in minute:seconds format
-     */
-    this._convertToMins = function(time) {
-        // Get the seconds component of the time
-        let timeSeconds = Math.floor(time) % 60;
-        // Get the minutes component of the time
-        let timeMinutes = Math.floor(time / 60);
-        // Format the time correctly
-        // Insert zero before seconds count if less than 10 for formatting
-        let timeInMins = `${timeMinutes}:${timeSeconds < 10 ? '0' : ''}${timeSeconds}`;
-        return timeInMins;
-    };
-
     // get song duration in minutes:seconds format
-    this.songDuration = this._convertToMins(currentSong.sound.duration());
+    this.songDuration = convertToMins(currentSong.sound.duration());
 
     //
     // ------------ DRAWING FUNCTIONS ------------
@@ -198,7 +181,7 @@ function RhythmGame() {
 
         // Draw current song time & length of song in minutes:seconds format
         if (this.playing) {
-            this.songCurrentTime = this._convertToMins(currentSong.sound.currentTime());
+            this.songCurrentTime = convertToMins(currentSong.sound.currentTime());
         }
         text(`${this.songCurrentTime} / ${this.songDuration}`, width-340, 275);
 
@@ -461,7 +444,7 @@ function RhythmGame() {
                 this.notes = this._noteHitCheck(this.hitZones[3]);
             } else if (key == "P" || key == "p") {
                 // saves time of the song when paused as time to be displayed
-                this.songCurrentTime = this._convertToMins(currentSong.sound.currentTime());
+                this.songCurrentTime = convertToMins(currentSong.sound.currentTime());
                 // pauses music
     			currentSong.sound.pause();
                 currentSong.ghostSound.pause();
