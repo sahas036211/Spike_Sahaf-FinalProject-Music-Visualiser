@@ -12,6 +12,9 @@ function VisControls() {
 
 	// Web cam button to be displayed
 	this.webcamButton = new WebcamButton();
+
+	// Speed up button to be displayed
+	this.speedupButton = new SpeedUpButton();
   
 	// Make the window fullscreen or revert to windowed
 	this.mousePressed = function() {
@@ -19,6 +22,7 @@ function VisControls() {
 	  	this.playbackButton.hitCheck();
 	  	this.micButton.hitCheck();
 	  	this.webcamButton.hitCheck();
+		this.speedupButton.hitCheck();
 	};
 
 	
@@ -64,6 +68,7 @@ function VisControls() {
 		text('PRESS P TO RETURN \nTO MAIN MENU', width-340, 100);
 		//playback button
 		this.playbackButton.draw();
+		this.speedupButton.draw();
 		//only draw the menu if menu displayed is set to true.
 		if (this.menuDisplayed) {
 			textSize(40);
