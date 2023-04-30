@@ -21,7 +21,7 @@ function KaraokeGame() {
     this.updateCounter = 0; // Counter used to track frame updates
     this.pitchDetectionThrottle = 500; // Throttle pitch detection calls to every 500 ms
     this.lastPitchDetectionTime = 0; // Initialize the last pitch detection time
-
+    this.lastScoreUpdateTime = 0; // Add this line in the KaraokeGame constructor
 
     // set gif overlay effects to paused at start
     glitter.pause();
@@ -260,65 +260,94 @@ function KaraokeGame() {
         pop();
     }
 
+    this._drawGameOverMenu = function() {
+        push();
+        fill(255);
+        textSize(100);
+        text('SCORE: ' + this._score, width/2, 100);
+        // draw back button at bottom of screen
+        push();
+        textSize(60);
+        fill(255);
+        textAlign(CENTER);
+        if (mouseY > 715 && mouseY < 835 &&
+            mouseX < (width/2)+350 && mouseX > (width/2)-350) { // check mouse pos
+            textStyle(BOLD); // menu option bold when hovered over
+        }
+        text('BACK TO MAIN MENU', width/2, 800);
+        pop();
+        pop();
+    }
+
+
     this.draw = function() {  
 
-        // If useCameraBackground is true, draw the webcam feed as the background
-        if (this.useCameraBackground && this.video) {
-            image(this.video, 0, 0, width, height);
-        } else {
-            background(0);
+        if (!this.gameOver){
+            // If useCameraBackground is true, draw the webcam feed as the background
+            if (this.useCameraBackground && this.video) {
+                image(this.video, 0, 0, width, height);
+            } else {
+                background(0);
+            }
+
+            // draw glitter and hearts overlay gifs
+            image(glitter, 0, 0, width/2, height);
+            image(glitter, width/2, 0, width/2, height);
+            image(hearts, 0, 0, width, height);
+            image(butterflies, 0, 0, width, height);
+
+            push();
+            // Draw stats and info for current song
+            fill(255);
+            textSize(32);
+            textAlign(LEFT);
+            text('SONG', 140, 148);
+            text('SCORE', 120, 247);
+            text('POINTS +', 90, 347);
+
+            textSize(60);
+            text(this._songName, 250, 150);
+            text(nfc(this._score), 250, 250);
+            text(this.pointsAdded, 250, 350)
+            textAlign(CENTER);
+
+            // Draw current song time & length of song in minutes:seconds format
+            if (this.playing) {
+                this.songCurrentTime = this._convertToMins(currentSong.sound.currentTime());
+                this.update();
+                this.drawLyrics();
+            }
+            text(`${this.songCurrentTime} / ${this.songDuration}`, width - 340, 250);
+
+            // if song is playing display "pause", if paused display "play"
+            textSize(48);
+            if (this.playing) {
+                text('PRESS P TO PAUSE', width-340, 150);
+            } else {
+                text('PRESS P TO PLAY', width-340, 150);
+            }
+            pop();
+            
+            let songPitch = this.getSongPitchAt(currentSong.sound.currentTime()) || 0;
+            let userPitch = this._userPitch || 0;
+
+
+            
+            if (this.showVisuals) {
+                this.drawDualPitchBars(userPitch, songPitch);
+                this.drawPitchWaveform();
+            }
+
+            if (!this.playing) {
+                this._drawPauseMenu();
+            }
+        }else{
+            this._drawGameOverMenu();
         }
 
-        // draw glitter and hearts overlay gifs
-        image(glitter, 0, 0, width/2, height);
-        image(glitter, width/2, 0, width/2, height);
-        image(hearts, 0, 0, width, height);
-        image(butterflies, 0, 0, width, height);
-
-        push();
-        // Draw stats and info for current song
-        fill(255);
-        textSize(32);
-        textAlign(LEFT);
-        text('SONG', 140, 148);
-        text('SCORE', 120, 247);
-        text('POINTS +', 90, 347);
-
-        textSize(60);
-        text(this._songName, 250, 150);
-        text(nfc(this._score), 250, 250);
-        text(this.pointsAdded, 250, 350)
-        textAlign(CENTER);
-
-        // Draw current song time & length of song in minutes:seconds format
-        if (this.playing) {
-            this.songCurrentTime = this._convertToMins(currentSong.sound.currentTime());
-            this.update();
-            this.drawLyrics();
-        }
-        text(`${this.songCurrentTime} / ${this.songDuration}`, width - 340, 250);
-
-        // if song is playing display "pause", if paused display "play"
-        textSize(48);
-        if (this.playing) {
-            text('PRESS P TO PAUSE', width-340, 150);
-        } else {
-            text('PRESS P TO PLAY', width-340, 150);
-        }
-        pop();
-        
-        let songPitch = this.getSongPitchAt(currentSong.sound.currentTime()) || 0;
-        let userPitch = this._userPitch || 0;
-
-
-        
-        if (this.showVisuals) {
-             this.drawDualPitchBars(userPitch, songPitch);
-            this.drawPitchWaveform();
-        }
-
-        if (!this.playing) {
-            this._drawPauseMenu();
+        if (this.songCurrentTime == this.songDuration) {
+            this.playing = false;
+            this.gameOver = true; // set game over to true when song ends
         }
         
     };
@@ -382,8 +411,6 @@ function KaraokeGame() {
         analyze(0);
     };
     
-      
-    this.lastScoreUpdateTime = 0; // Add this line in the KaraokeGame constructor
 
     this.update = function() {
         // Checks if 1 second have passed since the last score update
@@ -429,6 +456,7 @@ function KaraokeGame() {
             this.songPitchHistory.push(songPitch || 0);
             this.userPitchHistory.push(userPitch || 0);
         }
+
     }
     
 
@@ -448,6 +476,7 @@ function KaraokeGame() {
                 hearts.pause();
                 butterflies.pause();
                 this.playing = false; // sets playstate to false
+                pitchDetection.stop(); // stops pitch detection
             }
         } else {
             if ((key == "P" || key == "p") && this.unpauseCountdown == -1) {
@@ -475,6 +504,10 @@ function KaraokeGame() {
                 }
             } else {
                 // TO DO: GAME OVER SCREEN "BACK TO MENU" BUTTON
+                if (mouseY > 715 && mouseY < 835 &&
+                    mouseX < (width/2)+350 && mouseX > (width/2)-350) { // check mouse pos
+                    home.selected = ""; // sends you back to the home screen
+                }
             }
         }
     }
