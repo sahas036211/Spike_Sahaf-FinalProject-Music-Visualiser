@@ -15,6 +15,9 @@ function VisControls() {
 
 	// Loop song button
 	this.loopButton = new LoopButton();
+
+	// Tempo button to be displayed
+	this.tempoButton = new TempoButton();
   
 	// Make the window fullscreen or revert to windowed
 	this.mousePressed = function() {
@@ -23,6 +26,7 @@ function VisControls() {
 	  	this.micButton.hitCheck();
 	  	this.webcamButton.hitCheck();
 		this.loopButton.hitCheck();
+		this.tempoButton.hitCheck();
 	};
 
     // Webcam input
@@ -64,7 +68,7 @@ function VisControls() {
 
 		text('PRESS P TO RETURN \nTO MAIN MENU', width-340, 100);
 
-		// only draw the menu if menu displayed is set to true.
+		//only draw the menu if menu displayed is set to true.
 		if (this.menuDisplayed) {
 			textSize(40);
 			rectMode(CENTER);
@@ -82,6 +86,9 @@ function VisControls() {
 
 		// loop button
 		this.loopButton.draw();
+
+		// tempo button
+		this.tempoButton.draw();
 		
 		// mic button
 		this.micButton.draw();
