@@ -6,6 +6,8 @@ var vis = null;
 var home = null;
 //global for rhythm game
 var rhythm = null;
+//global for karaoke game
+var karaoke = null;
 //variables for p5 sound objects
 var bakamitai = null;
 var demiurge = null;
@@ -197,9 +199,11 @@ function mouseClicked() {
 			// Check if menu item has been selected after mouse press
 			if (home.selected === home.options[0]) {
 				// Create new rhythm game object if rhythm game selected
+				karaoke = null;
 				rhythm = new RhythmGame();
 			} else if (home.selected === home.options[1]) {
 				// Create new karaoke game object if karaoke game selected
+				rhythm = null;
 				karaoke = new KaraokeGame();
 			}
 		} else if (home.selected === home.options[0]) {
@@ -221,9 +225,11 @@ function keyPressed() {
 			// Check if menu item has been selected after key press
 			if (home.selected === home.options[0]) {
 				// Create new rhythm game object if rhythm game selected
+				karaoke = null;
 				rhythm = new RhythmGame();
 			} else if (home.selected === home.options[1]) {
 				// Create new karaoke game object if karaoke game selected
+				rhythm = null;
 				karaoke = new KaraokeGame();
 			}
 		} else if (home.selected === home.options[0]) {
