@@ -35,6 +35,7 @@ var hearts = null;
 var butterflies = null;
 //variable for images for visualisation buttons
 var loopButtonImg = null;
+var tempoButtonImg = null;
 //variable for p5 fast fourier transform
 var fourier;
 
@@ -53,6 +54,7 @@ function preload() {
 
 	// visualisation button images
 	loopButtonImg = loadImage('assets/loopbutton.png');
+	tempoButtonImg = loadImage('assets/tempobutton.png');
 
 	// baka mitai
 	bakamitai = loadSound('assets/bakamitai.flac');

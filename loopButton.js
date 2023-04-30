@@ -1,14 +1,13 @@
 function LoopButton() {
-    pixelDensity(1);
-
-    this.x = (width/2) - 200;
-    this.y = height - 160;
     this.width = 30;
     this.height = 30;
+    this.x = (width/2) - 200;
+    this.y = height - 160;
     this.colour = 128;
 
     this.image = loopButtonImg;
     this.image.resize(this.width, this.height);
+    pixelDensity(1);
     this.image.loadPixels();
 
     // flag to determine whether to loop the currently playing song or not

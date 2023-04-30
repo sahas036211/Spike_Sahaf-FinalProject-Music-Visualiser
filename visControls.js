@@ -18,6 +18,9 @@ function VisControls() {
 
 	// Tempo button to be displayed
 	this.tempoButton = new TempoButton();
+
+	// Progress bar
+	this.progressBar = new ProgressBar();
   
 	// Make the window fullscreen or revert to windowed
 	this.mousePressed = function() {
@@ -27,6 +30,7 @@ function VisControls() {
 	  	this.webcamButton.hitCheck();
 		this.loopButton.hitCheck();
 		this.tempoButton.hitCheck();
+		this.progressBar.hitCheck();
 	};
 
     // Webcam input
@@ -62,7 +66,6 @@ function VisControls() {
 		push();
 		fill("white");
 		stroke("black");
-		strokeWeight(2);
 		textAlign(CENTER);
 		textSize(34);
 
@@ -74,7 +77,8 @@ function VisControls() {
 			rectMode(CENTER);
 			rect(300, 105, 450, 80, 90);
 			fill("black");
-			text("VISUALISATIONS", 300, 120);
+			text("VISUALISATIONS", 300, 110);
+			strokeWeight(2);
 			this.menu();
 		} else {
 			text("PRESS SPACE \nFOR VISUALISATIONS", 300, 100);
@@ -96,30 +100,8 @@ function VisControls() {
 		// webcam button
 		this.webcamButton.draw();
 
-		// song progress bar
-		fill('#333333');
-        rectMode(LEFT);
-        
-        rect(width/4, height-100, width/2, 25, 90);
-        // white completion bar
-        let progressWidth = map(currentSong.sound.currentTime(),
-                                0, currentSong.sound.duration(),
-                                0, width/2);
-        fill(255);
-        rect(width/4, height-100, progressWidth, 25, 90, 0, 0, 90);
-
-        
-
-        push();
-        textAlign(RIGHT);
-        textSize(24);
-        text(convertToMins(currentSong.sound.currentTime()), 
-            (width/4)-40, height-86)
-        textAlign(LEFT);
-        text(convertToMins(currentSong.sound.duration()), 
-            (width*0.75)+40, height-86)
-        pop();
-
+		// progress bar
+		this.progressBar.draw();
 	};
 
 	//draw out menu items for each visualisation

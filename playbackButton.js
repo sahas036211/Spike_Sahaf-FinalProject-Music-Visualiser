@@ -10,6 +10,7 @@ function PlaybackButton() {
 	this.playing = false;
 
 	this.draw = function() {
+		fill("white");
 		if (this.playing) {
 			rect(this.x, this.y, this.width/2 - 2, this.height);
 			rect(this.x + (this.width/2 + 3), this.y, this.width/2 - 2, this.height);
