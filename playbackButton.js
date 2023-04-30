@@ -27,10 +27,10 @@ function PlaybackButton() {
             && mouseX < this.x + this.width
             && mouseY > this.y
             && mouseY < this.y + this.height) {
-			if (sound.isPlaying()) {
-    			sound.pause();
+			if (currentSong.sound.isPlaying()) {
+    			currentSong.sound.pause();
   			} else {
-    			sound.loop();
+    			currentSong.sound.loop();
   			}
   			this.playing = !this.playing;
   			return true;
