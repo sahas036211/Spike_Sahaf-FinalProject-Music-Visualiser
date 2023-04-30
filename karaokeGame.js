@@ -48,8 +48,8 @@ function KaraokeGame() {
     // get song duration in minutes:seconds format
     this.songDuration = this._convertToMins(currentSong.sound.duration());
 
-    this.initPitchDetection = async function() {
-        await getAudioContext().suspend(); // So this suspends the audio context before we start setting up the mic input
+    this.initPitchDetection = function() {
+        getAudioContext().suspend(); // So this suspends the audio context before we start setting up the mic input
         this.mic = new p5.AudioIn(); // The code here creates a new p5.AudioIn object to get the mic input
         this.mic.start(() => { // Now we're starting the microphone input
             console.log("Microphone input started.");
@@ -102,7 +102,7 @@ function KaraokeGame() {
   
         // Return the pitch at the closest time
         return this.songPitchData[closestTimeIndex].pitch;
-    }
+    };
 
     this.initWebcam = function () {
         this.video = createCapture(VIDEO); // Create a video capture element
@@ -323,64 +323,65 @@ function KaraokeGame() {
         
     };
 
-    this.analyzeSongPitchData = function () {
-        // Check if the function has already been executed
+      this.analyzeSongPitchData = function () {
+        // Checks if the function has already been executed
         if (this.analyzeSongPitchDataCalled) {
-          return; // Exit the function if it has been executed before
+            return; // Exit the function if it has been executed before
         }
-      
-        // Set the flag to indicate the function has been executed
+    
+        // Makes sure the function is only executed once
         this.analyzeSongPitchDataCalled = true;
-      
-        let duration = currentSong.sound.duration(); // Get the duration of the song
-        let interval = 0.5; // Analyze pitch data every 5 miliseconds
-      
-        fourier.setInput(currentSong.sound); // Set the sound as the input for the FFT
-      
-        // Function to analyze the pitch data at a given time
+    
+        let duration = currentSong.sound.duration(); // Gets the duration of the song
+        let interval = 0.5; // Analyses pitch data every 0.5 seconds
+    
+        fourier.setInput(currentSong.sound); // Sets the sound as the input for the FFT
+    
+        //This function analyses the pitch data at a given time
         let analyze = (currentTime) => {
-          if (currentTime >= duration) {
-            // If the currentTime exceeds the song's duration, exit the function
-            return;
-          }
-      
-          if (currentSong.sound.isPlaying()) {
-            // Get the frequency spectrum of the song at the current time
-            let spectrum = fourier.analyze();
-            let maxAmplitudeIndex = -1;
-            let maxAmplitude = -Infinity;
-      
-            // Find the index with the maximum amplitude in the spectrum
-            for (let i = 0; i < spectrum.length; i++) {
-              if (spectrum[i] > maxAmplitude) {
-                maxAmplitude = spectrum[i];
-                maxAmplitudeIndex = i;
-              }
+            if (currentTime >= duration) {
+                // If the currentTime exceeds the song's duration, exit the function
+                return;
             }
-      
-            // Get the dominant frequency using the index with the maximum amplitude
-            let sampleRate = currentSong.sound.sampleRate(); // Get the sample rate from the sound
-            let fftSize = fourier.bins * 2; // Calculate the FFT size (twice the number of bins)
-            let dominantFrequency = maxAmplitudeIndex * sampleRate / (2 * fftSize); // Calculate the frequency using the formula
-      
-            let roundedTime = Math.round(currentTime * 10) / 10;
-      
-            // Save the dominant frequency and the corresponding time in the songPitchData array
-            this.songPitchData.push({
-              time: roundedTime,
-              pitch: dominantFrequency,
-            });
-          }
-      
-          // Schedule the next pitch analysis after the defined interval
-          setTimeout(() => {
-            analyze(currentTime + interval);
-          }, interval * 1000);
+    
+            if (currentSong.sound.isPlaying()) {
+                // Gets the frequency spectrum of the song at the current time
+                let spectrum = fourier.analyze();
+                let maxAmplitudeIndex = -1;
+                let maxAmplitude = -Infinity;
+    
+                // Finds the index with the maximum amplitude in the spectrum
+                for (let i = 0; i < spectrum.length; i++) {
+                    if (spectrum[i] > maxAmplitude) {
+                        maxAmplitude = spectrum[i];
+                        maxAmplitudeIndex = i;
+                    }
+                }
+    
+                // Ges the dominant frequency using the index with the maximum amplitude
+                let sampleRate = currentSong.sound.sampleRate(); // Get the sample rate from the sound
+                let fftSize = fourier.bins * 2; // Calculate the FFT size (twice the number of bins)
+                let dominantFrequency = maxAmplitudeIndex * (sampleRate / fftSize); // Calculate the frequency based on the index
+    
+                let roundedTime = Math.round(currentTime * 10) / 10;
+    
+                // Save the dominant frequency and the corresponding time in the songPitchData array
+                this.songPitchData.push({
+                    time: roundedTime,
+                    pitch: dominantFrequency,
+                });
+            }
+    
+            // Scheduls the next pitch analysis after the defined interval
+            setTimeout(() => {
+                analyze(currentTime + interval);
+            }, interval * 1000);
         };
-      
+    
         // Start analyzing the pitch data from the beginning of the song
         analyze(0);
-      };
+    };
+    
       
     this.lastScoreUpdateTime = 0; // Add this line in the KaraokeGame constructor
 

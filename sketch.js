@@ -41,6 +41,8 @@ var fourier;
 //karaoke variables
 var fft;
 var songPitchData = {};
+var preloadedPitchDetectionModel;
+
 
 // preload the songs and images to be used
 function preload() {
@@ -71,7 +73,8 @@ function preload() {
 	// pepto bismol
 	peptobismol = loadSound('assets/peptobismol.mp3');
 	peptobismolGS = loadSound('assets/peptobismol.mp3'); // ghost song
-	peptobismolLyrics = loadStrings('assets/peptobismollyrics.lrc'); // lyrics
+	peptobismolLyrics = loadStrings('assets/peptobismollyrics.lrc'); // 
+	
 }
 
 function setup() {
@@ -204,6 +207,8 @@ function mouseClicked() {
 				// Create new karaoke game object if karaoke game selected
 				rhythm = null;
 				karaoke = new KaraokeGame();
+				karaoke.initPitchDetection();
+				karaoke.analyzeSongPitchData();
 			}
 		} else if (home.selected === home.options[0]) {
 			rhythm.mousePressed();
@@ -230,6 +235,8 @@ function keyPressed() {
 				// Create new karaoke game object if karaoke game selected
 				rhythm = null;
 				karaoke = new KaraokeGame();
+				karaoke.initPitchDetection();
+				karaoke.analyzeSongPitchData();
 			}
 		} else if (home.selected === home.options[0]) {
 			rhythm.keyPressed(key);
