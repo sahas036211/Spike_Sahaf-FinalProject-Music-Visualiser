@@ -9,16 +9,19 @@ function VisControls() {
   
 	// Mic controller to handle the mic input
 	this.micController = new MicController();
+
+	// Web cam button to be displayed
+	this.webcamButton = new WebcamButton();
   
 	// Make the window fullscreen or revert to windowed
 	this.mousePressed = function() {
-	  // Check if buttons have been clicked
-	  this.playbackButton.hitCheck();
-	  this.micButton.hitCheck();
-	  this.webcamButton.hitcheck();
+	  	// Check if buttons have been clicked
+	  	this.playbackButton.hitCheck();
+	  	this.micButton.hitCheck();
+	  	this.webcamButton.hitCheck();
 	};
 
-	this.webcamButton = new WebcamButton();
+	
 
     // Webcam input
     this.webcam = null;
@@ -45,7 +48,7 @@ function VisControls() {
 
 		if (keycode > 48 && keycode < 58) {
 			var visNumber = keycode - 49;
-			visScreen.vis.selectVisual(visScreen.visuals[visNumber].name);
+			visScreen.vis.selectVisual(visScreen.vis.visuals[visNumber].name);
 		}
 	};
 
