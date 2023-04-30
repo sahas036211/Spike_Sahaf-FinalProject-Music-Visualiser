@@ -248,3 +248,20 @@ function keyReleased() {
 		}
 	}
 }
+
+/**
+     * Converts a given number in seconds to minute:seconds format.
+     * 
+     * @param {Number} time number of seconds to be converted
+     * @returns {String} time converted to string in minute:seconds format
+     */
+function convertToMins(time) {
+	// Get the seconds component of the time
+	let timeSeconds = Math.floor(time) % 60;
+	// Get the minutes component of the time
+	let timeMinutes = Math.floor(time / 60);
+	// Format the time correctly
+	// Insert zero before seconds count if less than 10 for formatting
+	let timeInMins = `${timeMinutes}:${timeSeconds < 10 ? '0' : ''}${timeSeconds}`;
+	return timeInMins;
+};
