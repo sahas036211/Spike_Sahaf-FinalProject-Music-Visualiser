@@ -246,8 +246,8 @@ function KaraokeGame() {
     this._drawGameOverMenu = function() {
         push();
         fill(255);
-        textSize(100);
-        text('SCORE: ' + this._score, width/2, 100);
+        textSize(200);
+        text('SCORE: ' + this._score, width/4, 500);
         // draw back button at bottom of screen
         push();
         textSize(60);
