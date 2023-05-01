@@ -36,7 +36,7 @@ function BeatDetection(beatInterval, difficultyValue) {
             // p5 sound jump method was buggy and not giving expected results.
             // code line below is a workaround found online from source:
             // https://github.com/processing/p5.js-sound/issues/372#issuecomment-560027420
-            setTimeout(function(){ Object.assign(currentSong.ghostSound, {_playing: true}); }, 100);
+            setTimeout(() => { Object.assign(currentSong.ghostSound, {_playing: true}); }, 100);
             this.initialised = true;
         }
     }

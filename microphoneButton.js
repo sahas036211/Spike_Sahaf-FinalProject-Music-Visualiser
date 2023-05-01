@@ -28,6 +28,7 @@ function MicButton() {
   this.enabled = false;
 
   this.draw = function() {
+      push();
       // Draw the square around the bold letter M
       if (this.enabled) {
           fill(255, 0, 0); // Red color for enabled state
@@ -46,6 +47,7 @@ function MicButton() {
       }
       textStyle(BOLD);
       text("M", this.x + this.width / 2, this.y + this.height / 2 );
+      pop();
   };
 
   this.hitCheck = function() {

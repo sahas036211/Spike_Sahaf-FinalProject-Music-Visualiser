@@ -51,13 +51,20 @@ function VisControls() {
 	//@param keycode the ascii code of the keypressed
 	this.keyPressed = function(keycode) {
 		console.log(keycode);
-		if (keycode == 32) {
+		if (keycode == 32) { // spacebar
 			this.menuDisplayed = !this.menuDisplayed;
 		}
 
-		if (keycode > 48 && keycode < 58) {
+		if (keycode > 48 && keycode < 58) { // numbers 0-9
 			var visNumber = keycode - 49;
 			visScreen.vis.selectVisual(visScreen.vis.visuals[visNumber].name);
+		}
+
+		if (keycode == 80) { // P
+			visScreen.controls.playbackButton.pauseTime = currentSong.sound.currentTime();
+			visScreen.controls.playbackButton.playing = false;
+			currentSong.sound.pause();
+			home.selected = ""; // sends you back to the home screen
 		}
 	};
 
@@ -84,7 +91,7 @@ function VisControls() {
 			text("PRESS SPACE \nFOR VISUALISATIONS", 300, 100);
 		}
 		pop();
-
+		
 		// playback button
 		this.playbackButton.draw();
 

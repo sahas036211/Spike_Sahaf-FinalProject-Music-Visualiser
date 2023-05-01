@@ -8,8 +8,10 @@ function PlaybackButton() {
 	//flag to determine whether to play or pause after button click and
 	//to determine which icon to draw
 	this.playing = false;
+	this.pauseTime = 0;
 
 	this.draw = function() {
+		push();
 		fill("white");
 		if (this.playing) {
 			rect(this.x, this.y, this.width/2 - 2, this.height);
@@ -19,6 +21,7 @@ function PlaybackButton() {
                      this.x + this.width, this.y + this.height/2,
                      this.x, this.y+this.height);
 		}
+		pop();
 	};
 
 	//checks for clicks on the button, starts or pauses playabck.
@@ -29,6 +32,7 @@ function PlaybackButton() {
             && mouseY > this.y
             && mouseY < this.y + this.height) {
 			if (currentSong.sound.isPlaying()) {
+				this.pauseTime = currentSong.sound.currentTime();
     			currentSong.sound.pause();
   			} else {
 				if (visScreen.controls.loopButton.loopEnabled) {

@@ -208,7 +208,7 @@ function KaraokeGame() {
                       // set song playhead to 0 to ensure it always
                       // starts from the beginning
                       currentSong.sound.jump();
-                      setTimeout(function(){ Object.assign(currentSong.sound, {_playing: true}); }, 100);
+                      setTimeout(() => { Object.assign(currentSong.sound, {_playing: true}); }, 100);
                   }
                   // play overlay effect gifs
                   glitter.play();
