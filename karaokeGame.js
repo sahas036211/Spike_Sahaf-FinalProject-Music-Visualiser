@@ -1,12 +1,12 @@
 function KaraokeGame() {
-    this._score = 0;
-    this._songName = currentSong.songName;
-    this.pitchDetect = null;
-    this._pitchDetectionReady = false;
-    this._userPitch = null;
-    this.songPitchData = [];
-    this.songPitchHistory = [];
-    this.userPitchHistory = [];
+    this._score = 0; // Initialise score to 0
+    this._songName = currentSong.songName; // Initialise song name to current song name
+    this.pitchDetect = null; // Initialise pitch detection to null
+    this._pitchDetectionReady = false; // Initialise pitch detection ready to false
+    this._userPitch = null; // Initialise user pitch to null
+    this.songPitchData = []; // Initialise song pitch data to empty array
+    this.songPitchHistory = []; // Initialise song pitch history to empty array
+    this.userPitchHistory = []; //  Initialise user pitch history to empty array
     this.playing = false; // Initialise playstate to false
     this.gameStarted = false; // Initialise gameStarted to false
     this.gameOver = false; // Initialise gameOver to false
@@ -130,9 +130,12 @@ function KaraokeGame() {
   
 
     this.drawLyrics = function() {
+        // Get the current time of the song
         let currentTime = currentSong.sound.currentTime();
+        // Variable to store the index of the current lyric
         let currentLyricIndex = null;
         
+        // Loops through the lyrics data and find the current lyric index
         for (let i = 0; i < currentSong.lyricsData.length; i++) {
             if (currentTime >= currentSong.lyricsData[i].time) {
                 currentLyricIndex = i;
@@ -141,22 +144,33 @@ function KaraokeGame() {
             }
         }
         
+        // If a current lyric index was found, draw the lyrics onto the screen
         if (currentLyricIndex !== null) {
             push();
+            // Set text alignment and size
             textAlign(CENTER);
             textSize(70);
+            
+            // Sets the text color, stroke color, and stroke weight
             fill(255);
             stroke(0);
             strokeWeight(3);
+            
+            // Draw the current lyric on the screen
             text(currentSong.lyricsData[currentLyricIndex].text, width / 2, height - 200);
-            if (currentLyricIndex != currentSong.lyricsData.length-1) {
+    
+            // If there is a next lyric, draw it on the screen as well
+            if (currentLyricIndex != currentSong.lyricsData.length - 1) {
+                // Set text color and size for the next lyric
                 fill(140);
                 textSize(55);
-                text(currentSong.lyricsData[currentLyricIndex+1].text, width/2, height - 100);
+                
+                // Draw the next lyric on the screen
+                text(currentSong.lyricsData[currentLyricIndex + 1].text, width / 2, height - 100);
             }
             pop();
         }
-    };
+    };    
   
 
     this.drawDualPitchBars = function(userPitch, songPitch) {
@@ -195,7 +209,7 @@ function KaraokeGame() {
         stroke(0);
         strokeWeight(4);
         textSize(100);
-        // checks if there is an unpause countdown currently in effect
+        // Checks if there is an unpause countdown currently in effect
         if (this.unpauseCountdown != -1) {
             if (this.unpauseCountdown > 0) {
                 // show countdown timer in centre of the screen
@@ -212,19 +226,19 @@ function KaraokeGame() {
                     currentSong.sound.jump();
                     setTimeout(function(){ Object.assign(currentSong.sound, {_playing: true}); }, 100);
                 }
-                // play overlay effect gifs
+                // Plays the overlay effect gifs
                 glitter.play();
                 hearts.play();
                 butterflies.play();
-                // sets playing condition to true
+                // Sets playing condition to true
                 this.playing = true;
                 this.unpauseCountdown = -1;
                 if (!this.gameStarted) {
-                    // set game started to true if this is the first unpause
+                    // Sets game started to true if this is the first unpause
                     this.gameStarted = true;
                 }
             }
-        } else { // if no countdown, show pause screen
+        } else { // If no countdown, show pause screen
             textSize(48);
             if (mouseY > 270 && mouseY < 390) { // check mouse pos
                 textStyle(BOLD); // menu option bold when hovered over
@@ -296,13 +310,13 @@ function KaraokeGame() {
             text(this.pointsAdded, 250, 350)
             textAlign(CENTER);
 
-        // Draw current song time & length of song in minutes:seconds format
-        if (this.playing) {
-            this.songCurrentTime = convertToMins(currentSong.sound.currentTime());
-            this.update();
-            this.drawLyrics();
-        }
-        text(`${this.songCurrentTime} / ${this.songDuration}`, width - 340, 250);
+            // Draw current song time & length of song in minutes:seconds format
+            if (this.playing) {
+                this.songCurrentTime = convertToMins(currentSong.sound.currentTime());
+                this.update();
+                this.drawLyrics();
+            }
+            text(`${this.songCurrentTime} / ${this.songDuration}`, width - 340, 250);
 
             // if song is playing display "pause", if paused display "play"
             textSize(48);
@@ -317,12 +331,13 @@ function KaraokeGame() {
             let userPitch = this._userPitch || 0;
 
 
-            
+            // Draw the user pitch bar and waveform based on the user's pitch value
             if (this.showVisuals) {
                 this.drawDualPitchBars(userPitch, songPitch);
                 this.drawPitchWaveform();
             }
-
+            
+            // Draw the pause menu if the game is paused
             if (!this.playing) {
                 this._drawPauseMenu();
             }
@@ -386,7 +401,7 @@ function KaraokeGame() {
                 });
             }
     
-            // Scheduls the next pitch analysis after the defined interval
+            // Schedules the next pitch analysis after the defined interval
             setTimeout(() => {
                 analyze(currentTime + interval);
             }, interval * 1000);
@@ -396,7 +411,7 @@ function KaraokeGame() {
         analyze(0);
     };
     
-
+    // Gets the pitch of the song at a given time
     this.update = function() {
         // Checks if 1 second have passed since the last score update
         if (millis() - this.lastScoreUpdateTime >= 1000) {
@@ -433,14 +448,20 @@ function KaraokeGame() {
             // Update the lastScoreUpdateTime variable to the current time
             this.lastScoreUpdateTime = millis();
         }
-    
+        
+        // Check if the song is currently playing
         if (this.playing) {
+            // Get the pitch of the song at the current time
             let songPitch = this.getSongPitchAt(currentSong.sound.currentTime());
+            // Get the pitch of the user's input (mic, for example)
             let userPitch = this._userPitch;
-    
+
+            // Add the song pitch value to the song pitch history array, or 0 if the pitch is not available
             this.songPitchHistory.push(songPitch || 0);
+            // Add the user pitch value to the user pitch history array, or 0 if the pitch is not available
             this.userPitchHistory.push(userPitch || 0);
         }
+
 
     }
     
@@ -478,7 +499,8 @@ function KaraokeGame() {
 
     }
 
-    this.mouseClicked = function() {
+    // mousePressed function for the game
+    this.mousePressed = function() {
         if (!this.playing && this.unpauseCountdown == -1) {
             if (!this.gameOver) {
                 if (mouseY > 270 && mouseY < 390) {
@@ -487,7 +509,7 @@ function KaraokeGame() {
                     home.selected = ""; // sends you back to the home screen
                 }
             } else {
-                // TO DO: GAME OVER SCREEN "BACK TO MENU" BUTTON
+                // GAME OVER SCREEN "BACK TO MENU" BUTTON
                 if (mouseY > 715 && mouseY < 835 &&
                     mouseX < (width/2)+350 && mouseX > (width/2)-350) { // check mouse pos
                     home.selected = ""; // sends you back to the home screen
