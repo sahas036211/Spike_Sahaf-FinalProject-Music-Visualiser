@@ -21,8 +21,10 @@ function VisControls() {
 
 	// Progress bar
 	this.progressBar = new ProgressBar();
+
+	// Previous and Next buttons
+	this.previousNextButtons = new PreviousNextButtons();
   
-	// Make the window fullscreen or revert to windowed
 	this.mousePressed = function() {
 	  	// Check if buttons have been clicked
 	  	this.playbackButton.hitCheck();
@@ -31,6 +33,7 @@ function VisControls() {
 		this.loopButton.hitCheck();
 		this.tempoButton.hitCheck();
 		this.progressBar.hitCheck();
+		this.previousNextButtons.hitCheck();
 	};
 
     // Webcam input
@@ -61,9 +64,7 @@ function VisControls() {
 		}
 
 		if (keycode == 80) { // P
-			visScreen.controls.playbackButton.pauseTime = currentSong.sound.currentTime();
-			visScreen.controls.playbackButton.playing = false;
-			currentSong.sound.pause();
+			visScreen.controls.playbackButton.setPlaying(false);
 			home.selected = ""; // sends you back to the home screen
 		}
 	};
@@ -84,13 +85,14 @@ function VisControls() {
 			rectMode(CENTER);
 			rect(300, 105, 450, 80, 90);
 			fill("black");
-			text("VISUALISATIONS", 300, 110);
+			text("VISUALISATIONS", 300, 120);
 			strokeWeight(2);
 			this.menu();
 		} else {
 			text("PRESS SPACE \nFOR VISUALISATIONS", 300, 100);
 		}
 		pop();
+		noStroke();
 		
 		// playback button
 		this.playbackButton.draw();
@@ -109,6 +111,9 @@ function VisControls() {
 
 		// progress bar
 		this.progressBar.draw();
+
+		// previous and next buttons
+		this.previousNextButtons.draw();
 	};
 
 	//draw out menu items for each visualisation

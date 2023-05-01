@@ -27,10 +27,10 @@ function ProgressBar() {
         textAlign(RIGHT);
         textSize(24);
         text(convertToMins(currentTime), 
-             (width/4)-40, height-86)
+             (width/4)-30, height-80)
         textAlign(LEFT);
         text(convertToMins(currentSong.sound.duration()), 
-             (width*0.75)+40, height-86)
+             (width*0.75)+30, height-80)
         pop();
 
         if (this.jumpTimeout > 0) {

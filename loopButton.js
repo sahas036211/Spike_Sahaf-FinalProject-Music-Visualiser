@@ -1,7 +1,7 @@
 function LoopButton() {
     this.width = 30;
     this.height = 30;
-    this.x = (width/2) - 200;
+    this.x = (width/2) - 210;
     this.y = height - 160;
     this.colour = 128;
 

@@ -1,7 +1,7 @@
 function TempoButton() {
     this.width = 30;
     this.height = 30;
-    this.x = (width / 2) + 200; // Positioned to the right of the PlaybackButton
+    this.x = (width / 2) + 150; // Positioned to the right of the PlaybackButton
     this.y = height - 160;
 
     this.speeds = [0.25, 0.5, 1, 1.5, 2];
@@ -16,7 +16,7 @@ function TempoButton() {
         fill("white");
         textSize(24);
         textAlign(LEFT);
-        text(`${this.currentSpeed}x`, this.x + 40, this.y + 16);
+        text(`${this.currentSpeed}x`, this.x + 45, this.y + 23);
         pop();
     };
   
