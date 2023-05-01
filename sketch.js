@@ -179,11 +179,7 @@ function setup() {
 }
   
 function draw() {
-	if (visScreen.controls.webcamButton.getEnabled()) {
-        image(visScreen.controls.webcamButton.getWebcam(), 0, 0, width, height);
-    } else {
-        background(0);
-    }
+	background(0);
 	// draw depending on which screen has been selected from menu
   	if (home.selected === "") {
 		// draw home screen
@@ -197,6 +193,11 @@ function draw() {
 		getAudioContext().resume();
   	} else if (home.selected === home.options[2]) {
     	// draw visualisers
+		if (visScreen.controls.webcamButton.getEnabled()) {
+			image(visScreen.controls.webcamButton.getWebcam(), 0, 0, width, height);
+		} else {
+			background(0);
+		}
     	visScreen.draw();
   	} else if (home.selected === home.options[3]) {
 		// draw settings menu
