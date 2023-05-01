@@ -133,7 +133,7 @@ function setup() {
 		},
 
 		{songName: "BALLIN'", sound: ballin, ghostSound: ballinGS,
-		 freq1: 20, freq2: 2000, bpm: 97, threshold: 0.3,
+		 freq1: 20, freq2: 20000, bpm: 97, threshold: 0.3,
 		 lyrics: ballinLyrics, lyricsData: []
 		}
 	];
