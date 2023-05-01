@@ -240,8 +240,10 @@ function RhythmGame() {
             } else { // when unpause countdown hits 0, unpause the game
                 currentSong.sound.play(); // plays hearable music
                 if (!this.beatDetect.initialised) {
-                    // set song playhead to 0 to ensure it always
-                    // starts from the beginning
+                    // set song playhead to 0 and ensure it always
+                    // starts with normal settings
+                    currentSong.sound.rate(1);
+                    currentSong.sound.setLoop(false);
                     currentSong.sound.jump();
                     setTimeout(function(){ Object.assign(currentSong.sound, {_playing: true}); }, 100);
                 }

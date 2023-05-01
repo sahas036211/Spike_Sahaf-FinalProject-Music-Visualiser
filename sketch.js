@@ -12,19 +12,21 @@ var demiurge = null;
 var chestnuts = null;
 var newtank = null;
 var peptobismol = null;
+var ballin = null;
 //variables for the p5 sound objects to be analysed in rhythm game
 var bakamitaiGS = null;
 var demiurgeGS = null;
 var chestnutsGS = null;
 var newtankGS = null;
 var peptobismolGS = null;
+var ballinGS = null;
 //variables for lyric files of songs
 var bakamitaiLyrics = null;
 var demiurgeLyrics = null;
 var chestnutsLyrics = null;
 var newtankLyrics = null;
 var peptobismolLyrics = null;
-
+var ballinLyrics = null;
 //variable for array that will contain song information
 var songs = [];
 //variable for currently selected sound object to be played
@@ -43,7 +45,6 @@ var fourier;
 var fft;
 var songPitchData = {};
 var preloadedPitchDetectionModel;
-
 
 // preload the songs and images to be used
 function preload() {
@@ -79,7 +80,12 @@ function preload() {
 	// pepto bismol
 	peptobismol = loadSound('assets/peptobismol.mp3');
 	peptobismolGS = loadSound('assets/peptobismol.mp3'); // ghost song
-	peptobismolLyrics = loadStrings('assets/peptobismollyrics.lrc'); // 
+	peptobismolLyrics = loadStrings('assets/peptobismollyrics.lrc'); // lyrics
+
+	// ballin
+	ballin = loadSound('assets/ballin.mp3');
+	ballinGS = loadSound('assets/ballin.mp3'); // ghost song
+	ballinLyrics = loadStrings('assets/ballinlyrics.lrc'); // lyrics
 	
 }
 
@@ -113,6 +119,12 @@ function setup() {
 		 songName: 'PEPTO BISMOL', sound: peptobismol, ghostSound: peptobismolGS,
 		 freq1: 20, freq2: 20000, bpm: 140, threshold: 0.1,
 		 lyrics: peptobismolLyrics, lyricsData: []
+		},
+
+		{
+		 songName: "BALLIN'", sound: ballin, ghostSound: ballinGS,
+		 freq: 20, freq2: 20000, bpm: 97, threshold: 0.1,
+		 lyrics: ballinLyrics, lyricsData: []
 		}
 	];
  
