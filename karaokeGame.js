@@ -459,7 +459,6 @@ function KaraokeGame() {
                 hearts.pause();
                 butterflies.pause();
                 this.playing = false; // sets playstate to false
-                pitchDetection.stop(); // stops pitch detection
             }
         } else {
             if ((key == "P" || key == "p") && this.unpauseCountdown == -1) {
