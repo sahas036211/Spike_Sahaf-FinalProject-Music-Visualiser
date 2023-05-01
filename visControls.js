@@ -21,7 +21,7 @@ function VisControls() {
 	this.previousNextButtons = new PreviousNextButtons();
 
 	// Volume bar
-	this.volumeBar = new VolumeBar(width/2 + 270, height - 135, 80, 30);
+	this.volumeBar = new VolumeBar(width/2 + 300, height - 130, 80, 30);
   
 	// draws the playback button and potentially the menu
 	this.draw = function() {

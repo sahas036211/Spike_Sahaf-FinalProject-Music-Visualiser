@@ -14,7 +14,7 @@ function VolumeBar(x, y, width, height) {
                 fill(255);
             }
             rect(this.x + this.width*(i/6),
-                 this.y - this.height*(i/6),
+                 this.y - (this.height*(1/6) + this.height*(i/6)),
                  this.width/12,
                  this.height*(1/6) + this.height*(i/6));
         }
@@ -36,8 +36,8 @@ function VolumeBar(x, y, width, height) {
 
     this.mousePressed = function() {
         if (mouseX > this.x
-            && mouseX < this.x + this.width
-            && mouseY > this.y - this.height
+            && mouseX < this.x + (this.width*(11/12))
+            && mouseY > this.y - this.height*(5/6)
             && mouseY < this.y) {
         this.mouseHeld = true;
         }
