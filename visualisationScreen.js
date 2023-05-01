@@ -6,6 +6,7 @@ function VisualisationScreen() {
 	this.vis.add(new WavePattern());
 	this.vis.add(new Needles());
     this.vis.add(new HorizontalBars());
+    this.vis.add(new CircularWaveform());
 
     this.draw = function() {
         this.vis.selectedVisual.draw();
