@@ -80,6 +80,10 @@ function preload() {
 	peptobismol = loadSound('assets/peptobismol.mp3');
 	peptobismolGS = loadSound('assets/peptobismol.mp3'); // ghost song
 	peptobismolLyrics = loadStrings('assets/peptobismollyrics.lrc'); // 
+
+	sayitaintso = loadSound('assets/sayitaintso.mp3');
+	sayitaintsoGS = loadSound('assets/sayitaintso.mp3'); // ghost song
+	sayitaintsoLyrics = loadStrings('assets/sayitaintsolyrics.lrc'); // lyrics
 	
 }
 
@@ -113,7 +117,10 @@ function setup() {
 		 songName: 'PEPTO BISMOL', sound: peptobismol, ghostSound: peptobismolGS,
 		 freq1: 20, freq2: 20000, bpm: 140, threshold: 0.1,
 		 lyrics: peptobismolLyrics, lyricsData: []
-		}
+		},
+		{songName: 'SAY IT AINT SO', sound: sayitaintso, ghostSound: sayitaintsoGS,
+		 freq1: 20, freq2: 20000, bpm: 76, threshold: 0.1,
+		 lyrics: sayitaintsoLyrics, lyricsData: []}
 	];
  
 	for (var i = 0; i < songs.length; i++) {
