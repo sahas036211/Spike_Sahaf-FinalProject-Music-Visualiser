@@ -114,7 +114,7 @@ function VisualisationScreen() {
 			this.menuDisplayed = !this.menuDisplayed;
 		}
 
-		if (keycode > 48 && keycode < 58) { // numbers 0-9
+		if (keycode > 48 && keycode < 55) { // numbers 1-6
 			var visNumber = keycode - 49;
             // change visual to corresponding number
 			this.selectedVisual = this.visuals[visNumber];
