@@ -230,6 +230,8 @@ function mouseClicked() {
 				karaoke = new KaraokeGame();
 				karaoke.initPitchDetection();
 				karaoke.analyzeSongPitchData();
+			} else if (home.selected === home.options[2]) {
+				fourier = new p5.FFT();
 			}
 		} else if (home.selected === home.options[0]) {
 			rhythm.mouseClicked();
@@ -278,6 +280,8 @@ function keyPressed() {
 				karaoke = new KaraokeGame();
 				karaoke.initPitchDetection();
 				karaoke.analyzeSongPitchData();
+			} else if (home.selected === home.options[2]) {
+				fourier = new p5.FFT();
 			}
 		} else if (home.selected === home.options[0]) {
 			rhythm.keyPressed(key);
