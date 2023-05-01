@@ -19,6 +19,9 @@ function VisControls() {
 
 	// Previous and Next buttons
 	this.previousNextButtons = new PreviousNextButtons();
+
+	// Volume bar
+	this.volumeBar = new VolumeBar(width/2 + 270, height - 135, 80, 30);
   
 	// draws the playback button and potentially the menu
 	this.draw = function() {
@@ -42,11 +45,14 @@ function VisControls() {
 
 		// previous and next buttons
 		this.previousNextButtons.draw();
+
+		// volume bar
+		this.volumeBar.draw();
 	};
 
 	// ------------ INPUT HANDLER FUNCTIONS ------------
 
-	this.mousePressed = function() {
+	this.mouseClicked = function() {
 		// Check if buttons have been clicked
 		this.playbackButton.hitCheck();
 		this.micButton.hitCheck();
@@ -56,4 +62,14 @@ function VisControls() {
 	  	this.progressBar.hitCheck();
 	  	this.previousNextButtons.hitCheck();
   	};
+
+	this.mousePressed = function() {
+		// Check if volume button has mouse held on it
+		this.volumeBar.mousePressed();
+	}
+
+	this.mouseReleased = function() {
+		// Check if volume button has mouse held on it
+		this.volumeBar.mouseReleased();
+	}
 }

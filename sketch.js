@@ -40,6 +40,8 @@ var loopButtonImg = null;
 var tempoButtonImg = null;
 var micButtonImg = null;
 var camButtonImg = null;
+//global variable for sound volume (Default is 50%)
+var soundVolume = 0.5;
 //variable for p5 fast fourier transform
 var fourier;
 
@@ -138,7 +140,7 @@ function setup() {
  
 	for (var i = 0; i < songs.length; i++) {
 		// default all songs to half volume
-		songs[i].sound.setVolume(0.5);
+		songs[i].sound.setVolume(soundVolume);
  
 		// code based on source: https://dev.to/mcanam/javascript-lyric-synchronizer-4i15
 		lines = songs[i].lyrics;
@@ -176,7 +178,6 @@ function setup() {
 }
   
 function draw() {
-	settings.volumeSlider.hide();
 	if (visScreen.controls.webcam) {
         image(visScreen.controls.webcam, 0, 0, width, height);
     } else {
@@ -197,9 +198,8 @@ function draw() {
     	// draw visualisers
     	visScreen.draw();
   	} else if (home.selected === home.options[3]) {
-		// draw options and settings menu
+		// draw settings menu
 		settings.draw();
-        settings.volumeSlider.show();
     }    
 }
 
@@ -216,7 +216,7 @@ function mouseMoved() {
 function mouseClicked() {
 	if (home) { // checks home != null to prevent errors while loading setup
 		if (home.selected === "") {
-			home.mousePressed();
+			home.mouseClicked();
 			// Check if menu item has been selected after mouse press
 			if (home.selected === home.options[0]) {
 				// Create new rhythm game object if rhythm game selected
@@ -230,13 +230,33 @@ function mouseClicked() {
 				karaoke.analyzeSongPitchData();
 			}
 		} else if (home.selected === home.options[0]) {
-			rhythm.mousePressed();
-		} else if (home.selected == home.options[1]) {
-			karaoke.mousePressed();
+			rhythm.mouseClicked();
+		} else if (home.selected === home.options[1]) {
+			karaoke.mouseClicked();
 		} else if (home.selected === home.options[2]) {
+			visScreen.controls.mouseClicked();
+		} else if (home.selected === home.options[3]) {
+			settings.mouseClicked();
+		}
+	}
+}
+
+function mousePressed() {
+	if (home) { // checks home != null to prevent errors while loading setup
+		if (home.selected === home.options[2]) {
 			visScreen.controls.mousePressed();
 		} else if (home.selected === home.options[3]) {
 			settings.mousePressed();
+		}
+	}
+}
+
+function mouseReleased() {
+	if (home) { // checks home != null to prevent errors while loading setup
+		if (home.selected === home.options[2]) {
+			visScreen.controls.mouseReleased();
+		} else if (home.selected === home.options[3]) {
+			settings.mouseReleased();
 		}
 	}
 }

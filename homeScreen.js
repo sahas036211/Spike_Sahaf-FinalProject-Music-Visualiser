@@ -52,7 +52,7 @@ function HomeScreen() {
         } return false;
     }
 
-    this.mousePressed = function() {
+    this.mouseClicked = function() {
         // checks if mouse is currently hovering over an option
         if (this.mouseMoved()) {
             // selects option when mouse is pressed

@@ -478,7 +478,7 @@ function KaraokeGame() {
 
     }
 
-    this.mousePressed = function() {
+    this.mouseClicked = function() {
         if (!this.playing && this.unpauseCountdown == -1) {
             if (!this.gameOver) {
                 if (mouseY > 270 && mouseY < 390) {

@@ -473,7 +473,7 @@ function RhythmGame() {
         } 
     }
 
-    this.mousePressed = function() {
+    this.mouseClicked = function() {
         if (!this.playing && this.unpauseCountdown == -1) {
             if (!this.gameStarted) {
                 if (mouseY > 270 && mouseY < 390) { // easy option

@@ -2,20 +2,12 @@ function SettingsScreen() {
     this.options = ["VOLUME",
                     "SONG SELECT"];
 
-    // create a volume slider with range 0 to 1 that starts at 0.5
-    this.volumeSlider = createSlider(0,100,50);
-    this.volumeSlider.position((width/2)+25, 325);
+    this.volumeBar = new VolumeBar(width/2 +70, 345, 90, 35);
     
     // sets default starting option to rhythm game
     this.currentOption = this.options[0];
 
     this.draw = function() {
-        let vol = this.volumeSlider.value();
-        for (var i = 0; i < songs.length; i++) {
-            // set volume of all songs relative to slider value
-            songs[i].sound.setVolume(vol/100);
-        }
-        
         // draw title at top of screen
         fill("white");
         push();
@@ -42,6 +34,7 @@ function SettingsScreen() {
             fill("white");
             text(this.options[i], (width/2)-25, 350 + (i * 120)); 
         }
+        this.volumeBar.draw();
         pop();
 
         textAlign(LEFT);
@@ -95,7 +88,7 @@ function SettingsScreen() {
         }
     }
 
-    this.mousePressed = function() {
+    this.mouseClicked = function() {
         if (mouseY > 403 && mouseY < 513) {
             if (currentSong != songs[songs.length-1]) {
                 // get index of current song
@@ -110,5 +103,13 @@ function SettingsScreen() {
             mouseX < (width/2)+250 && mouseX > (width/2)-250) { // check mouse pos
             home.selected = ""; // sends you back to the home screen
         }
+    }
+
+    this.mousePressed = function() {
+        this.volumeBar.mousePressed();
+    }
+
+    this.mouseReleased = function() {
+        this.volumeBar.mouseReleased();
     }
 }
