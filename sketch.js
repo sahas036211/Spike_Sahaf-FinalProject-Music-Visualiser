@@ -30,25 +30,20 @@ var ballinLyrics = null;
 //variable for array that will contain song information
 var songs = [];
 //variable for currently selected sound object to be played
-var currentSong = null;
+var currentSong;
 //variables for image overlay effects
-var glitter = null;
-var hearts = null;
-var butterflies = null;
+var glitter;
+var hearts;
+var butterflies;
 //variable for images for visualisation buttons
-var loopButtonImg = null;
-var tempoButtonImg = null;
-var micButtonImg = null;
-var camButtonImg = null;
+var loopButtonImg;
+var tempoButtonImg;
+var micButtonImg;
+var camButtonImg;
 //global variable for sound volume (Default is 50%)
 var soundVolume = 0.5;
 //variable for p5 fast fourier transform
 var fourier;
-
-//karaoke variables
-var fft;
-var songPitchData = {};
-var preloadedPitchDetectionModel;
 
 // preload the songs and images to be used
 function preload() {
@@ -97,44 +92,50 @@ function preload() {
 	sayitaintso = loadSound('assets/sayitaintso.mp3');
 	sayitaintsoGS = loadSound('assets/sayitaintso.mp3'); // ghost song
 	sayitaintsoLyrics = loadStrings('assets/sayitaintsolyrics.lrc'); // lyrics
-	
 }
 
 function setup() {
 	songs = [
 		{
-		 songName: 'BAKA MITAI', sound: bakamitai, ghostSound: bakamitaiGS,
-		 freq1: 200, freq2: 4000, bpm: 74, threshold: 0.5,
-		 lyrics: bakamitaiLyrics, lyricsData: []
+		songName: 'BAKA MITAI', sound: bakamitai, ghostSound: bakamitaiGS,
+		freq1: 200, freq2: 4000, bpm: 74, threshold: 0.5,
+		lyrics: bakamitaiLyrics, lyricsData: []
 		},
 		 
 		{
-		 songName: 'DEMIURGE', sound: demiurge, ghostSound: demiurgeGS,
-		 freq1: 20, freq2: 20000, bpm: 84, threshold: 0.1,
-		 lyrics: demiurgeLyrics, lyricsData: []
+		songName: 'DEMIURGE', sound: demiurge, ghostSound: demiurgeGS,
+		freq1: 20, freq2: 20000, bpm: 84, threshold: 0.1,
+		lyrics: demiurgeLyrics, lyricsData: []
 		},
  
 		{
-		 songName: 'CHESTNUTS', sound: chestnuts, ghostSound: chestnutsGS,
-		 freq1: 200, freq2: 4000, bpm: 68, threshold: 0.5,
-		 lyrics: chestnutsLyrics, lyricsData: []
+		songName: 'CHESTNUTS', sound: chestnuts, ghostSound: chestnutsGS,
+		freq1: 200, freq2: 4000, bpm: 68, threshold: 0.5,
+		lyrics: chestnutsLyrics, lyricsData: []
 		},
  
 		{
-		 songName: 'NEW TANK', sound: newtank, ghostSound: newtankGS,
-		 freq1: 20, freq2: 20000, bpm: 151, threshold: 0.1,
-		 lyrics: newtankLyrics, lyricsData: []
+		songName: 'NEW TANK', sound: newtank, ghostSound: newtankGS,
+		freq1: 20, freq2: 20000, bpm: 151, threshold: 0.1,
+		lyrics: newtankLyrics, lyricsData: []
 		},
  
 		{
-		 songName: 'PEPTO BISMOL', sound: peptobismol, ghostSound: peptobismolGS,
-		 freq1: 20, freq2: 20000, bpm: 140, threshold: 0.1,
-		 lyrics: peptobismolLyrics, lyricsData: []
+		songName: 'PEPTO BISMOL', sound: peptobismol, ghostSound: peptobismolGS,
+		freq1: 20, freq2: 20000, bpm: 140, threshold: 0.1,
+		lyrics: peptobismolLyrics, lyricsData: []
 		},
 
-		{songName: "BALLIN'", sound: ballin, ghostSound: ballinGS,
-		 freq1: 20, freq2: 2000, bpm: 97, threshold: 0.3,
-		 lyrics: ballinLyrics, lyricsData: []
+		{
+		songName: "BALLIN'", sound: ballin, ghostSound: ballinGS,
+		freq1: 20, freq2: 20000, bpm: 97, threshold: 0.3,
+		lyrics: ballinLyrics, lyricsData: []
+		},
+
+		{
+		songName: "SAY IT AIN'T SO", sound: sayitaintso, ghostSound: sayitaintsoGS,
+		freq1: 20, freq2: 4000, bpm: 76, threshold: 0.5,
+		lyrics: sayitaintsoLyrics, lyricsData: []
 		}
 	];
  
@@ -312,4 +313,4 @@ function convertToMins(time) {
 	// Insert zero before seconds count if less than 10 for formatting
 	let timeInMins = `${timeMinutes}:${timeSeconds < 10 ? '0' : ''}${timeSeconds}`;
 	return timeInMins;
-};
+}
