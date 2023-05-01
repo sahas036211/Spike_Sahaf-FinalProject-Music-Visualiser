@@ -38,6 +38,7 @@ function ProgressBar() {
             this.jumpTimeout -= deltaTime;
         } else if (this.jumpTimeout < 0) {
             this.jumpTimeout = 0;
+        } else {
             this.isJumping = false;
         }
     }
