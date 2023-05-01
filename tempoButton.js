@@ -4,11 +4,11 @@ function TempoButton() {
     this.x = (width / 2) + 150; // Positioned to the right of the PlaybackButton
     this.y = height - 160;
 
-    this.speeds = [0.25, 0.5, 1, 1.5, 2];
-    this.currentSpeed = this.speeds[2];
+    this._speeds = [0.25, 0.5, 1, 1.5, 2];
+    this._currentSpeed = this._speeds[2];
 
     this.image = tempoButtonImg;
-    this.image.resize(this.width, this.height);
+    this.image.resize(this.width, this.height); // scale image to correct size
     
     this.draw = function () {
         push();
@@ -16,22 +16,30 @@ function TempoButton() {
         fill("white");
         textSize(24);
         textAlign(LEFT);
-        text(`${this.currentSpeed}x`, this.x + 45, this.y + 23);
+        text(`${this._currentSpeed}x`, this.x + 45, this.y + 23);
         pop();
     };
+
+    // ------------ GETTER & SETTER FUNCTIONS ------------
+
+    this.getSpeed = function() {
+        return this._currentSpeed;
+    }
   
+    // ------------ INPUT HANDLER FUNCTIONS ------------
+
     this.hitCheck = function () {
         if (mouseX > this.x
             && mouseX < this.x + this.width
             && mouseY > this.y
             && mouseY < this.y + this.height) {
-            if (this.currentSpeed == this.speeds[this.speeds.length-1]) {
-                this.currentSpeed = this.speeds[0];
+            if (this._currentSpeed == this._speeds[this._speeds.length-1]) {
+                this._currentSpeed = this._speeds[0];
             } else {
-                let index = this.speeds.indexOf(this.currentSpeed);
-                this.currentSpeed = this.speeds[index+1];
+                let index = this._speeds.indexOf(this._currentSpeed);
+                this._currentSpeed = this._speeds[index+1];
             }
-            currentSong.sound.rate(this.currentSpeed);
+            currentSong.sound.rate(this._currentSpeed);
             return true;
         }
             return false;

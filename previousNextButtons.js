@@ -4,6 +4,7 @@ function PreviousNextButtons() {
     this.y = height - 155;
 	this.prevX = (width/2) - 90;
     this.nextX = (width/2) + 60;
+    this.timeout = 0;
 
 	this.draw = function() {
 		push();
@@ -23,15 +24,27 @@ function PreviousNextButtons() {
                  this.prevX - this.width*2, this.y + this.height/2,
                  this.prevX - this.width, this.y + this.height);
 		pop();
+
+        if (this.timeout > 0) {
+            this.timeout -= deltaTime;
+        } else if (this.timeout < 0) {
+            this.timeout = 0;
+        }
 	};
+
+    // ------------ INPUT HANDLER FUNCTIONS ------------
 
     this.hitCheck = function() {
         if (mouseX > this.nextX // checks if next button is pressed
             && mouseX < this.nextX + this.width*2
             && mouseY > this.y
-            && mouseY < this.y + this.height) {
-            // pauses current song before changing songs
-            visScreen.controls.playbackButton.setPlaying(false);
+            && mouseY < this.y + this.height
+            && this.timeout == 0) { // check timeout not in effect
+            this.timeout = 500; // 500 ms timeout between presses
+            if (visScreen.controls.playbackButton.getPlaying()) {
+                // pauses current song if playing before changing songs
+                visScreen.controls.playbackButton.setPlaying(false);
+            }
             if (currentSong != songs[songs.length-1]) {
                 // get index of current song
                 let index = songs.indexOf(currentSong);
@@ -41,16 +54,20 @@ function PreviousNextButtons() {
                 currentSong = songs[0];
             }
             // apply loop and tempo status of previous song to new song
-            currentSong.sound.rate(visScreen.controls.tempoButton.currentSpeed);
-            currentSong.sound.setLoop(visScreen.controls.loopButton.loopEnabled);
+            currentSong.sound.rate(visScreen.controls.tempoButton.getSpeed());
+            currentSong.sound.setLoop(visScreen.controls.loopButton.getLoop());
             // set the song to start playing
             visScreen.controls.playbackButton.setPlaying(true);
         } else if (mouseX > this.prevX - this.width*2 // check if previous button is pressed
                    && mouseX < this.prevX
                    && mouseY > this.y
-                   && mouseY < this.y + this.height) {
-            // pauses current song before changing songs
-            visScreen.controls.playbackButton.setPlaying(false);
+                   && mouseY < this.y + this.height
+                   && this.timeout == 0) { // check timeout not in effect
+            this.timeout = 500; // 500 ms timeout between presses
+            if (visScreen.controls.playbackButton.getPlaying()) {
+                // pauses current song if playing before changing songs
+                visScreen.controls.playbackButton.setPlaying(false);
+            }
             if (currentSong != songs[0]) {
                 // get index of current song
                 let index = songs.indexOf(currentSong);
@@ -60,8 +77,8 @@ function PreviousNextButtons() {
                 currentSong = songs[songs.length-1];
             }
             // apply loop and tempo status of previous song to new song
-            currentSong.sound.rate(visScreen.controls.tempoButton.currentSpeed);
-            currentSong.sound.setLoop(visScreen.controls.loopButton.loopEnabled);
+            currentSong.sound.rate(visScreen.controls.tempoButton.getSpeed());
+            currentSong.sound.setLoop(visScreen.controls.loopButton.getLoop());
             // set the song to start playing
             visScreen.controls.playbackButton.setPlaying(true);
         }

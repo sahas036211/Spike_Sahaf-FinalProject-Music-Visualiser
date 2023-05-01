@@ -6,13 +6,13 @@ function PlaybackButton() {
 
 	//flag to determine whether to play or pause after button click and
 	//to determine which icon to draw
-	this.playing = false;
-	this.pauseTime = 0;
+	this._playing = false;
+	this._pauseTime = 0;
 
 	this.draw = function() {
 		push();
 		fill("white");
-		if (this.playing) {
+		if (this._playing) {
 			rect(this.x, this.y, this.width/2 - 2, this.height);
 			rect(this.x + (this.width/2 + 3), this.y, this.width/2 - 2, this.height);
 		} else {
@@ -22,7 +22,13 @@ function PlaybackButton() {
 		}
 		pop();
 	};
+
+	// ------------ GETTER & SETTER FUNCTIONS ------------
 	
+	this.getPlaying = function() {
+		return this._playing;
+	}
+
 	this.setPlaying = function(playing) {
 		if (playing) {
 			if (visScreen.controls.loopButton.loopEnabled) {
@@ -30,16 +36,20 @@ function PlaybackButton() {
 			} else {
 				currentSong.sound.play();
 			}
-			this.playing = true;
+			this._playing = true;
 		} else {
-			this.pauseTime = currentSong.sound.currentTime();
+			this._pauseTime = currentSong.sound.currentTime();
     		currentSong.sound.pause();
-			this.playing = false;
+			this._playing = false;
 		}
 	}
 
-	//checks for clicks on the button, starts or pauses playabck.
-	//@returns true if clicked false otherwise.
+	this.getPauseTime = function() {
+		return this._pauseTime;
+	}
+
+    // ------------ INPUT HANDLER FUNCTIONS ------------
+
 	this.hitCheck = function() {
 		if (mouseX > this.x
             && mouseX < this.x + this.width

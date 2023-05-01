@@ -38,6 +38,8 @@ var butterflies = null;
 //variable for images for visualisation buttons
 var loopButtonImg = null;
 var tempoButtonImg = null;
+var micButtonImg = null;
+var camButtonImg = null;
 //variable for p5 fast fourier transform
 var fourier;
 
@@ -56,6 +58,8 @@ function preload() {
 	// visualisation button images
 	loopButtonImg = loadImage('assets/loopbutton.png');
 	tempoButtonImg = loadImage('assets/tempobutton.png');
+	micButtonImg = loadImage('assets/micbutton.png');
+	camButtonImg = loadImage('assets/cambutton.png');
 
 	// baka mitai
 	bakamitai = loadSound('assets/bakamitai.flac');
@@ -124,6 +128,11 @@ function setup() {
 		 songName: 'PEPTO BISMOL', sound: peptobismol, ghostSound: peptobismolGS,
 		 freq1: 20, freq2: 20000, bpm: 140, threshold: 0.1,
 		 lyrics: peptobismolLyrics, lyricsData: []
+		},
+
+		{songName: "BALLIN'", sound: ballin, ghostSound: ballinGS,
+		 freq1: 20, freq2: 2000, bpm: 97, threshold: 0.3,
+		 lyrics: ballinLyrics, lyricsData: []
 		}
 	];
  
@@ -253,7 +262,7 @@ function keyPressed() {
 		} else if (home.selected === home.options[1]) {
 			karaoke.keyPressed(key);
 		} else if (home.selected === home.options[2]) {
-			visScreen.controls.keyPressed(keyCode);
+			visScreen.keyPressed(keyCode);
 		} else if (home.selected === home.options[3]) {
 			settings.keyPressed(key);
 		}

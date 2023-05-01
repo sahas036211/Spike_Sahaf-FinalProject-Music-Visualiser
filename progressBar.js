@@ -4,6 +4,7 @@ function ProgressBar() {
     this.width = width/2;
     this.height = 25;
     this.jumpTimeout = 0;
+    this.isJumping = false;
 
     this.draw = function() {
         push();
@@ -13,16 +14,16 @@ function ProgressBar() {
 
         // white completion bar
         let currentTime;
-        if (visScreen.controls.playbackButton.playing) {
+        if (visScreen.controls.playbackButton.getPlaying()) {
             currentTime = currentSong.sound.currentTime(); 
         } else {
-            currentTime = visScreen.controls.playbackButton.pauseTime;
+            currentTime = visScreen.controls.playbackButton.getPauseTime();
         }
         let progressWidth = map(currentTime,
                             0, currentSong.sound.duration(),
                             0, width/2); 
         fill(255);
-        rect(this.x, this.y, progressWidth, this.height, 90, 0, 0, 90);
+        rect(this.x, this.y, progressWidth, this.height, 90);
 
         textAlign(RIGHT);
         textSize(24);
@@ -37,11 +38,14 @@ function ProgressBar() {
             this.jumpTimeout -= deltaTime;
         } else if (this.jumpTimeout < 0) {
             this.jumpTimeout = 0;
+            this.isJumping = false;
         }
     }
 
+    // ------------ INPUT HANDLER FUNCTIONS ------------
+
     this.hitCheck = function() {
-        if (visScreen.controls.playbackButton.playing && this.jumpTimeout == 0) {
+        if (visScreen.controls.playbackButton.getPlaying() && this.jumpTimeout == 0) {
             if (mouseX > this.x
                 && mouseX < this.x + this.width
                 && mouseY > this.y
@@ -49,12 +53,13 @@ function ProgressBar() {
                 let jumpTime = map(mouseX, 
                                    width/4, width*0.75,
                                    0, currentSong.sound.duration());
+                this.isJumping = true;
                 currentSong.sound.jump(jumpTime);
                 this.jumpTimeout = 300;
                 setTimeout(() => { Object.assign(currentSong.sound, {_playing: true}); }, 100);
                 setTimeout(() => {
                                     currentSong.sound.pause();
-                                    if (visScreen.controls.loopButton.loopEnabled) {
+                                    if (visScreen.controls.loopButton.getLoop()) {
                                         currentSong.sound.loop();
                                     } else {
                                         currentSong.sound.play(); 

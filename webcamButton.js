@@ -1,37 +1,58 @@
 function WebcamButton() {
-    this.x = 100;
-    this.y = 20;
-    this.width = 40; // Increased width
-    this.height = 40; // Increased height
-    this.enabled = false;
+    this.x = (width/2) - 350;
+    this.y = height - 160;
+    this.width = 30;
+    this.height = 30;
+    
+    this.image = camButtonImg;
+    this.image.resize(this.width, this.height); // scale image to correct size
+    pixelDensity(1);
+    this.image.loadPixels(); // load pixels of image to edit
 
-    this.draw = function () {
+    // flag to determine whether cam is enabled or not
+	this._enabled = false;
+
+    this.draw = function() {
         push();
-        // Draw the square around the bold letter W
-        if (this.enabled) {
-            fill(255, 0, 0); // Red color for enabled state
+        image(this.image, this.x, this.y);
+        
+        // button is white if enabled, grey if disabled
+        let fillColour;
+        if (!this._enabled) {
+            fillColour = 128;
         } else {
-            fill(255); // White color for disabled state
+            fillColour = 255;
         }
-        rect(this.x, this.y, this.width, this.height);
 
-        // Draw the bold letter W inside the square
-        textSize(38); // Increased text size
-        textAlign(CENTER, CENTER);
-        if (this.enabled) {
-            fill(255); // White color for enabled state
-        } else {
-            fill(0); // Black color for disabled state
+        // replace pixel colour with new fill colour
+        for (let i = 0; i < this.image.pixels.length; i+=4) {
+            this.image.pixels[i] = fillColour;
+            this.image.pixels[i+1] = fillColour;
+            this.image.pixels[i+2] = fillColour;
         }
-        textStyle(BOLD);
-        text("W", this.x + this.width / 2, this.y + this.height / 2);
+        this.image.updatePixels();
         pop();
     };
 
+    // Webcam input
+    this.webcam = null;
+
+    // Enable or disable webcam input
+    this.setWebcam = function(enable) {
+        if (enable) {
+            this.webcam = createCapture(VIDEO);
+            this._enabled = true;
+        } else {
+            this.webcam.remove();
+            this._enabled = false;
+        }
+    };
+
+    // ------------ INPUT HANDLER FUNCTIONS ------------
+
     this.hitCheck = function () {
         if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
-            this.enabled = !this.enabled; // Toggle the state
-            visScreen.controls.enableWebcam(); // Enable/disable the webcam
+            this.setWebcam(!this._enabled); // toggle the webcam
             return true;
         }
         return false;

@@ -1,61 +1,66 @@
-// MicController constructor
-function MicController() {
-  this.mic = new p5.AudioIn();
-  this.micEnabled = false;
-
-  this.enableMic = function() { 
-    this.micEnabled = !this.micEnabled;
-    if (this.micEnabled) {
-      this.mic.start();
-      fourier.setInput(this.mic);
-      if (currentSong.sound.isPlaying()) {
-        currentSong.sound.pause();
-        visScreen.controls.playbackButton.setPlaying(false);
-      }
-    } else {
-      this.mic.stop();
-      fourier.setInput(null);
-    }
-  };
-}
-
 // MicButton constructor
 function MicButton() {
-  this.x = 50;
-  this.y = 20;
-  this.width = 40; // Increased width
-  this.height = 40; // Increased height
-  this.enabled = false;
+    this.x = (width/2) - 280;
+    this.y = height - 160;
+    this.width = 30;
+    this.height = 30;
 
-  this.draw = function() {
-      push();
-      // Draw the square around the bold letter M
-      if (this.enabled) {
-          fill(255, 0, 0); // Red color for enabled state
-      } else {
-          fill(255); // White color for disabled state
-      }
-      rect(this.x, this.y, this.width, this.height);
+    this.image = micButtonImg;
+    this.image.resize(this.width, this.height); // scale image to correct size
+    pixelDensity(1);
+    this.image.loadPixels(); // load pixels of image to edit
 
-      // Draw the bold letter M inside the square
-      textSize(38); // Increased text size
-      textAlign(CENTER, CENTER);
-      if (this.enabled) {
-          fill(255); // White color for enabled state
-      } else {
-          fill(0); // Black color for disabled state
-      }
-      textStyle(BOLD);
-      text("M", this.x + this.width / 2, this.y + this.height / 2 );
-      pop();
-  };
+    this.mic = new p5.AudioIn();
 
-  this.hitCheck = function() {
-    if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
-      this.enabled = !this.enabled; // Toggle the state
-      visScreen.controls.micController.enableMic(); // Enable/disable the microphone
-      return true;
+    // flag to determine whether mic is enabled or not
+    this._micEnabled = false;
+
+    this.draw = function() {
+        push();
+        image(this.image, this.x, this.y);
+        
+        // button is white if enabled, grey if disabled
+        let fillColour;
+        if (!this._micEnabled) {
+            fillColour = 128;
+        } else {
+            fillColour = 255;
+        }
+
+        // replace pixel colour with new fill colour
+        for (let i = 0; i < this.image.pixels.length; i+=4) {
+            this.image.pixels[i] = fillColour;
+            this.image.pixels[i+1] = fillColour;
+            this.image.pixels[i+2] = fillColour;
+        }
+        this.image.updatePixels();
+        pop();
     }
-    return false;
-  };
+
+    // ------------ GETTER & SETTER FUNCTIONS ------------
+
+    this.setMic = function(enable) { 
+        if (enable) {
+            this.mic.start();
+            fourier.setInput(this.mic);
+            if (visScreen.controls.playbackButton.getPlaying()) {
+                visScreen.controls.playbackButton.setPlaying(false);
+            }
+            this._micEnabled = true;
+        } else {
+            this.mic.stop();
+            fourier.setInput(null);
+            this._micEnabled = false;
+        }
+    };
+
+    // ------------ INPUT HANDLER FUNCTIONS ------------
+
+    this.hitCheck = function() {
+        if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
+          this.setMic(!this._micEnabled); // toggle the microphone
+          return true;
+        }
+        return false;
+    };
 }
