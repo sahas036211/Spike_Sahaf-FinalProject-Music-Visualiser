@@ -11,6 +11,7 @@ function VisualisationScreen() {
 	this.visuals.push(new Needles());
     this.visuals.push(new HorizontalBars());
     this.visuals.push(new CircularWaveform());
+    this.visuals.push(new SpinningCube());
 
 	this.selectedVisual = this.visuals[0];
 

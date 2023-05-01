@@ -12,6 +12,9 @@ function WebcamButton() {
     // flag to determine whether cam is enabled or not
 	this._enabled = false;
 
+    // Webcam input
+    this.webcam = null;
+
     this.draw = function() {
         push();
         image(this.image, this.x, this.y);
@@ -34,19 +37,26 @@ function WebcamButton() {
         pop();
     };
 
-    // Webcam input
-    this.webcam = null;
+    // ------------ GETTER & SETTER FUNCTIONS ------------
 
-    // Enable or disable webcam input
     this.setWebcam = function(enable) {
         if (enable) {
             this.webcam = createCapture(VIDEO);
+            this.webcam.hide();
             this._enabled = true;
         } else {
             this.webcam.remove();
             this._enabled = false;
         }
     };
+
+    this.getWebcam = function() {
+        return this.webcam;
+    }
+
+    this.getEnabled = function() {
+        return this._enabled;
+    }
 
     // ------------ INPUT HANDLER FUNCTIONS ------------
 

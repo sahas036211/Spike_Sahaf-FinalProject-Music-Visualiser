@@ -179,8 +179,8 @@ function setup() {
 }
   
 function draw() {
-	if (visScreen.controls.webcam) {
-        image(visScreen.controls.webcam, 0, 0, width, height);
+	if (visScreen.controls.webcamButton.getEnabled()) {
+        image(visScreen.controls.webcamButton.getWebcam(), 0, 0, width, height);
     } else {
         background(0);
     }

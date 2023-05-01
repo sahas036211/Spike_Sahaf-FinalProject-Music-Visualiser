@@ -487,7 +487,6 @@ function KaraokeGame() {
                     home.selected = ""; // sends you back to the home screen
                 }
             } else {
-                // TO DO: GAME OVER SCREEN "BACK TO MENU" BUTTON
                 if (mouseY > 715 && mouseY < 835 &&
                     mouseX < (width/2)+350 && mouseX > (width/2)-350) { // check mouse pos
                     home.selected = ""; // sends you back to the home screen
