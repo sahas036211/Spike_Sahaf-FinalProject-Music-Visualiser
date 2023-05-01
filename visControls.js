@@ -53,7 +53,6 @@ function VisControls() {
 	//responds to keyboard presses
 	//@param keycode the ascii code of the keypressed
 	this.keyPressed = function(keycode) {
-		console.log(keycode);
 		if (keycode == 32) { // spacebar
 			this.menuDisplayed = !this.menuDisplayed;
 		}

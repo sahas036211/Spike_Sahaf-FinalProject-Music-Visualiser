@@ -198,29 +198,31 @@ function KaraokeGame() {
         // checks if there is an unpause countdown currently in effect
         if (this.unpauseCountdown != -1) {
             if (this.unpauseCountdown > 0) {
-                  // show countdown timer in centre of the screen
-                  let countdownDisplay = Math.ceil(this.unpauseCountdown / 60);
-                  text(countdownDisplay, width/2, height/2);
-                  this.unpauseCountdown -= 1;
+                // show countdown timer in centre of the screen
+                let countdownDisplay = Math.ceil(this.unpauseCountdown / 60);
+                text(countdownDisplay, width/2, height/2);
+                this.unpauseCountdown -= 1;
             } else { // when unpause countdown hits 0, unpause the game
-                  currentSong.sound.play(); // plays hearable music
-                  if (!this.gameStarted) {
-                      // set song playhead to 0 to ensure it always
-                      // starts from the beginning
-                      currentSong.sound.jump();
-                      setTimeout(() => { Object.assign(currentSong.sound, {_playing: true}); }, 100);
-                  }
-                  // play overlay effect gifs
-                  glitter.play();
-                  hearts.play();
-                  butterflies.play();
-                  // sets playing condition to true
-                  this.playing = true;
-                  this.unpauseCountdown = -1;
-                  if (!this.gameStarted) {
+                currentSong.sound.play(); // plays hearable music
+                if (!this.gameStarted) {
+                    // set song playhead to 0 and ensure it always
+                    // starts with normal settings
+                    currentSong.sound.rate(1);
+                    currentSong.sound.setLoop(false);
+                    currentSong.sound.jump();
+                    setTimeout(function(){ Object.assign(currentSong.sound, {_playing: true}); }, 100);
+                }
+                // play overlay effect gifs
+                glitter.play();
+                hearts.play();
+                butterflies.play();
+                // sets playing condition to true
+                this.playing = true;
+                this.unpauseCountdown = -1;
+                if (!this.gameStarted) {
                     // set game started to true if this is the first unpause
                     this.gameStarted = true;
-                  }
+                }
             }
         } else { // if no countdown, show pause screen
             textSize(48);
