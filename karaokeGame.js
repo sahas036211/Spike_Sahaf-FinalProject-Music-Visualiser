@@ -303,6 +303,8 @@ function KaraokeGame() {
             text('SONG', 140, 148);
             text('SCORE', 120, 247);
             text('POINTS +', 90, 347);
+            text('Press C to change background to camera', 10, 50);
+            text('Press H to hide waveform or bars', 1400, 50);
 
             textSize(60);
             text(this._songName, 250, 150);
@@ -411,7 +413,7 @@ function KaraokeGame() {
         analyze(0);
     };
     
-    // Gets the pitch of the song at a given time
+
     this.update = function() {
         // Checks if 1 second have passed since the last score update
         if (millis() - this.lastScoreUpdateTime >= 1000) {
@@ -499,8 +501,7 @@ function KaraokeGame() {
 
     }
 
-    // mousePressed function for the game
-    this.mousePressed = function() {
+    this.mouseClicked = function() {
         if (!this.playing && this.unpauseCountdown == -1) {
             if (!this.gameOver) {
                 if (mouseY > 270 && mouseY < 390) {
