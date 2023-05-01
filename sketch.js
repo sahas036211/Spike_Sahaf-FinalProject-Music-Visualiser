@@ -87,6 +87,7 @@ function preload() {
 	ballinGS = loadSound('assets/ballin.mp3'); // ghost song
 	ballinLyrics = loadStrings('assets/ballinlyrics.lrc'); // lyrics
 
+	//say it aint so
 	sayitaintso = loadSound('assets/sayitaintso.mp3');
 	sayitaintsoGS = loadSound('assets/sayitaintso.mp3'); // ghost song
 	sayitaintsoLyrics = loadStrings('assets/sayitaintsolyrics.lrc'); // lyrics
