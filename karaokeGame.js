@@ -95,7 +95,6 @@ function KaraokeGame() {
 
     this.initWebcam(); // This calls the initWebcam function to initialise the webcam
 
-
     this.drawPitchWaveform = function() {
         let waveformHeight = 200; // Adjust the height of the waveform as desired
         let waveformY = height - waveformHeight - 50; // Position the waveform above the lyrics display
@@ -126,8 +125,6 @@ function KaraokeGame() {
     
         pop();
     };
-    
-  
 
     this.drawLyrics = function() {
         // Get the current time of the song
@@ -170,8 +167,7 @@ function KaraokeGame() {
             }
             pop();
         }
-    };    
-  
+    };
 
     this.drawDualPitchBars = function(userPitch, songPitch) {
         // Constants for bar dimensions and maximum pitch
@@ -198,7 +194,7 @@ function KaraokeGame() {
             fill(255, 0, 0, 150);
             rect(songBarX, height - songFilledHeight - 200, barWidth, songFilledHeight);
         pop();
-    };    
+    };
 
     this._drawPauseMenu = function() {
         push();
@@ -278,7 +274,6 @@ function KaraokeGame() {
         pop();
     }
 
-
     this.draw = function() {  
 
         if (!this.gameOver){
@@ -332,7 +327,6 @@ function KaraokeGame() {
             let songPitch = this.getSongPitchAt(currentSong.sound.currentTime()) || 0;
             let userPitch = this._userPitch || 0;
 
-
             // Draw the user pitch bar and waveform based on the user's pitch value
             if (this.showVisuals) {
                 this.drawDualPitchBars(userPitch, songPitch);
@@ -354,7 +348,7 @@ function KaraokeGame() {
         
     };
 
-      this.analyzeSongPitchData = function () {
+    this.analyzeSongPitchData = function () {
         // Checks if the function has already been executed
         if (this.analyzeSongPitchDataCalled) {
             return; // Exit the function if it has been executed before
@@ -364,7 +358,7 @@ function KaraokeGame() {
         this.analyzeSongPitchDataCalled = true;
     
         let duration = currentSong.sound.duration(); // Gets the duration of the song
-        let interval = 0.5; // Analyses pitch data every 0.5 seconds
+        let interval = 1; // Analyses pitch data every 1 second
     
         fourier.setInput(currentSong.sound); // Sets the sound as the input for the FFT
     
@@ -413,7 +407,6 @@ function KaraokeGame() {
         analyze(0);
     };
     
-
     this.update = function() {
         // Checks if 1 second have passed since the last score update
         if (millis() - this.lastScoreUpdateTime >= 1000) {
@@ -462,16 +455,18 @@ function KaraokeGame() {
             this.songPitchHistory.push(songPitch || 0);
             // Add the user pitch value to the user pitch history array, or 0 if the pitch is not available
             this.userPitchHistory.push(userPitch || 0);
+
+            // Limit the size of the history arrays to maxDataPoints
+            if (this.songPitchHistory.length > this.maxDataPoints) {
+                this.songPitchHistory.shift();
+            }
+            if (this.userPitchHistory.length > this.maxDataPoints) {
+                this.userPitchHistory.shift();
+            }
         }
-
-
     }
-    
 
-    //
     // ------------ INPUT HANDLER FUNCTIONS ------------
-    //
-
     this.keyPressed = function() {
         if (this.playing) {
             if (key == "P" || key == "p") {
